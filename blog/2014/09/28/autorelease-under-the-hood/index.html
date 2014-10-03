@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Autorelease - Under the Hood - Matteo Gobbi</title>
+  <meta name="author" content="Matteo Gobbi">
+
+  
+  <meta name="description" content="Autorelease - Under the Hood written in arc, ios, mrc, objective-c, underthehood Since this is an argument less touched but much important, I &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Matteo Gobbi" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-55234030-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+  <body>
+    <a href="/" class="home-icon">
+      <img src="/images/home.png"/>
+    </a>
+
+    <article role="article" class="full-single-article">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h1>Autorelease - Under the Hood</h1>
+        <div class="meta">
+          written 
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2014-09-28T23:24:37+01:00" pubdate data-updated="true"></time>
+          
+
+in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/arc/'>arc</a>, <a class='category' href='/blog/categories/ios/'>ios</a>, <a class='category' href='/blog/categories/mrc/'>mrc</a>, <a class='category' href='/blog/categories/objective-c/'>objective-c</a>, <a class='category' href='/blog/categories/underthehood/'>underthehood</a>
+  
+</span>
+
+
+        </div>
+        <p>Since this is an argument less touched but much important, I decided to write an article to organize the informations and explain how <code>autorelease</code>, or better <strong>autorelease pool</strong> works.</p>
+
+<p>The main goal of this article is not to explain the base of what is an <strong>autorelease pool</strong> and when <code>autorelease</code> should be used, but anyway, this is really important to understand these concepts before proceeding. For this reason, the first paragraph will be dedicated to explain them. Experts developers, can safely skip it if they want.</p>
+
+<!--more-->
+
+
+<p>
+<br /></p>
+
+<h2>What and when</h2>
+
+<p>As the <a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html">Apple documentation</a> says:</p>
+
+<blockquote>
+Autorelease pool blocks provide a mechanism whereby you can relinquish ownership of an object, but avoid the possibility of it being deallocated immediately (such as when you return an object from a method). Typically, you don’t need to create your own autorelease pool blocks, but there are some situations in which either you must or it is beneficial to do so.
+</blockquote>
+
+
+<p>Let&rsquo;s look at a couple of examples:</p>
+
+<p>Before <strong>ARC</strong>, there was our much less friend called <strong><a href="https://developer.apple.com/library/ios/releasenotes/objectivec/rn-transitioningtoarc/introduction/introduction.html">MRC</a></strong>, which stands for <strong>Manual Reference Counting</strong>. Even if today it is still present on XCode, it is not longer used and the &ldquo;bad job&rdquo; of using <code>retain</code>, <code>release</code> and <code>autorelease</code>,  is left to the compiler.
+But let&rsquo;s think for a while to be in a MRC environment and to have these methods:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cm">/* MGClassA */</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">method</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">MGClassB</span> <span class="o">*</span><span class="n">objB</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGClassB</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="bp">NSObject</span> <span class="o">*</span><span class="n">newObj</span> <span class="o">=</span> <span class="p">[</span><span class="n">objB</span> <span class="n">getAnObject</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//do something..</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">objB</span> <span class="k">release</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* MGClassB */</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSObject</span> <span class="o">*</span><span class="p">)</span><span class="nf">getAnObject</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="bp">NSObject</span> <span class="o">*</span><span class="n">newObj</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSObject</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">newObj</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>in the first method, an object typed <code>MGClassB</code> is allocated and temporary retained from the object of type <code>MGClassA</code>; then <code>objB</code> is asked to allocate, initialize and return a new object. So at this point we have this situation:</p>
+
+<p><code>objA</code>  &mdash;<strong>retain</strong>&mdash;>  <code>objB</code></p>
+
+<p><code>objB</code>  &mdash;<strong>retain</strong>&mdash;>  <code>newObj</code></p>
+
+<p>please note that <code>objA</code> is not calling <code>retain</code> after having obtained <code>newObj</code>, so it has no ownership and <code>newObj</code> still has a retain count equals to 1.<br/>
+At this point, <code>method</code> finishes and releases <code>objB</code>, which is not referenced anymore but it is still retaining <code>newObj</code>. These objects will therefore remain allocated in memory generating the famous <strong>memory leak</strong>. From <a href="https://developer.apple.com/library/ios/documentation/performance/conceptual/managingmemory/articles/FindingLeaks.html">Apple documentation</a></p>
+
+<blockquote>
+Memory leaks are blocks of allocated memory that the program no longer references.
+</blockquote>
+
+
+<p>This means that being <code>newObj</code> just pointed from <code>objB</code>, but being <code>objB</code> NOT pointed from anyone, it will be no longer possible have a reference to release <code>newObj</code> which will remain allocated until the application will be not closed.</p>
+
+<p>How can we solve this issue?
+<code>autorelease</code>, keep the object alive for a period of time. Then, the object is automatically released, avoiding so, a memory leak:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cm">/* MGClassB */</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSObject</span> <span class="o">*</span><span class="p">)</span><span class="nf">getAnObject</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="bp">NSObject</span> <span class="o">*</span><span class="n">newObj</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSObject</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">newObj</span> <span class="n">autorelease</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the next paragraph we will go in depth explaining why in this example doesn&rsquo;t appear an <strong>autorelease pool</strong>, but before, let&rsquo;s go to have a look to another situation where you need to create that.<br/>
+An <strong>autorelease pool</strong> is a container where autoreleased objects are placed. When the pool is drained, every object in the container is released. This could be very useful in a situation like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSObject</span> <span class="o">*</span><span class="p">)</span><span class="nf">method</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="bp">NSAutoreleasePool</span> <span class="o">*</span><span class="n">myPool</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSAutoreleasePool</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="cm">/* Do something that creates a lot of temporary objects autoreleased. */</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">[</span><span class="n">myPool</span> <span class="n">drain</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>that in the modern <strong>Objective-C</strong> becomes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSObject</span> <span class="o">*</span><span class="p">)</span><span class="nf">method</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">@autoreleasepool</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="cm">/* Do something that creates a lot of temporary objects autoreleased. */</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This cyle, is executed 10.000 times. You maybe don&rsquo;t know how many objects will be allocated in your code, but without using <code>@autoreleasepool</code>, the memory would be filled with a lot of objects allocations, that instead at the end of each cycle would be no longer used. This could have an impact on the the performance of the app and could cause risk of memory warnings.<br/>
+Using <code>@autoreleasepool</code>, objects would be instead released at the end of the autorelease&rsquo;s scope.</p>
+
+<p>Note that with ARC, you can&rsquo;t call <code>release</code> or <code>autorelease</code>, so having <code>@autoreleasepool</code> sometime is even more useful.
+<br />
+<br /></p>
+
+<h2>Under the hood</h2>
+
+<p>We know that an object which is autoreleased, go in an autorelease pool, but keep in mind this example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cm">/* MGClassB */</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSObject</span> <span class="o">*</span><span class="p">)</span><span class="nf">getAnObject</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="bp">NSObject</span> <span class="o">*</span><span class="n">newObj</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSObject</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">newObj</span> <span class="n">autorelease</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>the question is: <strong>what autorelease pool does <code>newObj</code> go in?</strong><br/>
+The answer is easy, and it is in the file named <code>main.m</code> in the folder <code>Supporting Files</code> of any XCode project:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">@autoreleasepool</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">UIApplicationMain</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="nb">nil</span><span class="p">,</span> <span class="n">NSStringFromClass</span><span class="p">([</span><span class="n">AppDelegate</span> <span class="k">class</span><span class="p">]));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yes, the <code>main</code> method <strong>has the first autorelease pool</strong> of the entire project.
+So in our example, <code>newObj</code> goes in the main autorelease pool, which is drained when the current <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html">Run Loop</a> terminates before begin again.<br/>
+We are obviously supposing to be in the main thread, but however, in general, <strong>every thread has his main autorelease pool</strong>.</p>
+
+<p>So now that we know the theory, the next question is: <strong>where does the autoreleased object found the pointer to the correct autorelease pool?</strong>
+As the <a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html">Apple Documentation</a> says:</p>
+
+<blockquote>
+Each thread in a Cocoa application maintains its own stack of autorelease pool blocks.
+</blockquote>
+
+
+<p>and this is.  Simple as that!<br/>
+So basically when the object call <code>autorelease</code>, it does something like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">autorelease</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">AutoreleasePool</span> <span class="o">*</span><span class="n">pool</span> <span class="o">=</span> <span class="cm">/* Take from the stack the most recently autorelease pool */</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">pool</span> <span class="nl">add</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Indeed, since autorelease&rsquo;s pool can be several and nested, <strong>there MUST be a stack</strong>.<br/>
+This is of course an high level code to make it easier to understand, but the open source Apple&rsquo;s implementation of autorelease is <a href="http://opensource.apple.com/source/objc4/objc4-493.9/runtime/objc-arr.mm">here</a>.</p>
+
+<p>The last thing to stress, regards the autorelease pool&rsquo;s container.<br/>
+Indeed, <strong>what datastructure does an autorelease pool use to store objects to release?</strong><br/>
+Let&rsquo;s try:</p>
+
+<ul>
+<li><code>NSMutableArray</code>: no, because it would retain the object calling <code>-addObject</code>. This would make the autorelease vain;</li>
+<li><code>NSMutableDictionary</code>: no, for the same reason of the previous;</li>
+<li><code>NSMutableSet</code>: no, for the same reason of the previous and because doesn&rsquo;t accept repeated object.</li>
+</ul>
+
+
+<p>So what does it use?<br/>
+Easy: any data structure which <strong>doesn&rsquo;t retains the object</strong> and that <strong>accepts repeated objects</strong>, like for example <code>NSPointerArray</code> with <code>weak</code> objects references, <code>LinkedList</code>, etc.
+<br />
+<br /></p>
+
+<h2>Conclusion</h2>
+
+<p>I hope that this article has cleared every doubt about the <code>autorelease</code> method and the <strong>autorelease pool</strong>. Even if the management of an autorelease pool will be always a system&rsquo;s responsibility, it is very important to understand how it works.</p>
+
+<p>Follow me on <a href="http://twitter.com/matteo_gobbi">Twitter</a>!</p>
+
+<p>Cheers!</p>
+
+
+        <hr class="divider-short"/>
+
+        
+        <section>
+          <h1>Comments</h1>
+          <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        </section>
+        
+      </div>
+    </div>
+  </div>
+</article>
+
+<hr class="divider-short"/>
+
+<div class="archive-link">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        
+
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+    <footer id="footer" class="her-row">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-1">
+  <a href="/"><h4>Home</h4></a>
+</div>
+
+<div class="col-md-2">
+  <div class="social-icon-list">
+    
+    <a title="Twitter" href="https://twitter.com/matteo_gobbi"><img src="/images/glyphicons_social_31_twitter.png"/></a>
+    
+    
+    <a title="GitHub" href="https://github.com/matteogobbi"><img src="/images/glyphicons_social_21_github.png"/></a>
+    
+    
+    <a title="StackOverflow" href="http://stackoverflow.com/users/1973344"><img src="/images/glyphicons_social_21_stackoverflow.png"/></a>
+    
+    
+    <a title="LinkedIn" href="https://linkedin.com/in/matteogobbi"><img src="/images/glyphicons_social_17_linked_in.png"/></a>
+    
+    
+    <a title="E-Mail" href="mailto:job@matteogobbi.it"><img src="/images/glyphicons_social_39_e-mail.png"/></a>
+    
+  </div>
+</div>
+
+<div class="pull-right">
+</div>
+
+
+    </div>
+  </div>
+</footer>
+
+    
+      
+
+<script type="text/javascript">
+      var disqus_shortname = 'matteogobbi';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/';
+        var disqus_url = 'http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+    
+  </body>
+</html>
