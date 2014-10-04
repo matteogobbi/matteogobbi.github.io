@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mrc | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/mrc/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-10-04T01:07:20+01:00</updated>
+  <updated>2014-10-04T01:07:50+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -66,9 +66,9 @@ But let&rsquo;s think for a while to be in a MRC environment and to have these m
 
 <p>in the first method, an object typed <code>MGClassB</code> is allocated and temporary retained from the object of type <code>MGClassA</code>; then <code>objB</code> is asked to allocate, initialize and return a new object. So at this point we have this situation:</p>
 
-<p><code>objA</code>  &mdash;<strong>retain</strong>&mdash;>  <code>objB</code></p>
+<p><code>objA</code>  &mdash;<strong>retains</strong>&mdash;>  <code>objB</code></p>
 
-<p><code>objB</code>  &mdash;<strong>retain</strong>&mdash;>  <code>newObj</code></p>
+<p><code>objB</code>  &mdash;<strong>retains</strong>&mdash;>  <code>newObj</code></p>
 
 <p>please note that <code>objA</code> is not calling <code>retain</code> after having obtained <code>newObj</code>, so it has no ownership and <code>newObj</code> still has a retain count equals to 1.<br/>
 At this point, <code>method</code> finishes and releases <code>objB</code>, which is not referenced anymore but it is still retaining <code>newObj</code>. These objects will therefore remain allocated in memory generating the famous <strong>memory leak</strong>. From <a href="https://developer.apple.com/library/ios/documentation/performance/conceptual/managingmemory/articles/FindingLeaks.html">Apple documentation</a></p>
