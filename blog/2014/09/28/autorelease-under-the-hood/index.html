@@ -13,8 +13,8 @@
   <meta name="author" content="Matteo Gobbi">
 
   
-  <meta name="description" content="Autorelease - Under the Hood written in arc, ios, mrc, objective-c, underthehood Since this is an argument less touched but much important, I &hellip;">
-  
+  <meta name="description" content="We know that an object which is autoreleased, go in an autorelease pool, but in what autorelease pool? where? when?">
+  <meta name="keywords" content="autorelease,release,arc,host,mrc,retain,reference,counting,ios,dev,hood,under">
 
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -245,7 +245,7 @@ Using <code>@autoreleasepool</code>, objects would be instead released at the en
 
 <h2>Under the hood</h2>
 
-<p>We know that an object which is autoreleased, go in an autorelease pool, but keep in mind this example:</p>
+<p>We know that an object which is autoreleased, goes in an autorelease pool, but keep in mind this example:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -281,7 +281,7 @@ The answer is easy, and it is in the file named <code>main.m</code> in the folde
 
 
 <p>Yes, the <code>main</code> method <strong>has the first autorelease pool</strong> of the entire project.
-So in our example, <code>newObj</code> goes in the main autorelease pool, which is drained when the current <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html">Run Loop</a> terminates before begin again.<br/>
+So in our example, <code>newObj</code> goes in the main autorelease pool, which is drained when the current <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html">Run Loop</a> terminates.<br/>
 We are obviously supposing to be in the main thread, but however, in general, <strong>every thread has his main autorelease pool</strong>.</p>
 
 <p>So now that we know the theory, the next question is: <strong>where does the autoreleased object found the pointer to the correct autorelease pool?</strong>
