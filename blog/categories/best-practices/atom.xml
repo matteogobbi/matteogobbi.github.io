@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Best Practices | Matteo Gobbi]]></title>
+  <link href="http://matteogobbi.github.io/blog/categories/best-practices/atom.xml" rel="self"/>
+  <link href="http://matteogobbi.github.io/"/>
+  <updated>2014-11-08T23:57:58+00:00</updated>
+  <id>http://matteogobbi.github.io/</id>
+  <author>
+    <name><![CDATA[Matteo Gobbi]]></name>
+    <email><![CDATA[job@matteogobbi.it]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Interaction Object]]></title>
+    <link href="http://matteogobbi.github.io/blog/2014/10/30/interaction-object/"/>
+    <updated>2014-10-30T23:16:22+00:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/10/30/interaction-object</id>
+    <content type="html"><![CDATA[<p>Many times in your projects, you are in the situation where you need to store something in some way, in order to use it in the most efficient way possible.
+In detail, sometime happen that you need to create a hamburger menu or a list of pretty static items, using a <code>UITableView</code>.</p>
+
+<p>An <strong>Interaction Object</strong>, is a component that makes your life easier and your code clean and testable.</p>
+
+<p>In this article I will go to consider a recurrent situation, showing how to implement and follow this really easy approach.</p>
+
+<!--more-->
+
+
+<p><br/></p>
+
+<h2>The problem</h2>
+
+<p>In my last two companies, I have been in the situation to create a hamburger menu using a <code>UITableView</code>, like this:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/interaction-object/1.jpg" height="300" alt="Hamburger Menu" /></p>
+
+<p>As a pretty static menu, it was not fetched from any datasource, therefore I thought &ldquo;<strong>what is the best method to represent the menu items?</strong>&rdquo;.<br/>
+A naïve and rude approach would be something like:</p>
+
+<pre><code class="objc">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.row) {
+
+        //....get/create a cell etc.
+
+        case 0: 
+        {
+            cell.title = @"Home";
+            break;
+        }
+
+        case 1: 
+        {
+            cell.title = @"Favourites";
+            break;
+        }
+
+        //...
+    }
+
+    //..
+
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.row) {
+
+        case 0: 
+        {
+            [self goToHome];
+            break;
+        }
+
+        case 1: 
+        {
+           [self goToFavourites];
+            break;
+        }
+
+        //...
+    }
+
+    //..
+}
+</code></pre>
+
+<p>Yes, it is dirty and not scalable.</p>
+
+<p>What if you want add another cell then? And if you want the new cell be somewhere in the middle? You should change every case&rsquo;s number. What if you want display different cells in according with a condition (i.e. user/admin)?</p>
+
+<p>In short, this is not a good approach at all.</p>
+
+<p><br/></p>
+
+<h2>The solution</h2>
+
+<p>As a menu, any cell needs 3 basic and foundamental things:</p>
+
+<ul>
+<li>An image;</li>
+<li>A title;</li>
+<li>An action.</li>
+</ul>
+
+
+<p>The idea is to have a component (<strong>MGInteractionObject</strong>, precisely) to store these informations, and having then an array of these components in order to associate them to the cells. Moreover, this approach will give us the opportunity to manage the array, choosing wich items show and wich not in according with certain events or conditions.</p>
+
+<p>Therefore, the header file would looks something like:</p>
+
+<pre><code class="objc">#import &lt;Foundation/Foundation.h&gt;
+
+typedef void(^performBlock)();
+
+typedef NS_ENUM(NSUInteger, MGActionType) {
+    MGActionTypeBlock        = 1,
+    MGActionTypeSelector
+};
+
+@interface MGInteractionObject : NSObject
+
+@property (copy, nonatomic, readonly) NSString *title;
+@property (copy, nonatomic, readonly) NSString *imageName;
+
+@property (assign, nonatomic, readonly) MGActionType actionType;
+@property (assign, nonatomic, readonly) SEL selector;
+@property (copy, nonatomic, readonly) performBlock block;
+
+- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName selector:(SEL)selector;
+- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName performBlock:(performBlock)block;
+
+@end
+</code></pre>
+
+<p>Basically, as I said, we store a <strong>title</strong> for the menu item, an <strong>image</strong> and an <strong>action</strong>, which might be performed by a <strong>block</strong>, or by a <strong>selector</strong>. Finally, we have an <strong>enumeration</strong> in order to present to the developer the different ways to perform the action.<br/>
+Of course, here I reported just some basic information to store, but it could be expanded a lot, for example with the following properties:</p>
+
+<pre><code class="objc">@property (copy, nonatomic, readonly) NSString *highlightedTitle;
+@property (copy, nonatomic, readonly) NSString *highlightedImageName;
+@property (strong, nonatomic, readonly) UIColor *backgroundColor;
+@property (strong, nonatomic, readonly) UIColor *highlightedBackgroundColor;
+//..etc
+</code></pre>
+
+<p>Now that we know the header, it&rsquo;s the time to have a look to the implementation code:</p>
+
+<pre><code class="objc">#import "MGInteractionObject.h"
+
+@implementation MGInteractionObject
+
+#pragma mark - Public init
+- (id)init {
+    @throw [NSException
+        exceptionWithName:NSInternalInconsistencyException
+                   reason:@"Must use initWithTitle:imageName:selector: or initWithTitle:imageName:performBlock:"
+                 userInfo:nil];
+}
+
+- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName selector:(SEL)selector
+{
+    return [self initWithTitle:title imageName:imageName selector:selector performBlock:nil];
+}
+
+- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName performBlock:(performBlock)block
+{
+    return [self initWithTitle:title imageName:imageName selector:nil performBlock:block];
+}
+
+#pragma mark - Private init
+- (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName selector:(SEL)selector performBlock:(performBlock)block
+{
+    if(self = [super init]) {
+        _title = [title copy];
+        _imageName = [imageName copy];
+        _selector = selector;
+        _block = [block copy];
+
+        _actionType = (selector) ? MGActionTypeSelector : MGActionTypeBlock;
+    }
+    return self;
+}
+
+@end
+</code></pre>
+
+<p>Simple and easy.</p>
+
+<p>Now we have the base element. Let&rsquo;s proceed to properly use it.</p>
+
+<p><br/></p>
+
+<h2>How to use it</h2>
+]]></content>
+  </entry>
+  
+</feed>
