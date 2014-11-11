@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Architecture | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/architecture/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-11-09T13:24:05+00:00</updated>
+  <updated>2014-11-11T22:54:45+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -18,12 +18,10 @@
     <link href="http://matteogobbi.github.io/blog/2014/10/30/interaction-object/"/>
     <updated>2014-10-30T23:16:22+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/10/30/interaction-object</id>
-    <content type="html"><![CDATA[<p>Many times in your projects, you are in the situation where you need to store something in some way, in order to use it in the most efficient way possible.
+    <content type="html"><![CDATA[<p>Many times in your projects, you are in the situation in which you need to store something in some way, in order to use it in the most efficient way possible.
 In detail, sometime happen that you need to create a hamburger menu or a list of pretty static items, using a <code>UITableView</code>.</p>
 
-<p>An <strong>Interaction Object</strong>, is a component that makes your life easier and your code clean and testable.</p>
-
-<p>In this article I will go to consider a recurrent situation, showing how to implement and follow this really easy approach.</p>
+<p>In this article I will go to consider a recurrent situation, showing how to implement and follow the very easy approach to have a set of <strong>Interaction Object</strong>, making our code clean and testable.</p>
 
 <!--more-->
 
@@ -88,11 +86,15 @@ A naïve and rude approach would be something like:</p>
 }
 </code></pre>
 
+<p>&hellip;&hellip;</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/interaction-object/2.gif" height="300" alt="Shit" /></p>
+
 <p>Yes, it is dirty and not scalable.</p>
 
 <p>What if you want add another cell then? And if you want the new cell be somewhere in the middle? You should change every case&rsquo;s number. What if you want display different cells in according with a condition (i.e. user/admin)?</p>
 
-<p>In short, this is not a good approach at all.</p>
+<p>In short, this is not a good approach at all. So..how?</p>
 
 <p><br/></p>
 
@@ -193,6 +195,130 @@ Of course, here I reported just some basic information to store, but it could be
 <p><br/></p>
 
 <h2>How to use it</h2>
+
+<p>What we need to do now, is to create an interaction object for each menu item.<br/>
+Supposing to have <strong>4 items</strong>:</p>
+
+<ul>
+<li>Home;</li>
+<li>Favourites;</li>
+<li>Stores;</li>
+<li>Admin options.</li>
+</ul>
+
+
+<p>we should simply go to create <strong>4 interaction objects</strong> like these:</p>
+
+<pre><code class="objc">- (void)mg_createMenuInteractionItemsForUser:(MGUser *)user
+{
+
+    __weak typeof (self) weakSelf = self;
+
+    MGInteractionObject *objHome = 
+        [[MGInteractionObject alloc] initWithTitle:@"Home"
+                                         imageName:@"icon_home" 
+                                   performSelector:@selector(openHome)];
+
+    MGInteractionObject *objFavourites = 
+        [[MGInteractionObject alloc] initWithTitle:@"Favourites"
+                                         imageName:@"icon_favourites" 
+                                      performBlock:^{
+                                                    //Do something    
+                                                    }];
+
+    MGInteractionObject *objStores = 
+        [[MGInteractionObject alloc] initWithTitle:@"Stores"
+                                         imageName:@"icon_stores" 
+                                   performSelector:@selector(openStores)];
+
+
+    //Prepare tableButtons
+    NSArray *tableButtons;
+    if(user.isAdmin) {
+
+        MGInteractionObject *objAdmin = 
+            [[MGInteractionObject alloc] initWithTitle:@"Admin options"
+                                             imageName:@"icon_admin" 
+                                          performBlock:^{
+                                                        //Do something        
+                                                        }];
+
+        tableButtons = @[
+                        objHome,
+                        objFavourites,
+                        objStores,
+                        objAdmin
+                        ];
+    } else {
+        tableButtons = @[
+                        objHome,
+                        objFavourites,
+                        objStores
+                        ];
+    }
+
+    return tableButtons;
+}
+</code></pre>
+
+<p>Having these 4 objects, we return an array of <code>MGInteractionObject</code>, in according with the conditions we want to consider. In this example, it is checked if the user is an admin (<code>user.isAdmin</code>) to decide <strong>if add or not the admin interaction object</strong>, in the array <code>tableButtons</code>.</p>
+
+<p>At this point the last step is just to reload the table getting the tableView&rsquo;s cells:</p>
+
+<pre><code class="objc">-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *cellIdentifier = @"InteractionCell";
+
+    MGInteractionCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+
+    if(!cell) {
+        cell = [[MGInteractionCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
+
+    //Get the interaction object
+    MGInteractionObject *interactionObject = _tableButtons[indexPath.row];
+
+    //Set the interaction object for this cell to configure it
+    cell.interactionObject = interactionObject;
+
+    return cell;
+}
+</code></pre>
+
+<p>Here it is used a custom cell <code>MGInteractionCell</code> which has the property <code>interactionObject</code>, which throught the <strong>setter</strong> method, configure the cell.<br/>
+Obviously, it could be also used a normal <code>UITableViewCell</code> setting the <code>title</code> and the <code>image</code> directly from this method.</p>
+
+<p>Finally, when a user touch a cell, it is called <code>tableView:didSelectRowAtIndexPath:</code>:</p>
+
+<pre><code class="objc">-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //Get the interaction object
+    MGInteractionObject *interactionObject = _tableButtons[indexPath.row];
+
+    //Perform the block or the selector
+    switch (interactionObject.interactionType) {
+        case MGActionTypeBlock:
+            interactionObject.block();
+            break;
+        case MGActionTypeSelector: {
+            if ([self respondsToSelector:interactionObject.selector]) {
+                [self performSelector:interactionObject.selector withObject:nil];
+            }
+            break;
+        }
+    }
+}
+</code></pre>
+
+<p>where it is checked if <strong>perform the block</strong> or <strong>perform the selector</strong>.</p>
+
+<p>And..</p>
+
+<p>..that&rsquo;s it!</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/interaction-object/3.gif" height="300" alt="Happy" /></p>
+
+<p>Enjoy! ;)</p>
 ]]></content>
   </entry>
   

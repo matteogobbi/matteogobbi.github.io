@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-11-09T13:24:05+00:00</updated>
+  <updated>2014-11-11T22:54:45+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -18,12 +18,10 @@
     <link href="http://matteogobbi.github.io/blog/2014/10/30/interaction-object/"/>
     <updated>2014-10-30T23:16:22+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/10/30/interaction-object</id>
-    <content type="html"><![CDATA[<p>Many times in your projects, you are in the situation where you need to store something in some way, in order to use it in the most efficient way possible.
+    <content type="html"><![CDATA[<p>Many times in your projects, you are in the situation in which you need to store something in some way, in order to use it in the most efficient way possible.
 In detail, sometime happen that you need to create a hamburger menu or a list of pretty static items, using a <code>UITableView</code>.</p>
 
-<p>An <strong>Interaction Object</strong>, is a component that makes your life easier and your code clean and testable.</p>
-
-<p>In this article I will go to consider a recurrent situation, showing how to implement and follow this really easy approach.</p>
+<p>In this article I will go to consider a recurrent situation, showing how to implement and follow the very easy approach to have a set of <strong>Interaction Object</strong>, making our code clean and testable.</p>
 
 <!--more-->
 
@@ -136,11 +134,15 @@ A naïve and rude approach would be something like:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>&hellip;&hellip;</p>
+
+<p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/interaction-object/2.gif" height="300" alt="Shit" /></p>
+
 <p>Yes, it is dirty and not scalable.</p>
 
 <p>What if you want add another cell then? And if you want the new cell be somewhere in the middle? You should change every case&rsquo;s number. What if you want display different cells in according with a condition (i.e. user/admin)?</p>
 
-<p>In short, this is not a good approach at all.</p>
+<p>In short, this is not a good approach at all. So..how?</p>
 
 <p><br/></p>
 
@@ -308,6 +310,219 @@ Of course, here I reported just some basic information to store, but it could be
 <p><br/></p>
 
 <h2>How to use it</h2>
+
+<p>What we need to do now, is to create an interaction object for each menu item.<br/>
+Supposing to have <strong>4 items</strong>:</p>
+
+<ul>
+<li>Home;</li>
+<li>Favourites;</li>
+<li>Stores;</li>
+<li>Admin options.</li>
+</ul>
+
+
+<p>we should simply go to create <strong>4 interaction objects</strong> like these:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mg_createMenuInteractionItemsForUser:</span><span class="p">(</span><span class="n">MGUser</span> <span class="o">*</span><span class="p">)</span><span class="nv">user</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">__weak</span> <span class="k">typeof</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">objHome</span> <span class="o">=</span>
+</span><span class='line'>        <span class="p">[[</span><span class="n">MGInteractionObject</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;Home&quot;</span>
+</span><span class='line'>                                         <span class="nl">imageName</span><span class="p">:</span><span class="s">@&quot;icon_home&quot;</span>
+</span><span class='line'>                                   <span class="nl">performSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">openHome</span><span class="p">)];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">objFavourites</span> <span class="o">=</span>
+</span><span class='line'>        <span class="p">[[</span><span class="n">MGInteractionObject</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;Favourites&quot;</span>
+</span><span class='line'>                                         <span class="nl">imageName</span><span class="p">:</span><span class="s">@&quot;icon_favourites&quot;</span>
+</span><span class='line'>                                      <span class="nl">performBlock</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                                                    <span class="c1">//Do something    </span>
+</span><span class='line'>                                                    <span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">objStores</span> <span class="o">=</span>
+</span><span class='line'>        <span class="p">[[</span><span class="n">MGInteractionObject</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;Stores&quot;</span>
+</span><span class='line'>                                         <span class="nl">imageName</span><span class="p">:</span><span class="s">@&quot;icon_stores&quot;</span>
+</span><span class='line'>                                   <span class="nl">performSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">openStores</span><span class="p">)];</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Prepare tableButtons</span>
+</span><span class='line'>    <span class="bp">NSArray</span> <span class="o">*</span><span class="n">tableButtons</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="n">isAdmin</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">objAdmin</span> <span class="o">=</span>
+</span><span class='line'>            <span class="p">[[</span><span class="n">MGInteractionObject</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithTitle</span><span class="p">:</span><span class="s">@&quot;Admin options&quot;</span>
+</span><span class='line'>                                             <span class="nl">imageName</span><span class="p">:</span><span class="s">@&quot;icon_admin&quot;</span>
+</span><span class='line'>                                          <span class="nl">performBlock</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                                                        <span class="c1">//Do something        </span>
+</span><span class='line'>                                                        <span class="p">}];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">tableButtons</span> <span class="o">=</span> <span class="l">@[</span>
+</span><span class='line'>                        <span class="n">objHome</span><span class="p">,</span>
+</span><span class='line'>                        <span class="n">objFavourites</span><span class="p">,</span>
+</span><span class='line'>                        <span class="n">objStores</span><span class="p">,</span>
+</span><span class='line'>                        <span class="n">objAdmin</span>
+</span><span class='line'>                        <span class="l">]</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">tableButtons</span> <span class="o">=</span> <span class="l">@[</span>
+</span><span class='line'>                        <span class="n">objHome</span><span class="p">,</span>
+</span><span class='line'>                        <span class="n">objFavourites</span><span class="p">,</span>
+</span><span class='line'>                        <span class="n">objStores</span>
+</span><span class='line'>                        <span class="l">]</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">tableButtons</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Having these 4 objects, we return an array of <code>MGInteractionObject</code>, in according with the conditions we want to consider. In this example, it is checked if the user is an admin (<code>user.isAdmin</code>) to decide <strong>if add or not the admin interaction object</strong>, in the array <code>tableButtons</code>.</p>
+
+<p>At this point the last step is just to reload the table getting the tableView&rsquo;s cells:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-(</span><span class="bp">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">static</span> <span class="bp">NSString</span> <span class="o">*</span><span class="n">cellIdentifier</span> <span class="o">=</span> <span class="s">@&quot;InteractionCell&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">MGInteractionCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier</span><span class="p">:</span><span class="n">cellIdentifier</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">cell</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">MGInteractionCell</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithStyle</span><span class="p">:</span><span class="n">UITableViewCellStyleDefault</span> <span class="nl">reuseIdentifier</span><span class="p">:</span><span class="n">cellIdentifier</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Get the interaction object</span>
+</span><span class='line'>    <span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">interactionObject</span> <span class="o">=</span> <span class="n">_tableButtons</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Set the interaction object for this cell to configure it</span>
+</span><span class='line'>    <span class="n">cell</span><span class="p">.</span><span class="n">interactionObject</span> <span class="o">=</span> <span class="n">interactionObject</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here it is used a custom cell <code>MGInteractionCell</code> which has the property <code>interactionObject</code>, which throught the <strong>setter</strong> method, configure the cell.<br/>
+Obviously, it could be also used a normal <code>UITableViewCell</code> setting the <code>title</code> and the <code>image</code> directly from this method.</p>
+
+<p>Finally, when a user touch a cell, it is called <code>tableView:didSelectRowAtIndexPath:</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">//Get the interaction object</span>
+</span><span class='line'>    <span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">interactionObject</span> <span class="o">=</span> <span class="n">_tableButtons</span><span class="p">[</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Perform the block or the selector</span>
+</span><span class='line'>    <span class="k">switch</span> <span class="p">(</span><span class="n">interactionObject</span><span class="p">.</span><span class="n">interactionType</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="nl">MGActionTypeBlock</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">interactionObject</span><span class="p">.</span><span class="n">block</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="nl">MGActionTypeSelector</span><span class="p">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">([</span><span class="nb">self</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="n">interactionObject</span><span class="p">.</span><span class="n">selector</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>                <span class="p">[</span><span class="nb">self</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">interactionObject</span><span class="p">.</span><span class="n">selector</span> <span class="nl">withObject</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>where it is checked if <strong>perform the block</strong> or <strong>perform the selector</strong>.</p>
+
+<p>And..</p>
+
+<p>..that&rsquo;s it!</p>
+
+<p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/interaction-object/3.gif" height="300" alt="Happy" /></p>
+
+<p>Enjoy! ;)</p>
 ]]></content>
   </entry>
   
