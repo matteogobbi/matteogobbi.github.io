@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Underthehood | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/underthehood/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-11-11T23:01:10+00:00</updated>
+  <updated>2014-11-15T22:25:21+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -71,7 +71,7 @@ But let&rsquo;s think for a while to be in a MRC environment and to have these m
 <p><code>objB</code>  &mdash;<strong>retains</strong>&mdash;>  <code>newObj</code></p>
 
 <p>please note that <code>objA</code> is not calling <code>retain</code> after having obtained <code>newObj</code>, so it has no ownership and <code>newObj</code> still has a retain count equals to 1.<br/>
-At this point, <code>method</code> finishes and releases <code>objB</code>, which is not referenced anymore and it is still retaining <code>newObj</code>. This object will therefore remains allocated in memory generating the famous <strong>memory leak</strong>. From <a href="https://developer.apple.com/library/ios/documentation/performance/conceptual/managingmemory/articles/FindingLeaks.html">Apple documentation</a></p>
+At this point, <code>method</code> finishes and releases <code>objB</code>, which is not referenced anymore and it is still retaining <code>newObj</code>. This object will therefore remain allocated in memory generating the <strong>memory leak</strong>. From <a href="https://developer.apple.com/library/ios/documentation/performance/conceptual/managingmemory/articles/FindingLeaks.html">Apple documentation</a></p>
 
 <blockquote>
 Memory leaks are blocks of allocated memory that the program no longer references.

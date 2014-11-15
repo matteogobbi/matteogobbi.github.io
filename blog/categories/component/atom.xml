@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Component | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/component/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-11-11T23:01:10+00:00</updated>
+  <updated>2014-11-15T22:25:21+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -18,10 +18,10 @@
     <link href="http://matteogobbi.github.io/blog/2014/10/30/interaction-object/"/>
     <updated>2014-10-30T23:16:22+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/10/30/interaction-object</id>
-    <content type="html"><![CDATA[<p>Many times in your projects, you are in the situation in which you need to store something in some way, in order to use it in the most efficient way possible.
-In detail, sometime happen that you need to create a hamburger menu or a list of pretty static items, using a <code>UITableView</code>.</p>
+    <content type="html"><![CDATA[<p>As a developer I often find myself in the situation where I have to face the problem to store and get some kind of information in the most possible handy way.<br/>
+In particular, this happens when you design a static menu list (e.g side panel or harburger menu) using a <code>UITableView</code>.</p>
 
-<p>In this article I will go to consider a recurrent situation, showing how to implement and follow the very easy approach to have a set of <strong>Interaction Object</strong>, making our code clean and testable.</p>
+<p>In this article I will go to explain how to implement it using the concept of <strong>Interaction Object</strong> in order to keep our code clean and testable.</p>
 
 <!--more-->
 
@@ -30,11 +30,11 @@ In detail, sometime happen that you need to create a hamburger menu or a list of
 
 <h2>The problem</h2>
 
-<p>In my last two companies, I have been in the situation to create a hamburger menu using a <code>UITableView</code>, like this:</p>
+<p>In my last two companies I used to work, I was in the situation to create a menu list like so:</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/interaction-object/1.jpg" height="300" alt="Hamburger Menu" /></p>
 
-<p>As a pretty static menu, it was not fetched from any datasource, therefore I thought &ldquo;<strong>what is the best method to represent the menu items?</strong>&rdquo;.<br/>
+<p>As a static menu, it was not populated from any datasource, therefore I thought &ldquo;<strong>what is the best way to represent the menu items?</strong>&rdquo;.<br/>
 A naïve and rude approach would be something like:</p>
 
 <pre><code class="objc">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -90,17 +90,17 @@ A naïve and rude approach would be something like:</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/interaction-object/2.gif" height="300" alt="Shit" /></p>
 
-<p>Yes, it is dirty and not scalable.</p>
+<p>Yes, that’s ugly and not scalable.</p>
 
-<p>What if you want add another cell then? And if you want the new cell be somewhere in the middle? You should change every case&rsquo;s number. What if you want display different cells in according with a condition (i.e. user/admin)?</p>
+<p>What if you want to add another cell later? And if you want the new cell to be somewhere in the middle? You’d have to change every case&rsquo;s number. What if you want to display different cells according with a condition (i.e. user/admin)?</p>
 
-<p>In short, this is not a good approach at all. So..how?</p>
+<p>In short, this is not a good approach at all. So… how can we go with this?</p>
 
 <p><br/></p>
 
 <h2>The solution</h2>
 
-<p>As a menu, any cell needs 3 basic and foundamental things:</p>
+<p>As a menu, any cell needs 3 basic and fundamental things:</p>
 
 <ul>
 <li>An image;</li>
@@ -109,9 +109,9 @@ A naïve and rude approach would be something like:</p>
 </ul>
 
 
-<p>The idea is to have a component (<strong>MGInteractionObject</strong>, precisely) to store these informations, and having then an array of these components in order to associate them to the cells. Moreover, this approach will give us the opportunity to manage the array, choosing wich items show and wich not in according with certain events or conditions.</p>
+<p>The idea is to have a component (<strong>MGInteractionObject</strong>, precisely) to store these information, and having then an array of these components in order to associate them to the cells. Moreover, this approach will give us the opportunity to manage the array, choosing which items to show and which not to, according to certain events or conditions.</p>
 
-<p>Therefore, the header file would looks something like:</p>
+<p>Therefore, the header file would look similar to:</p>
 
 <pre><code class="objc">#import &lt;Foundation/Foundation.h&gt;
 
@@ -137,8 +137,8 @@ typedef NS_ENUM(NSUInteger, MGActionType) {
 @end
 </code></pre>
 
-<p>Basically, as I said, we store a <strong>title</strong> for the menu item, an <strong>image</strong> and an <strong>action</strong>, which might be performed by a <strong>block</strong>, or by a <strong>selector</strong>. Finally, we have an <strong>enumeration</strong> in order to present to the developer the different ways to perform the action.<br/>
-Of course, here I reported just some basic information to store, but it could be expanded a lot, for example with the following properties:</p>
+<p>Basically, as I said, we store a <strong>title</strong> for the menu item, an <strong>image</strong> and an <strong>action</strong>, which will be performed by a <strong>block</strong>, or by a <strong>selector</strong> when the user taps on the menu entry. Finally, we have an <strong>enumeration</strong> in order to present to the developer the different ways to perform the action.<br/>
+For simplicity, here I reported just some basic information to store, but it could be expanded a lot further, for example with the following properties:</p>
 
 <pre><code class="objc">@property (copy, nonatomic, readonly) NSString *highlightedTitle;
 @property (copy, nonatomic, readonly) NSString *highlightedImageName;
@@ -146,6 +146,8 @@ Of course, here I reported just some basic information to store, but it could be
 @property (strong, nonatomic, readonly) UIColor *highlightedBackgroundColor;
 //..etc
 </code></pre>
+
+<p>Now that we the header is defined, it&rsquo;s the time to have start move on to the implementation:</p>
 
 <p>Now that we know the header, it&rsquo;s the time to have a look to the implementation code:</p>
 
@@ -174,7 +176,7 @@ Of course, here I reported just some basic information to store, but it could be
 #pragma mark - Private init
 - (instancetype)initWithTitle:(NSString *)title imageName:(NSString *)imageName selector:(SEL)selector performBlock:(performBlock)block
 {
-    if(self = [super init]) {
+    if (self = [super init]) {
         _title = [title copy];
         _imageName = [imageName copy];
         _selector = selector;
@@ -188,11 +190,9 @@ Of course, here I reported just some basic information to store, but it could be
 @end
 </code></pre>
 
-<p>Simple and easy.</p>
-
-<p>Now we have the base element. Let&rsquo;s proceed to properly use it.</p>
-
-<p><br/></p>
+<p>Simple as that.<br/>
+Now that we have the base element, let’s proceed to use it properly.<br/>
+<br/></p>
 
 <h2>How to use it</h2>
 
@@ -207,7 +207,7 @@ Supposing to have <strong>4 items</strong>:</p>
 </ul>
 
 
-<p>we should simply go to create <strong>4 interaction objects</strong> like these:</p>
+<p>we can simply go to create <strong>4 interaction objects</strong> like these:</p>
 
 <pre><code class="objc">- (void)mg_createMenuInteractionItemsForUser:(MGUser *)user
 {
@@ -261,9 +261,9 @@ Supposing to have <strong>4 items</strong>:</p>
 }
 </code></pre>
 
-<p>Having these 4 objects, we return an array of <code>MGInteractionObject</code>, in according with the conditions we want to consider. In this example, it is checked if the user is an admin (<code>user.isAdmin</code>) to decide <strong>if add or not the admin interaction object</strong>, in the array <code>tableButtons</code>.</p>
+<p>Having these 4 objects, we return an array of <code>MGInteractionObject</code>, according with the conditions we want to consider. In this example, it is checked if the user is an admin (<code>user.isAdmin</code>) to decide <strong>if add or not the admin interaction object</strong>, in the array <code>tableButtons</code>.</p>
 
-<p>At this point the last step is just to reload the table getting the tableView&rsquo;s cells:</p>
+<p>Now all we need to do yet is to reload the tableview to show the content. Here is the implementation of <code>tableView:cellForRowAtIndexPath:</code></p>
 
 <pre><code class="objc">-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -285,10 +285,11 @@ Supposing to have <strong>4 items</strong>:</p>
 }
 </code></pre>
 
-<p>Here it is used a custom cell <code>MGInteractionCell</code> which has the property <code>interactionObject</code>, which throught the <strong>setter</strong> method, configure the cell.<br/>
-Obviously, it could be also used a normal <code>UITableViewCell</code> setting the <code>title</code> and the <code>image</code> directly from this method.</p>
+<p>Here we are using a custom cell <code>MGInteractionCell</code> which has the property <code>interactionObject</code>, which through the <strong>setter</strong> method, configures the cell.</p>
 
-<p>Finally, when a user touch a cell, it is called <code>tableView:didSelectRowAtIndexPath:</code>:</p>
+<p>Obviously, it could be also used a normal <code>UITableViewCell</code> setting the <code>title</code> and the <code>image</code> directly from this method.</p>
+
+<p>Finally, when a user taps on a cell, the method <code>tableView:didSelectRowAtIndexPath:</code> is called:</p>
 
 <pre><code class="objc">-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -310,7 +311,7 @@ Obviously, it could be also used a normal <code>UITableViewCell</code> setting t
 }
 </code></pre>
 
-<p>where it is checked if <strong>perform the block</strong> or <strong>perform the selector</strong>.</p>
+<p>Here we check the interaction type and make a call to the block or perform the selector.</p>
 
 <p>And..</p>
 
