@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-11-15T22:25:21+00:00</updated>
+  <updated>2014-12-25T01:56:20+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -12,6 +12,365 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Extending Methods in a Category by Method Swizzling]]></title>
+    <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
+    <updated>2014-12-15T21:57:25+00:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
+    <content type="html"><![CDATA[<p>Override a method in a category <strong>is NOT possible</strong>.</p>
+
+<p>Probably is happened to you too to being writing a category and at a certain point exclaming &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
+Yes, and probably was becuase you accidentally tried to override a method without remembering that effectly, you was writing a category.</p>
+
+<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probabily need to have some <strong>new methods</strong> or <strong>properties</strong> you would like every subclass of that class will can to use.</p>
+
+<p>There is only another situation in front of which you could be confused, and this is when you are in both the previous cases, <strong>together</strong>.</p>
+
+<!--more-->
+
+
+<p><br/></p>
+
+<h2>The problem</h2>
+
+<p>Let&rsquo;s suppose you want to add some generic code in <code>-layoutSubviews</code>. The first thing which comes in your mind is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="nb">super</span> <span class="n">layoutSubviews</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Your extra code</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Great.</p>
+
+<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> would implements an <strong>extra code</strong>, like for instance logging something or checking a property before do something elese.<br/>
+Make this by sublcassing would be time-consuming and would implies code ripetition as you should create a sublcass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, for <code>UIImageView</code>, for <code>UIControl</code>, for <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
+
+<p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/swizzling/1.jpg" height="300" alt="..say again?" /></p>
+
+<p>Exactly, it is <strong>unthinkable</strong>.</p>
+
+<p>When we need to add functionalities or properties to a class, we normaly write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
+We know that this is not possible, as a category is a class extension, and implement an existing method like <code>layoutSubviews</code>, would results in a method ripetition. As figurative and easy example think just to something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="c1">//UIView standard code...</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">//..default UIView code</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//...UIView standard code</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//My layoutSubviews method</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">layoutSubviews</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">//..my code</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So, what can we do?<br/>
+<br/></p>
+
+<h2>Playing around the problem with Method Swizzling</h2>
+
+<p><strong>Method Swizzling</strong> is a technique with which, roughly speaking, you can swipe two methods making <strong>the selector of the first method calls the second method and vice-versa</strong>.</p>
+
+<p>The idea is to <strong>create a new method</strong> and <strong>swap his implementation with the <code>-layoutSubviews</code> one</strong>. Therefore, calling <code>-layoutSubviews</code>, will be effectly executed the new method with our new code, and in the new method, we will also call his selector, which instead will executes the <code>-layoutSubviews</code> original method.</p>
+
+<p>Calm down, I know, it&rsquo;s not easy to explain and to understand with these few lines above. So I created a couple of diagrams to have in mind a visual image of the situation:</p>
+
+<h4>The normal condition we have is the following:</h4>
+
+<p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/swizzling/2.png" height="400" alt="normal condition" /></p>
+
+<h4>The condition we want to pull out, is instead this:</h4>
+
+<p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/swizzling/3.png" height="400" alt="normal condition" /></p>
+
+<p>Being <strong>not possible insert extra code</strong> in the <code>-layoutSubviews</code> method, in a category, we have to <strong>redirect the flow through our custom method</strong>, in order to manipulate it.</p>
+
+<p>Now, it&rsquo;s the time to have a look at the explained code step by step.</p>
+
+<p>Let&rsquo;s start by saying that Apple offers a set of <a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html">C functions</a>, useful to manipulate <strong>properties</strong>, <strong>ivars</strong>, <strong>classes</strong>, <strong>methods</strong> and so on, at <strong>runtime</strong>. We are gonna see some of these in order to sort our situation.<br/>
+<br/></p>
+
+<h3>STEP 1</h3>
+
+<h4>Add the new method</h4>
+
+<p>The firs thing to do, is to add a new (empty for now) method to our category. This method, will be the one containing our <strong>code extension</strong> or our part of code we want to be executed when <code>-layoutSubviews</code> is called:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">@implementation</span> <span class="bp">UIView</span> <span class="nl">(MG_layoutSubviews)</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mg_layoutSubviews</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><br/></p>
+
+<h3>STEP 2</h3>
+
+<h4>Write the swizzling method - First part</h4>
+
+<p>The method containing the <strong>swizzling</strong> code, needs to be a class method. We will see the reason later.
+We must to remeber that we are doing this to have an extended <code>-layoutSubviews</code> default implementation:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="c1">//..category code</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mg_extendsLayoutSubviews</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">//PART 1</span>
+</span><span class='line'>    <span class="kt">Class</span> <span class="n">thisClass</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//layoutSubviews selector, method, implementation</span>
+</span><span class='line'>    <span class="kt">SEL</span> <span class="n">layoutSubviewsSEL</span> <span class="o">=</span> <span class="k">@selector</span><span class="p">(</span><span class="n">layoutSubviews</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">Method</span> <span class="n">layoutSubviewsMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">thisClass</span><span class="p">,</span> <span class="n">layoutSubviewsSEL</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">IMP</span> <span class="n">layoutSubviewsIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">layoutSubviewsMethod</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//mg_layoutSubviews selector, method, implementation</span>
+</span><span class='line'>    <span class="kt">SEL</span> <span class="n">mg_layoutSubviewsSEL</span> <span class="o">=</span> <span class="k">@selector</span><span class="p">(</span><span class="n">mg_layoutSubviews</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">Method</span> <span class="n">mg_layoutSubviewsMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">thisClass</span><span class="p">,</span> <span class="n">mg_layoutSubviewsSEL</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">IMP</span> <span class="n">mg_layoutSubviewsIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">mg_layoutSubviewsMethod</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//....</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//..category code</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>class_getInstanceMethod</code> return the method which corresponds to the <strong>implementation of the selector and the class</strong> specified, or <code>NULL</code> if the specified class or its superclasses do not contain an instance method with the specified selector.</p>
+
+<p><code>method_getImplementation</code> return <strong>a function pointer of type <code>IMP</code>.</strong></p>
+
+<p>It is important to underline that each class has a <strong>dispatch table</strong>, and as <a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtHowMessagingWorks.html">Apple says</a>:</p>
+
+<blockquote>
+This table has entries that associate method selectors with the class-specific addresses of the methods they identify. 
+</blockquote>
+
+
+<p>So basically, <code>Method</code> is the glue between <code>SEL</code> and <code>IMP</code>, and at this point we have completely access to these information.</p>
+
+<p><br/></p>
+
+<h3>STEP 3</h3>
+
+<h4>Write the swizzling method - Second part</h4>
+
+<p>Now, we need to exchange the two implementations:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="c1">//..category code</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mg_extendsLayoutSubviews</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">//PART 1</span>
+</span><span class='line'>    <span class="kt">Class</span> <span class="n">thisClass</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//layoutSubviews selector, method, implementation</span>
+</span><span class='line'>    <span class="kt">SEL</span> <span class="n">layoutSubviewsSEL</span> <span class="o">=</span> <span class="k">@selector</span><span class="p">(</span><span class="n">layoutSubviews</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">Method</span> <span class="n">layoutSubviewsMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">thisClass</span><span class="p">,</span> <span class="n">layoutSubviewsSEL</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">IMP</span> <span class="n">layoutSubviewsIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">layoutSubviewsMethod</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//mg_layoutSubviews selector, method, implementation</span>
+</span><span class='line'>    <span class="kt">SEL</span> <span class="n">mg_layoutSubviewsSEL</span> <span class="o">=</span> <span class="k">@selector</span><span class="p">(</span><span class="n">mg_layoutSubviews</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">Method</span> <span class="n">mg_layoutSubviewsMethod</span> <span class="o">=</span> <span class="n">class_getInstanceMethod</span><span class="p">(</span><span class="n">thisClass</span><span class="p">,</span> <span class="n">mg_layoutSubviewsSEL</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">IMP</span> <span class="n">mg_layoutSubviewsIMP</span> <span class="o">=</span> <span class="n">method_getImplementation</span><span class="p">(</span><span class="n">mg_layoutSubviewsMethod</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//PART 2</span>
+</span><span class='line'>    <span class="c1">//Try to add the method layoutSubviews with the new implementation (if already exists it&#39;ll return NO)</span>
+</span><span class='line'>    <span class="kt">BOOL</span> <span class="n">wasMethodAdded</span> <span class="o">=</span> <span class="n">class_addMethod</span><span class="p">(</span><span class="n">thisClass</span><span class="p">,</span> <span class="n">layoutSubviewsSEL</span><span class="p">,</span> <span class="n">mg_layoutSubviewsIMP</span><span class="p">,</span> <span class="n">method_getTypeEncoding</span><span class="p">(</span><span class="n">mg_layoutSubviewsMethod</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">wasMethodAdded</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//Just set the new selector points to the original layoutSubviews method</span>
+</span><span class='line'>        <span class="n">class_replaceMethod</span><span class="p">(</span><span class="n">thisClass</span><span class="p">,</span> <span class="n">mg_layoutSubviewsSEL</span><span class="p">,</span> <span class="n">layoutSubviewsIMP</span><span class="p">,</span> <span class="n">method_getTypeEncoding</span><span class="p">(</span><span class="n">layoutSubviewsMethod</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">method_exchangeImplementations</span><span class="p">(</span><span class="n">layoutSubviewsMethod</span><span class="p">,</span> <span class="n">mg_layoutSubviewsMethod</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//..category code</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What&rsquo;s happening in this code it is not really hard as could to seem.<br/>
+The first thing to do is to <strong>try to add the method</strong> <code>-layoutSubviews</code>. In fact, also if this method is in the default implementation of <code>UIView</code>, it <strong>could not be implemented in the subclass</strong> of <code>UIView</code> which the developer is gonna write. It means, that <strong>could not exists an associated implementation for that subclass</strong>, but just for the superclass.</p>
+
+<p>Using the function <code>BOOL class_addMethod ( Class cls, SEL name, IMP imp, const char *types )</code>, we can add in a <code>Class</code> a <strong>method associated to an implementation and called by a selector</strong>.
+Therefore, if the method will results to be not implemented, the returned var will be <code>YES</code>; if instead there will be an error due for example the fact just explained above, the resulted var will be equals to <code>NO</code>.</p>
+
+<p>In this code, we are adding a method called by the <code>-layoutSubviews</code> selector, but with the implementation of our new <code>-mg_layoutSubviews</code> method. The last parameter is an array of characters that describe the types of the arguments to the method.<br/>
+Please note that <code>thisClass</code> is equals to <code>self</code>, but remember that we are in a class method (<code>+</code>), and it means that <code>self</code> is exactly the class <code>UIView</code> and not an her <code>instance</code>.</p>
+
+<p>Now, coming back to the variable result:</p>
+
+<p><strong>case <code>YES</code></strong>, with the same approach, we have just to <strong>replace the other method</strong> associating the <code>-mg_layoutSubviews</code> selector to the implementation of the <code>-layoutSubviews</code> method.</p>
+
+<p><strong>case <code>NO</code></strong>, means that the method and his implementation already exist, and we have just to <strong>exchange the two implementations</strong> between them.</p>
+
+<p><br/></p>
+
+<h3>STEP 4</h3>
+
+<h4>Call back <code>-layoutSubviews</code> (by the swizzled selector)</h4>
+
+<p>Even if we exchanged the two implementations, we are still missing a part of our final diagram above: <strong>the arrow which calls the <code>-layoutSubviews</code> implementation</strong>.<br/>
+In fact, at the moment, <code>UIView</code> will calls <code>-layoutSubviews</code>, which due the swizzling, it is associated with our new method. But we still have that method empty.</p>
+
+<p>What we need, is close the cirle executing also the original <code>-layoutSubviews</code> implementation. Just remember, that now that implementation can be executed calling the new selector <code>mg_layoutSubviews</code>. So let&rsquo;s write it by code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="c1">//..category code</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mg_layoutSubviews</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="p">[</span><span class="nb">self</span> <span class="n">mg_layoutSuviews</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//..our extra code</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//..category code</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now the circle is closed and we have our method, effectly, &ldquo;extended&rdquo;.
+<br/></p>
+
+<h2>Finalize</h2>
+
+<p>As saw above, we wanted to use the <strong>class method</strong> <code>+mg_extendsLayoutSubviews</code> to write our swizzling code. So now, we have to call it in order to launch all this process.</p>
+
+<p>The best method in which do it, is <code>+load</code>. This because that method is executed when the class is initially loaded.<br/>
+Basically we are saying to the class to exchange his <code>SEL</code> -> <code>Method</code> (and therefore <code>IMP</code>) association in the <strong>dispatch table</strong>, and we are saying this directly when the class is loaded:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">load</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">static</span> <span class="kt">dispatch_once_t</span> <span class="n">onceToken</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">onceToken</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="nb">self</span> <span class="n">mg_createNewLayoutSubviews</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because we are changing this global state of the class, we need to do it extremely careful. For this reason, we use the <code>dispatch_once</code> function, which offers us the atomicity, and the guarantee that the code inside will be executed only once.</p>
+
+<p>Being called by the class method <code>+load</code>, this explains why <code>+mg_createNewLayoutSubviews</code> is a class method too.
+<br/></p>
+
+<h2>Conclusion</h2>
+
+<p>In the 90% of situations, you will not need to use this approach, but sometimes could be really useful. Just be sure you have not other solutions before to proceed, because since this is an extremely powerful way, it could be also extremely dangerous if you don&rsquo;t pay the maximum attention.</p>
+
+<p>Enjoy ;)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Interaction Object]]></title>
