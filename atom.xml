@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-12-26T17:27:02+00:00</updated>
+  <updated>2014-12-26T23:53:45+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -16,14 +16,14 @@
   <entry>
     <title type="html"><![CDATA[Extending Methods in a Category by Method Swizzling]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
-    <updated>2014-12-15T21:57:25+00:00</updated>
+    <updated>2014-12-15T22:57:25+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
     <content type="html"><![CDATA[<p>Overriding a method in a category <strong>is NOT possible</strong>.</p>
 
-<p>Probably is happened to you too to being writing a category and at a certain point exclaming &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
-Yes, and probably was becuase you accidentally tried to override a method without remembering that effectly, you was writing a category.</p>
+<p>Probably is happened to you too to being writing a category and at a certain point exclaiming &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
+Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you was writing a category.</p>
 
-<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probabily need to have some <strong>new methods</strong> or <strong>properties</strong> you would like every subclass of that class will can to use.</p>
+<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probably need to have some <strong>new methods</strong> or <strong>properties</strong> you would like every subclass of that class will can to use.</p>
 
 <p>There is only another situation in front of which you could be confused, and this is when you are in both the previous cases, <strong>together</strong>.</p>
 
@@ -53,7 +53,7 @@ Yes, and probably was becuase you accidentally tried to override a method withou
 
 <p>Great.</p>
 
-<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> would implements an <strong>extra code</strong>, like for instance logging something or checking a property before do something elese.<br/>
+<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> would implements an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
 Make this by sublcassing would be time-consuming and would implies code ripetition as you should create a sublcass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, for <code>UIImageView</code>, for <code>UIControl</code>, for <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
 
 <p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/swizzling/1.jpg" height="300" alt="..say again?" /></p>
@@ -374,9 +374,9 @@ Basically we are saying to the class to exchange his <code>SEL</code> -> <code>M
   
   <entry>
     <title type="html"><![CDATA[Interaction Object]]></title>
-    <link href="http://matteogobbi.github.io/blog/2014/10/30/interaction-object/"/>
-    <updated>2014-10-30T23:16:22+00:00</updated>
-    <id>http://matteogobbi.github.io/blog/2014/10/30/interaction-object</id>
+    <link href="http://matteogobbi.github.io/blog/2014/10/31/interaction-object/"/>
+    <updated>2014-10-31T00:16:22+01:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/10/31/interaction-object</id>
     <content type="html"><![CDATA[<p>As a developer I often find myself in the situation where I have to face the problem to store and get some kind of information in the most possible handy way.<br/>
 In particular, this happens when you design a static menu list (e.g side panel or harburger menu) using a <code>UITableView</code>.</p>
 
@@ -888,9 +888,9 @@ Supposing to have <strong>4 items</strong>:</p>
   
   <entry>
     <title type="html"><![CDATA[Autorelease - Under the Hood]]></title>
-    <link href="http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/"/>
-    <updated>2014-09-28T23:24:37+01:00</updated>
-    <id>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood</id>
+    <link href="http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood/"/>
+    <updated>2014-09-29T00:24:37+02:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood</id>
     <content type="html"><![CDATA[<p>Since this is an argument less touched but much important, I decided to write an article to organize the informations and explain how <code>autorelease</code>, or better <strong>autorelease pool</strong> works.</p>
 
 <p>The main goal of this article is not to explain the base of what is an <strong>autorelease pool</strong> and when <code>autorelease</code> should be used, but anyway, this is really important to understand these concepts before proceeding. For this reason, the first paragraph will be dedicated to explain them. Experts developers, can safely skip it if they want.</p>
