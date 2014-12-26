@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Underthehood | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/underthehood/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-12-26T23:53:45+01:00</updated>
+  <updated>2014-12-27T00:35:00+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -47,14 +47,14 @@ Yes, and probably was because you accidentally tried to override a method withou
 <p>Great.</p>
 
 <p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> would implements an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
-Make this by sublcassing would be time-consuming and would implies code ripetition as you should create a sublcass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, for <code>UIImageView</code>, for <code>UIControl</code>, for <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
+Make this by subclassing would be time-consuming and would implies code repetition as you should create a subclass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, for <code>UIImageView</code>, for <code>UIControl</code>, for <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/swizzling/1.jpg" height="300" alt="..say again?" /></p>
 
 <p>Exactly, it is <strong>unthinkable</strong>.</p>
 
-<p>When we need to add functionalities or properties to a class, we normaly write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
-We know that this is not possible, as a category is a class extension, and implement an existing method like <code>layoutSubviews</code>, would results in a method ripetition. As figurative and easy example think just to something like this:</p>
+<p>When we need to add functionalities or properties to a class, we normally write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
+We know that this is not possible, as a category is a class extension, and implement an existing method like <code>-layoutSubviews</code>, would results in a method repetition. As figurative and easy example think just to something like this:</p>
 
 <pre><code class="objc">//UIView standard code...
 
@@ -79,7 +79,7 @@ We know that this is not possible, as a category is a class extension, and imple
 
 <p><strong>Method Swizzling</strong> is a technique with which, roughly speaking, you can swipe two methods making <strong>the selector of the first method calls the second method and vice-versa</strong>.</p>
 
-<p>The idea is to <strong>create a new method</strong> and <strong>swap his implementation with the <code>-layoutSubviews</code> one</strong>. Therefore, calling <code>-layoutSubviews</code>, will be effectly executed the new method with our new code, and in the new method, we will also call his selector, which instead will executes the <code>-layoutSubviews</code> original method.</p>
+<p>The idea is to <strong>create a new method</strong> and <strong>swap his implementation with the <code>-layoutSubviews</code> one</strong>. Therefore, calling <code>-layoutSubviews</code>, will be effectively executed the new method with our new code, and in the new method, we will also call his selector, which instead will executes the <code>-layoutSubviews</code> original method.</p>
 
 <p>Calm down, I know, it&rsquo;s not easy to explain and to understand with these few lines above. So I created a couple of diagrams to have in mind a visual image of the situation:</p>
 
@@ -223,7 +223,7 @@ Please note that <code>thisClass</code> is equals to <code>self</code>, but reme
 <p>Even if we exchanged the two implementations, we are still missing a part of our final diagram above: <strong>the arrow which calls the <code>-layoutSubviews</code> implementation</strong>.<br/>
 In fact, at the moment, <code>UIView</code> will calls <code>-layoutSubviews</code>, which due the swizzling, it is associated with our new method. But we still have that method empty.</p>
 
-<p>What we need, is close the cirle executing also the original <code>-layoutSubviews</code> implementation. Just remember, that now that implementation can be executed calling the new selector <code>mg_layoutSubviews</code>. So let&rsquo;s write it by code:</p>
+<p>What we need, is close the circle executing also the original <code>-layoutSubviews</code> implementation. Just remember, that now that implementation can be executed calling the new selector <code>-mg_layoutSubviews</code>. So let&rsquo;s write it by code:</p>
 
 <pre><code class="objc">//..category code
 
@@ -237,7 +237,7 @@ In fact, at the moment, <code>UIView</code> will calls <code>-layoutSubviews</co
 //..category code
 </code></pre>
 
-<p>Now the circle is closed and we have our method, effectly, &ldquo;extended&rdquo;.
+<p>Now the circle is closed and we have our method, effectively, &ldquo;extended&rdquo;.
 <br/></p>
 
 <h2>Finalize</h2>
