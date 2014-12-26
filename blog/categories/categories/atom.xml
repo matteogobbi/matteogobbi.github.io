@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Categories | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/categories/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-12-25T01:56:20+00:00</updated>
+  <updated>2014-12-26T17:27:02+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -18,7 +18,7 @@
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
     <updated>2014-12-15T21:57:25+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
-    <content type="html"><![CDATA[<p>Override a method in a category <strong>is NOT possible</strong>.</p>
+    <content type="html"><![CDATA[<p>Overriding a method in a category <strong>is NOT possible</strong>.</p>
 
 <p>Probably is happened to you too to being writing a category and at a certain point exclaming &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
 Yes, and probably was becuase you accidentally tried to override a method without remembering that effectly, you was writing a category.</p>
