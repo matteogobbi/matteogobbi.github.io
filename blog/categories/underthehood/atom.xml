@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Underthehood | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/underthehood/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-12-27T00:35:00+01:00</updated>
+  <updated>2014-12-27T12:03:46+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -47,14 +47,14 @@ Yes, and probably was because you accidentally tried to override a method withou
 <p>Great.</p>
 
 <p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> would implements an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
-Make this by subclassing would be time-consuming and would implies code repetition as you should create a subclass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, for <code>UIImageView</code>, for <code>UIControl</code>, for <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
+Make this by subclassing would be time-consuming and would implies code repetition as you should create a subclass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, <code>UIImageView</code>, <code>UIControl</code>, <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/swizzling/1.jpg" height="300" alt="..say again?" /></p>
 
 <p>Exactly, it is <strong>unthinkable</strong>.</p>
 
 <p>When we need to add functionalities or properties to a class, we normally write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
-We know that this is not possible, as a category is a class extension, and implement an existing method like <code>-layoutSubviews</code>, would results in a method repetition. As figurative and easy example think just to something like this:</p>
+We know that this is not possible, as a category is a class extension, and implementing an existing method like <code>-layoutSubviews</code>, would results in a method repetition. As figurative and easy example think just to something like this:</p>
 
 <pre><code class="objc">//UIView standard code...
 
