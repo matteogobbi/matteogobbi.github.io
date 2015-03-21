@@ -3,25 +3,33 @@
   
   
   <url>
+    <loc>http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture/</loc>
+    
+    <lastmod>2015-03-22T02:09:15+00:00</lastmod>
+    
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/</loc>
     
-    <lastmod>2014-12-15T22:57:25+01:00</lastmod>
+    <lastmod>2014-12-15T21:57:25+00:00</lastmod>
     
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>http://matteogobbi.github.io/blog/2014/10/31/interaction-object/</loc>
+    <loc>http://matteogobbi.github.io/blog/2014/10/30/interaction-object/</loc>
     
-    <lastmod>2014-10-31T00:16:22+01:00</lastmod>
+    <lastmod>2014-10-30T23:16:22+00:00</lastmod>
     
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood/</loc>
+    <loc>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/</loc>
     
-    <lastmod>2014-09-29T00:24:37+02:00</lastmod>
+    <lastmod>2014-09-28T23:24:37+01:00</lastmod>
     
     <priority>0.8</priority>
   </url>
@@ -29,21 +37,21 @@
   
   <url>
     <loc>http://matteogobbi.github.io/</loc>
-    <lastmod>2014-12-27T12:03:46+01:00</lastmod>
+    <lastmod>2015-03-21T00:15:28+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://matteogobbi.github.io/blog/archives/</loc>
-    <lastmod>2014-12-27T12:03:46+01:00</lastmod>
+    <lastmod>2015-03-21T00:15:28+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://matteogobbi.github.io/posts/</loc>
-    <lastmod>2014-12-27T12:03:46+01:00</lastmod>
+    <lastmod>2015-03-21T00:15:28+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Extending | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/extending/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2014-12-27T12:03:46+01:00</updated>
+  <updated>2015-03-21T00:15:28+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Extending Methods in a Category by Method Swizzling]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
-    <updated>2014-12-15T22:57:25+01:00</updated>
+    <updated>2014-12-15T21:57:25+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
     <content type="html"><![CDATA[<p>Overriding a method in a category <strong>is NOT possible</strong>.</p>
 
@@ -264,6 +264,8 @@ Basically we are saying to the class to exchange his <code>SEL</code> -> <code>M
 <h2>Conclusion</h2>
 
 <p>In the 90% of situations, you will not need to use this approach, but sometimes could be really useful. Just be sure you have not other solutions before to proceed, because since this is an extremely powerful way, it could be also extremely dangerous if you don&rsquo;t pay the maximum attention.</p>
+
+<p>Follow me on <a href="http://twitter.com/matteo_gobbi">Twitter</a>!</p>
 
 <p>Enjoy ;)</p>
 ]]></content>

@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Anotomy of a TableView(Controller) Architecture - Matteo Gobbi</title>
+  <meta name="author" content="Matteo Gobbi">
+
+  
+  <meta name="description" content="How we should think to a ViewController with his TableView? Who should be responsible for what?">
+  <meta name="keywords" content="architecture,best,practice,ios,dev,tableview">
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Matteo Gobbi" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-55234030-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+  <body>
+    <a href="/" class="home-icon">
+      <img src="/images/home.png"/>
+    </a>
+
+    <article role="article" class="full-single-article">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h1>Anotomy of a TableView(Controller) Architecture</h1>
+        <div class="meta">
+          written 
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2015-03-22T02:09:15+00:00" pubdate data-updated="true"></time>
+          
+
+in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/architecture/'>architecture</a>, <a class='category' href='/blog/categories/best-practice/'>best practice</a>, <a class='category' href='/blog/categories/ios/'>ios</a>, <a class='category' href='/blog/categories/objective-c/'>objective-c</a>, <a class='category' href='/blog/categories/uitableview/'>uitableview</a>
+  
+</span>
+
+
+        </div>
+        <p><code>UITableView</code>s are part of our projects since the first iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: <strong>well architectured</strong>.</p>
+
+<!--more-->
+
+
+<p><br /></p>
+
+<h2>The most diffused &ldquo;wrong&rdquo; approach</h2>
+
+<p>When developers need to use a <code>UITableView</code>, they put it normally in a <code>UIViewController</code>, or <code>UITableViewController</code>. At this point the first thing they do in the <strong>ViewController</strong> is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+</span><span class='line'><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span><span class="p">.</span><span class="n">datasource</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>setting the class conform to these two protocols.</p>
+
+<p><strong>NO.</strong><br /></p>
+
+<p>First of all we must understand the difference between <code>UITableViewDelegate</code> and <code>UITableViewDataSource</code> or more generically from <strong>delegate</strong> and <strong>datasource</strong>;
+Secondly we should reflect about what a <strong>ViewController</strong> should take care of.
+<br />
+<br /></p>
+
+<h2>Understand the roles</h2>
+
+<p>To have a clear vision of how to build a strong architecture, we have first to understand what is a delegate, and what is a datasource.<br/>
+<br />
+<strong>Delegation</strong> is a pattern used to send a message from an object (the delegating), to another object (the delegate), and as Apple says:</p>
+
+<blockquote>
+The message informs the delegate of an event that the delegating object is about to handle or has just handled.
+</blockquote>
+
+
+<p>So in the <code>UITableView</code>&rsquo;s case, its delegate is called when an user tap a cell, or add/delete/move it, etc.<br/>
+<br />
+The <strong>datasource</strong> is the object responsible for managing the content you are presenting for example in a table or collection view. His main task is to <strong>return the data which will be used to represent the table view</strong>.<br/>
+<br />
+So we can imagine the table view asking to his datasource questions like:</p>
+
+<ul>
+<li>How many sections shall I have?</li>
+<li>For a given section, how many rows shall I display for it?</li>
+<li>For a given section, what title shall I display for it?</li>
+</ul>
+
+
+<p>and so on..<br/>
+<br />
+Now the question (and also one of the main point of this text) is:<br/>
+<strong>should the ViewController be responsible of all this being both, tableView&rsquo;s delegate and datasource as well as the <u>view controller</u></strong>?
+<br /><br/>
+What the view controller should effectly take care of?<br/>
+<br />
+Since the first Apple tutorials, developers took the habit to put everything in the view controller, bringing the whole tech community to joke about this buckling to the famous pattern and acronym <strong>MVC</strong>, the meaning of &ldquo;<strong>Massive</strong> View Controller&rdquo; instead of &ldquo;Model View Controller&rdquo;.<br/>
+So the answer to the previous question as maybe you can imagine is a big <strong>NO</strong>.<br/>
+<br />
+The <strong>ViewController</strong>, should indeed be responsible to interact with other entities as for example the network layer or the data model, providing then the data to the view (or to the ViewModel as in the MVVM design pattern). Moreover, it should handle the final actions performed from the user on the view.<br/>
+<br />
+In the <code>UITableView</code>&rsquo;s case, is the <strong>TableView</strong>&rsquo;s <strong>delegate</strong> to handle the actions performed on the table. For example:</p>
+
+<ol>
+<li>1 - An user tap a cell;</li>
+<li>2 - The table view delegate handle the tap;</li>
+<li>3 - The delegate does something and if needed it will call the final action in the view controller.</li>
+</ol>
+
+
+<p>Don&rsquo;t worry about the point 3, we&rsquo;ll see how to sort this shortly.
+<br />
+<br /></p>
+
+<h2>Building the architecture</h2>
+
+<p>After all this (too) long introduction, it&rsquo;s the time to discover the core of this article: <strong>how to build an efficient architecture</strong>.<br/>
+<br />
+The standard architecture we have when we create a <code>UIViewController</code> with inside a <code>UITableView</code>, is basically the following:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/anatomy-architecture/1.png" alt="Basic" /></p>
+
+<p>Well, a simple view controller with his view, and an <code>IBOutlet</code> to the <code>UITableView</code>.<br/>
+The next step, would be to understand how and where istantiate the <strong>delegate</strong> and the <strong>datasource</strong>. This is absolutely the main point of our architecture, as we want a <strong>net separation</strong> between these objects, so that everyone has its own responsabilities. Therefore what we need is a <strong>custom delegate</strong>, and a <strong>custom datasource</strong>. These will be respectively conform to <code>UITableViewDelegate</code> and <code>UITableViewDatasource</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">@interface</span> <span class="nc">MGTableViewDelegate</span> : <span class="bp">NSObject</span> <span class="o">&lt;</span><span class="bp">UITableViewDelegate</span><span class="o">&gt;</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">MGTableViewDatasource</span> : <span class="bp">NSObject</span> <span class="o">&lt;</span><span class="bp">UITableViewDataSource</span><span class="o">&gt;</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But who should instantiate and own these 2?</p>
+
+<p>The answer is: the <strong>ViewController</strong>.</p>
+
+<p>As controller of the view and principal &ldquo;manager&rdquo;, it will own and set them as delegate and datasource of our <code>UITableView</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">MGTableViewDelegate</span> <span class="o">*</span><span class="n">myDelegate</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGTableViewDelegate</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'><span class="n">MGTableViewDatasource</span> <span class="o">*</span><span class="n">myDatasource</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGTableViewDatasource</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">myDelegate</span><span class="p">;</span>
+</span><span class='line'><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span><span class="p">.</span><span class="n">datasource</span> <span class="o">=</span> <span class="n">myDatasource</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Therefore, at this point our architecture should look like this:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/anatomy-architecture/2.png" alt="Delegate and Datasource" /></p>
+
+<p>Let&rsquo;s also suppose to have a custom <strong>headerView</strong> for the <code>UITableView</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">@interface</span> <span class="nc">MGTableHeaderView</span> : <span class="bp">UIView</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>as well as some cell to display:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/anatomy-architecture/3.png" alt="TableView Header and Cells" /></p>
+
+<p>Good.<br/>
+The architecture begin to take shape. We have almost all the pieces.<br/>
+We know that the delegate will take care of the tableView&rsquo;s events, but <strong>how the datasource will generate the data for the tableView</strong>?</p>
+
+<p>The datasource has to generate the needed data using the information it has at disposition. Sharing these information, is duty of the <strong>ViewController</strong>. Indeed, it could pass the reference to this data at the moment of the datasource initialization.<br/>
+So let&rsquo;s go back some lines and let&rsquo;s refactor our code, supposing that the data we want to pass to the datasource is a <strong>user</strong> data object:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">MGTableViewDelegate</span> <span class="o">*</span><span class="n">myDelegate</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGTableViewDelegate</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'><span class="n">MGTableViewDatasource</span> <span class="o">*</span><span class="n">myDatasource</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGTableViewDatasource</span> <span class="nl">datasourceWithUser</span><span class="p">:</span><span class="n">user</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">myDelegate</span><span class="p">;</span>
+</span><span class='line'><span class="nb">self</span><span class="p">.</span><span class="n">tableView</span><span class="p">.</span><span class="n">datasource</span> <span class="o">=</span> <span class="n">myDatasource</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Cool. So let&rsquo;s have a look to the architecture:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/anatomy-architecture/4.png" alt="TableView Header and Cells" /></p>
+
+<p>Now the datasource can use this data to generate and return cells for the <strong>TableView</strong> throught the method <code>- tableView:cellForRowAtIndexPath:</code> automatically called from the latter.</p>
+
+<p>In this user data, are contained information like:</p>
+
+<ul>
+<li>name;</li>
+<li>surname;</li>
+<li>gender;</li>
+<li>birthday;</li>
+<li>address;</li>
+</ul>
+
+
+<p>and so on.<br/>
+As we said above, the job of the datasource is to manipulate these information displaying them on the appropriate cells.</p>
+
+<p><strong>But which is the best approach to achieve this result?</strong></p>
+
+<p>In one of my previous articles, I wrote about <a href="http://matteogobbi.github.io/blog/2014/10/31/interaction-object/">Interaction Objects</a>.<br/>
+An <strong>InteractionObject</strong> is a component which can store all the information needed to configure a cell, i.e.:</p>
+
+<ul>
+<li>image;</li>
+<li>title;</li>
+<li>value;</li>
+<li>target;</li>
+<li>selector;<br/>
+..etc.</li>
+</ul>
+
+
+<p>An example of <strong>InteractionObject</strong>, is something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">objGender</span> <span class="o">=</span> <span class="p">[[</span><span class="n">MGInteractionObject</span> <span class="n">alloc</span><span class="p">]</span>
+</span><span class='line'>                                <span class="nl">initWithOption</span><span class="p">:</span><span class="s">@&quot;Gender&quot;</span>
+</span><span class='line'>                                <span class="nl">value</span><span class="p">:</span><span class="n">_user</span><span class="p">.</span><span class="n">gender</span>
+</span><span class='line'>                                <span class="nl">imageURLString</span><span class="p">:</span><span class="nb">nil</span>
+</span><span class='line'>                                <span class="nl">editable</span><span class="p">:</span><span class="nb">NO</span>
+</span><span class='line'>                                <span class="nl">target</span><span class="p">:</span><span class="n">_viewController</span>
+</span><span class='line'>                                <span class="nl">selector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="nl">mg_changeGender</span><span class="p">:)];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(as you see, the target is a <strong>ViewController</strong>, which in this case could be passed for example during the datasource&rsquo;s initialization, of course in <code>weak</code> reference).</p>
+
+<p>Once that the datasource has configured these object, it will store them into an array&rsquo;s hierarchy, ready to be showed in the right <code>indexPath</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="c1">//InteractionObject for rows in the section profile</span>
+</span><span class='line'><span class="bp">NSArray</span> <span class="o">*</span><span class="n">profileSection</span> <span class="o">=</span> <span class="l">@[</span><span class="n">objCountry</span><span class="p">,</span> <span class="n">objGender</span><span class="p">,</span> <span class="n">objCity</span><span class="p">,</span> <span class="n">objOccupation</span><span class="p">,</span> <span class="n">objAbout</span><span class="l">]</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//InteractionObject for rows in the section logout</span>
+</span><span class='line'><span class="bp">NSArray</span> <span class="o">*</span><span class="n">logoutSection</span> <span class="o">=</span> <span class="l">@[</span><span class="n">objLogout</span><span class="l">]</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//Final array of section</span>
+</span><span class='line'><span class="n">_arrayDatasource</span> <span class="o">=</span> <span class="l">@[</span><span class="n">profileSection</span><span class="p">,</span> <span class="n">logoutSection</span><span class="l">]</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here the image rappresenting the current architecture:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/anatomy-architecture/5.png" alt="Interaction Objects inside" /></p>
+
+<p>Finally, as we want to be able to update our <strong>InteractionObject</strong>s as well as reloading the <strong>headerView</strong> and <strong>cells</strong>, we have to override the method <code>- reloadData</code> of the <code>UITableView</code>, subclassing the latter:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="c1">//Implementation file of the MGTableView&#39;s class inherited from UITableView</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">reloadData</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">MGTableViewDatasource</span> <span class="o">*</span><span class="n">datasource</span> <span class="o">=</span> <span class="nb">self</span><span class="p">.</span><span class="n">dataSource</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Update datasource</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">datasource</span> <span class="n">updateData</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="nb">super</span> <span class="n">reloadData</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Get the interactionObject for the headerView</span>
+</span><span class='line'>    <span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">objHeader</span> <span class="o">=</span> <span class="p">[</span><span class="n">datasource</span> <span class="n">headerInteractionObject</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Update the headerView</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">self</span><span class="p">.</span><span class="n">tableHeaderView</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//Do init</span>
+</span><span class='line'>        <span class="n">MGTableViewHeader</span> <span class="o">*</span><span class="n">headerView</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGTableViewHeader</span> <span class="n">headerViewFromNib</span><span class="p">];</span>
+</span><span class='line'>        <span class="nb">self</span><span class="p">.</span><span class="n">tableHeaderView</span> <span class="o">=</span> <span class="n">headerView</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[(</span><span class="n">MGTableViewHeader</span> <span class="o">*</span><span class="p">)</span><span class="nb">self</span><span class="p">.</span><span class="n">tableHeaderView</span> <span class="nl">configureWithHeaderInteractionObject</span><span class="p">:</span><span class="n">objHeader</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When this method is called, first is called <code>[datasoure updateData]</code>, which reading from the data object (in our previous example, the user), regenerate all the <strong>InteractionObjects</strong>, included the one for the <strong>headerView</strong>.</p>
+
+<p>Well, let&rsquo;s recap a little bit:</p>
+
+<ol>
+<li>1 - the <strong>ViewController</strong> create the <code>UITableView</code>&rsquo;s <strong>delegate</strong> and <strong>datasource</strong> as separated components;</li>
+<li>2 - the method <code>- reloadData</code> is called on the <strong>TableView</strong>;</li>
+<li>3 - from the previous point, the <strong>datasource</strong> gets updated creating all the needed <strong>InteractionObject</strong>s by the information contained in the <strong>DataObject</strong>;</li>
+<li>4 - calling <code>[super reloadData]</code> the method <code>- tableView:cellForRowAtIndexPath:</code> gets invocated from the <strong>TableView</strong>, and the cells are configured passing to anyone the corresponding <strong>InteractionObject</strong>;</li>
+<li>5 - the <strong>headerView</strong> is updated.</li>
+</ol>
+
+
+<p>The last thing I would like to evidentiate, is the semplicity of the method which should handle a tap on a cell:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="bp">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">didSelectRowAtIndexPath:</span><span class="p">(</span><span class="bp">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">MGTableViewDatasource</span> <span class="o">*</span><span class="n">datasource</span> <span class="o">=</span>
+</span><span class='line'>      <span class="p">(</span><span class="n">MGTableViewDatasource</span> <span class="o">*</span><span class="p">)</span><span class="n">tableView</span><span class="p">.</span><span class="n">dataSource</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">MGInteractionObject</span> <span class="o">*</span><span class="n">interactionObj</span> <span class="o">=</span>
+</span><span class='line'>      <span class="p">[</span><span class="n">datasource</span> <span class="nl">cellInteractionObjectAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//Execute target/selector</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">([</span><span class="n">interactionObj</span><span class="p">.</span><span class="n">target</span> <span class="nl">respondsToSelector</span><span class="p">:</span><span class="n">interactionObj</span><span class="p">.</span><span class="n">selector</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">interactionObj</span><span class="p">.</span><span class="n">target</span> <span class="nl">performSelector</span><span class="p">:</span><span class="n">interactionObj</span><span class="p">.</span><span class="n">selector</span>
+</span><span class='line'>                                  <span class="nl">withObject</span><span class="p">:</span><span class="nb">nil</span> <span class="nl">afterDelay</span><span class="p">:</span><span class="mf">0.f</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">tableView</span> <span class="nl">deselectRowAtIndexPath</span><span class="p">:</span><span class="n">indexPath</span> <span class="nl">animated</span><span class="p">:</span><span class="nb">YES</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>which the only thing it does, is to get the corresponding <strong>InteractionObject</strong>, and reading the information from there, performing a <strong>selector</strong> on a <strong>target</strong>.</p>
+
+<p><br />
+<br /></p>
+
+<h2>Conclusion</h2>
+
+<p>Following the architecture explained in this article, your project folder hierarchy should looks something like this:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/anatomy-architecture/project.png" height="500" alt="Project hierachy" /></p>
+
+<p>The best thing of this approach, is the power. Indeed all this architecture is really scalable and maintanable. Even if in 2 month you&rsquo;ll need to add another cell in your section, the only thing you&rsquo;ll do will be creating another <strong>InteractionObject</strong>, letting <strong>every component</strong> doing its job, <strong>without touching any kind of method</strong>.</p>
+
+<p>Follow me on <a href="http://twitter.com/matteo_gobbi">Twitter</a>!</p>
+
+<p>Enjoy the quality ;)</p>
+
+<p>Cheers!</p>
+
+
+        <hr class="divider-short"/>
+
+        
+        <section>
+          <h1>Comments</h1>
+          <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        </section>
+        
+      </div>
+    </div>
+  </div>
+</article>
+
+<hr class="divider-short"/>
+
+<div class="archive-link">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        
+          <a class="pull-left" href="/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/" title="Previous Post: Extending methods in a category by Method Swizzling">&laquo; Previous: Extending methods in a category by Method Swizzling</a>
+        
+
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+    <footer id="footer" class="her-row">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-1">
+  <a href="/"><h4>Home</h4></a>
+</div>
+
+<div class="col-md-2">
+  <div class="social-icon-list">
+    
+    <a title="Twitter" href="https://twitter.com/matteo_gobbi"><img src="/images/glyphicons_social_31_twitter.png"/></a>
+    
+    
+    <a title="GitHub" href="https://github.com/matteogobbi"><img src="/images/glyphicons_social_21_github.png"/></a>
+    
+    
+    <a title="StackOverflow" href="http://stackoverflow.com/users/1973344"><img src="/images/glyphicons_social_21_stackoverflow.png"/></a>
+    
+    
+    <a title="LinkedIn" href="https://linkedin.com/in/matteogobbi"><img src="/images/glyphicons_social_17_linked_in.png"/></a>
+    
+    
+    <a title="E-Mail" href="mailto:job@matteogobbi.it"><img src="/images/glyphicons_social_39_e-mail.png"/></a>
+    
+  </div>
+</div>
+
+<div class="pull-right">
+</div>
+
+
+    </div>
+  </div>
+</footer>
+
+    
+      
+
+<script type="text/javascript">
+      var disqus_shortname = 'matteogobbi';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture/';
+        var disqus_url = 'http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+    
+  </body>
+</html>
