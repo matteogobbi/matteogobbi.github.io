@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-03-23T19:29:06+00:00</updated>
+  <updated>2015-03-23T22:22:19+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -18,7 +18,7 @@
     <link href="http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/"/>
     <updated>2015-03-22T02:09:15+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture</id>
-    <content type="html"><![CDATA[<p><code>UITableView</code>s are part of our projects since the first iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: <strong>well architectured</strong>.</p>
+    <content type="html"><![CDATA[<p><code>UITableView</code>s are part of our projects since the very beginning of the iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: in a <strong>well architected way</strong>.</p>
 
 <!--more-->
 
@@ -38,16 +38,17 @@
 
 <p>setting the class conform to these two protocols.</p>
 
-<p><strong>NO.</strong><br /></p>
+<p><strong>Not</strong> really a big deal.<br />
+Let’s discuss some better ways to structure our code.</p>
 
-<p>First of all we must understand the difference between <code>UITableViewDelegate</code> and <code>UITableViewDataSource</code> or more generically from <strong>delegate</strong> and <strong>datasource</strong>;
+<p>First of all we have to understand the difference between <code>UITableViewDelegate</code> and <code>UITableViewDataSource</code> or in a more general sense, the difference between <strong>delegate</strong> and <strong>datasource</strong>;
 Secondly we should reflect about what a <strong>ViewController</strong> should take care of.
 <br />
 <br /></p>
 
-<h2>Understand the roles</h2>
+<h2>Understanding the roles</h2>
 
-<p>To have a clear vision of how to build a strong architecture, we have first to understand what is a delegate, and what is a datasource.<br/>
+<p>In order to have a clear vision of how to build a strong architecture, we  first have to understand what is a delegate, and what is a datasource.<br/>
 <br />
 <strong>Delegation</strong> is a pattern used to send a message from an object (the delegating), to another object (the delegate), and as Apple says:</p>
 
@@ -56,9 +57,9 @@ The message informs the delegate of an event that the delegating object is about
 </blockquote>
 
 
-<p>So in the <code>UITableView</code>&rsquo;s case, its delegate is called when an user tap a cell, or add/delete/move it, etc.<br/>
+<p>So in the <code>UITableView</code>&rsquo;s case, its delegate is called when an user taps a cell, or adds/deletes/moves it, etc.<br/>
 <br />
-The <strong>datasource</strong> is the object responsible for managing the content you are presenting for example in a table or collection view. His main task is to <strong>return the data which will be used to represent the table view</strong>.<br/>
+The <strong>datasource</strong> is the object responsible for managing the content you are presenting for example in a table or collection view. His main task is to <strong>return the data which will be displayed by the table view</strong>.<br/>
 <br />
 So we can imagine the table view asking to his datasource questions like:</p>
 
@@ -69,41 +70,41 @@ So we can imagine the table view asking to his datasource questions like:</p>
 </ul>
 
 
-<p>and so on..<br/>
+<p>and so on&hellip;<br/>
 <br />
 Now the question (and also one of the main point of this text) is:<br/>
-<strong>should the ViewController be responsible of all this being both, tableView&rsquo;s delegate and datasource as well as the <u>view controller</u></strong>?
+<strong>should the ViewController be responsible of all this being both, tableView&rsquo;s delegate and datasource as well as, I repeat, the <u>view controller</u></strong>?
 <br /><br/>
 What the view controller should effectly take care of?<br/>
 <br />
-Since the first Apple tutorials, developers took the habit to put everything in the view controller, bringing the whole tech community to joke about this buckling to the famous pattern and acronym <strong>MVC</strong>, the meaning of &ldquo;<strong>Massive</strong> View Controller&rdquo; instead of &ldquo;Model View Controller&rdquo;.<br/>
-So the answer to the previous question as maybe you can imagine is a big <strong>NO</strong>.<br/>
+Since the initial Apple tutorials back to 2008, developers took the habit to put everything into the view controller, bringing the whole tech community to joke about this buckling the famous pattern and acronym <strong>MVC</strong>, the meaning of &ldquo;<strong>Massive</strong> View Controller&rdquo; instead of &ldquo;Model View Controller&rdquo;.<br/>
+So the answer to the previous question as maybe you can imagine is a most likely <strong>NO</strong>.<br/>
 <br />
 The <strong>ViewController</strong>, should indeed be responsible to interact with other entities as for example the network layer or the data model, providing then the data to the view (or to the ViewModel as in the MVVM design pattern). Moreover, it should handle the final actions performed from the user on the view.<br/>
 <br />
 In the <code>UITableView</code>&rsquo;s case, is the <strong>TableView</strong>&rsquo;s <strong>delegate</strong> to handle the actions performed on the table, following for example this process:</p>
 
 <ol>
-<li>1 - An user tap a cell;</li>
-<li>2 - The table view delegate handle the tap;</li>
+<li>1 - An user taps a cell;</li>
+<li>2 - The table view delegate handles the tap;</li>
 <li>3 - The delegate does something and if needed it will call the final action in the view controller.</li>
 </ol>
 
 
-<p>Don&rsquo;t worry about the point 3, we&rsquo;ll see how to sort this shortly.
+<p>Don&rsquo;t worry about the third point, we&rsquo;ll see how to sort it out shortly.
 <br />
 <br /></p>
 
 <h2>Building the architecture</h2>
 
-<p>After all this (too) long introduction, it&rsquo;s the time to discover the core of this article: <strong>how to build an efficient architecture</strong>.<br/>
+<p>After this (too) long introduction, it&rsquo;s time to discover the core of this article: <strong>how to build an efficient architecture</strong>.<br/>
 <br />
 The standard architecture we have when we create a <code>UIViewController</code> with inside a <code>UITableView</code>, is basically the following:</p>
 
 <p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/anatomy-architecture/1.png" alt="Basic" /></p>
 
-<p>Well, a simple view controller with his view, and an <code>IBOutlet</code> to the <code>UITableView</code>.<br/>
-The next step, would be to understand how and where istantiate the <strong>delegate</strong> and the <strong>datasource</strong>. This is absolutely the main point of our architecture, as we want a <strong>net separation</strong> between these objects, so that everyone has its own responsabilities. Therefore what we need is a <strong>custom delegate</strong>, and a <strong>custom datasource</strong>. These will be respectively conform to <code>UITableViewDelegate</code> and <code>UITableViewDatasource</code>:</p>
+<p>Well, a simple view controller with his view, and an <code>IBOutlet</code> to the <code>UITableView</code> (or a reference in code, but let&rsquo;s take is simple).<br/>
+The next step, would be to understand how and where we want to istantiate the <strong>delegate</strong> and the <strong>datasource</strong>. This is absolutely the main point of our architecture, as we want a <strong>net separation</strong> between these objects, so that everyone has its own responsabilities. Therefore what we need is a <strong>custom delegate</strong>, and a <strong>custom datasource</strong>. These will be respectively conform to <code>UITableViewDelegate</code> and <code>UITableViewDatasource</code>:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -128,7 +129,7 @@ The next step, would be to understand how and where istantiate the <strong>deleg
 
 <p>But who should instantiate and own these 2?</p>
 
-<p>The answer is: the <strong>ViewController</strong>.</p>
+<p>The answer may vary, but having them into the <strong>ViewController</strong> is totally acceptable and we are going for taking this choice.</p>
 
 <p>As controller of the view and principal &ldquo;manager&rdquo;, it will own and set them as delegate and datasource of our <code>UITableView</code>:</p>
 
@@ -165,10 +166,10 @@ The next step, would be to understand how and where istantiate the <strong>deleg
 <p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/anatomy-architecture/3.png" alt="TableView Header and Cells" /></p>
 
 <p>Good.<br/>
-The architecture begin to take shape. We have almost all the pieces.<br/>
-We know that the delegate will take care of the tableView&rsquo;s events, but <strong>how the datasource will generate the data for the tableView</strong>?</p>
+The architecture begins to take shape. We have almost all the pieces.<br/>
+We know that the delegate will take care of the tableView&rsquo;s events, but <strong>how will the datasource generate the data for the tableView</strong>?</p>
 
-<p>The datasource has to generate the needed data using the information it has at disposition. Sharing these information, is duty of the <strong>ViewController</strong>. Indeed, it could pass the reference to this data at the moment of the datasource initialization.<br/>
+<p>The datasource has to generate the necessary data using the available information. Sharing this information, is <strong>ViewController</strong>&rsquo;s. Indeed, it could pass the reference to this data at the moment of the datasource initialization.<br/>
 So let&rsquo;s go back some lines and let&rsquo;s refactor our code, supposing that the data we want to pass to the datasource is a <strong>user</strong> data object:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -184,13 +185,13 @@ So let&rsquo;s go back some lines and let&rsquo;s refactor our code, supposing t
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Cool. So let&rsquo;s have a look to the architecture:</p>
+<p>Cool. So let&rsquo;s have a look at the final architecture:</p>
 
 <p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/anatomy-architecture/4.png" alt="TableView Header and Cells" /></p>
 
-<p>Now the datasource can use this data to generate and return cells for the <strong>TableView</strong> throught the method <code>- tableView:cellForRowAtIndexPath:</code> automatically called from the latter.</p>
+<p>Now the datasource can use this data to generate and return cells for the <strong>TableView</strong> throught the method <code>- tableView:cellForRowAtIndexPath:</code> called from the latter.</p>
 
-<p>In this user data, are contained information like:</p>
+<p>The user DTO object contains common info like:</p>
 
 <ul>
 <li>name;</li>
@@ -202,7 +203,7 @@ So let&rsquo;s go back some lines and let&rsquo;s refactor our code, supposing t
 
 
 <p>and so on.<br/>
-As we said above, the job of the datasource is to manipulate these information displaying them on the appropriate cells.</p>
+As we said above, the responsibility of the datasource is to manipulate these information displaying them into the appropriate cells.</p>
 
 <p><strong>But which is the best approach to achieve this result?</strong></p>
 
@@ -238,9 +239,9 @@ An <strong>InteractionObject</strong> is a component which can store all the inf
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>(as you see, the target is a <strong>ViewController</strong>, which in this case could be passed for example during the datasource&rsquo;s initialization, of course in <code>weak</code> reference).</p>
+<p>(as you see, the target is a <strong>ViewController</strong>, which in this case could be passed for example during the datasource&rsquo;s initialization, using a <code>weak</code> reference).</p>
 
-<p>Once that the datasource has configured these object, it will store them into an array&rsquo;s hierarchy, ready to be showed in the right <code>indexPath</code>:</p>
+<p>Once that the datasource has configured these objects, it will store them into an hierarchy of arrays, ready to be showed in the right <code>indexPath</code>:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -261,7 +262,7 @@ An <strong>InteractionObject</strong> is a component which can store all the inf
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Here the image rappresenting the current architecture:</p>
+<p>Here is the image rapresenting the final architecture:</p>
 
 <p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/anatomy-architecture/5.png" alt="Interaction Objects inside" /></p>
 
@@ -321,15 +322,15 @@ An <strong>InteractionObject</strong> is a component which can store all the inf
 <p>Well, let&rsquo;s recap a little bit:</p>
 
 <ol>
-<li>1 - the <strong>ViewController</strong> create the <code>UITableView</code>&rsquo;s <strong>delegate</strong> and <strong>datasource</strong> as separated components;</li>
+<li>1 - the <strong>ViewController</strong> creates the <code>UITableView</code>&rsquo;s <strong>delegate</strong> and <strong>datasource</strong> as separated components;</li>
 <li>2 - the method <code>- reloadData</code> is called on the <strong>TableView</strong>;</li>
 <li>3 - from the previous point, the <strong>datasource</strong> gets updated creating all the needed <strong>InteractionObject</strong>s by the information contained in the <strong>DataObject</strong>;</li>
-<li>4 - calling <code>[super reloadData]</code> the method <code>- tableView:cellForRowAtIndexPath:</code> gets invocated from the <strong>TableView</strong>, and the cells are configured passing to anyone the corresponding <strong>InteractionObject</strong>;</li>
+<li>4 - calling <code>[super reloadData]</code> the method <code>- tableView:cellForRowAtIndexPath:</code> gets invoked from the <strong>TableView</strong>, and the cells are configured passing to anyone the corresponding <strong>InteractionObject</strong>;</li>
 <li>5 - the <strong>headerView</strong> is updated.</li>
 </ol>
 
 
-<p>The last thing I would like to evidentiate, is the semplicity of the method which should handle a tap on a cell:</p>
+<p>The last thing I would like to stress, is the simplicity of the method which should handle a tap on a cell:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -375,15 +376,17 @@ An <strong>InteractionObject</strong> is a component which can store all the inf
 
 <h2>Conclusion</h2>
 
-<p>Following the architecture explained in this article, your project folder hierarchy should looks something like this:</p>
+<p>Following the architecture explained in this article, your project folder hierarchy should look something like this:</p>
 
 <p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/anatomy-architecture/project.png" height="500" alt="Project hierachy" /></p>
 
-<p>The best thing of this approach, is that the architecture really scalable and maintanable. Even if after some months you&rsquo;ll need to add another cell in one of the TableView&rsquo;s section, the only thing you&rsquo;ll do will be creating another <strong>InteractionObject</strong>, letting <strong>every component</strong> doing its job and <strong>without touching any kind of method</strong>.</p>
+<p>The best thing of this approach, is the architecture really scalable and maintanable. Even if after some months you&rsquo;ll need to add another cell in one of the TableView&rsquo;s section, the only thing you&rsquo;ll do will be creating another <strong>InteractionObject</strong>, letting <strong>every component</strong> doing its job and <strong>without touching any kind of method</strong>.<br/>
+<br />
+Thank you to <a href="http://twitter.com/albertodebo">Alberto De Bortoli</a> for the review of this article.</p>
 
 <p>Follow me on <a href="http://twitter.com/matteo_gobbi">Twitter</a>!</p>
 
-<p>Enjoy the quality ;)</p>
+<p>Enjoy ;)</p>
 
 <p>Cheers!</p>
 ]]></content>
