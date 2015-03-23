@@ -9,7 +9,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Anotomy of a TableView(Controller) Architecture - Matteo Gobbi</title>
+  <title>Anatomy of a TableView(Controller) Architecture - Matteo Gobbi</title>
   <meta name="author" content="Matteo Gobbi">
 
   
@@ -22,7 +22,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture">
+  <link rel="canonical" href="http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Matteo Gobbi" type="application/atom+xml">
@@ -55,7 +55,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 col-md-offset-2">
-        <h1>Anotomy of a TableView(Controller) Architecture</h1>
+        <h1>Anatomy of a TableView(Controller) Architecture</h1>
         <div class="meta">
           written 
 
@@ -145,7 +145,7 @@ So the answer to the previous question as maybe you can imagine is a big <strong
 <br />
 The <strong>ViewController</strong>, should indeed be responsible to interact with other entities as for example the network layer or the data model, providing then the data to the view (or to the ViewModel as in the MVVM design pattern). Moreover, it should handle the final actions performed from the user on the view.<br/>
 <br />
-In the <code>UITableView</code>&rsquo;s case, is the <strong>TableView</strong>&rsquo;s <strong>delegate</strong> to handle the actions performed on the table. For example:</p>
+In the <code>UITableView</code>&rsquo;s case, is the <strong>TableView</strong>&rsquo;s <strong>delegate</strong> to handle the actions performed on the table, following for example this process:</p>
 
 <ol>
 <li>1 - An user tap a cell;</li>
@@ -380,7 +380,7 @@ An <strong>InteractionObject</strong> is a component which can store all the inf
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>When this method is called, first is called <code>[datasoure updateData]</code>, which reading from the data object (in our previous example, the user), regenerate all the <strong>InteractionObjects</strong>, included the one for the <strong>headerView</strong>.</p>
+<p>When this method is called, firstly is called <code>[datasoure updateData]</code>, which reading from the data object (in our previous example, the user), regenerate all the <strong>InteractionObjects</strong>, included the one for the <strong>headerView</strong>.</p>
 
 <p>Well, let&rsquo;s recap a little bit:</p>
 
@@ -432,7 +432,7 @@ An <strong>InteractionObject</strong> is a component which can store all the inf
 
 <p></p>
 
-<p>which the only thing it does, is to get the corresponding <strong>InteractionObject</strong>, and reading the information from there, performing a <strong>selector</strong> on a <strong>target</strong>.</p>
+<p>which the only thing it does, is getting the corresponding <strong>InteractionObject</strong> for that <code>indexPath</code>,  reading the contained information to perform then a <strong>selector</strong> on a <strong>target</strong>.</p>
 
 <p><br />
 <br /></p>
@@ -443,7 +443,7 @@ An <strong>InteractionObject</strong> is a component which can store all the inf
 
 <p style="text-align:center;"> <img src="/../images/posts/anatomy-architecture/project.png" height="500" alt="Project hierachy" /></p>
 
-<p>The best thing of this approach, is the power. Indeed all this architecture is really scalable and maintanable. Even if in 2 month you&rsquo;ll need to add another cell in your section, the only thing you&rsquo;ll do will be creating another <strong>InteractionObject</strong>, letting <strong>every component</strong> doing its job, <strong>without touching any kind of method</strong>.</p>
+<p>The best thing of this approach, is that the architecture really scalable and maintanable. Even if after some months you&rsquo;ll need to add another cell in one of the TableView&rsquo;s section, the only thing you&rsquo;ll do will be creating another <strong>InteractionObject</strong>, letting <strong>every component</strong> doing its job and <strong>without touching any kind of method</strong>.</p>
 
 <p>Follow me on <a href="http://twitter.com/matteo_gobbi">Twitter</a>!</p>
 
@@ -525,8 +525,8 @@ An <strong>InteractionObject</strong> is a component which can store all the inf
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture/';
-        var disqus_url = 'http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture/';
+        var disqus_identifier = 'http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/';
+        var disqus_url = 'http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/';
         var disqus_script = 'embed.js';
       
     (function () {

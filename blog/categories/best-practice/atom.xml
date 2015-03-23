@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Best Practice | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/best-practice/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-03-21T00:15:28+00:00</updated>
+  <updated>2015-03-23T19:29:06+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Anotomy of a TableView(Controller) Architecture]]></title>
-    <link href="http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture/"/>
+    <title type="html"><![CDATA[Anatomy of a TableView(Controller) Architecture]]></title>
+    <link href="http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/"/>
     <updated>2015-03-22T02:09:15+00:00</updated>
-    <id>http://matteogobbi.github.io/blog/2015/03/22/anotomy-of-a-tableview-controller-architecture</id>
+    <id>http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture</id>
     <content type="html"><![CDATA[<p><code>UITableView</code>s are part of our projects since the first iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: <strong>well architectured</strong>.</p>
 
 <!--more-->
@@ -78,7 +78,7 @@ So the answer to the previous question as maybe you can imagine is a big <strong
 <br />
 The <strong>ViewController</strong>, should indeed be responsible to interact with other entities as for example the network layer or the data model, providing then the data to the view (or to the ViewModel as in the MVVM design pattern). Moreover, it should handle the final actions performed from the user on the view.<br/>
 <br />
-In the <code>UITableView</code>&rsquo;s case, is the <strong>TableView</strong>&rsquo;s <strong>delegate</strong> to handle the actions performed on the table. For example:</p>
+In the <code>UITableView</code>&rsquo;s case, is the <strong>TableView</strong>&rsquo;s <strong>delegate</strong> to handle the actions performed on the table, following for example this process:</p>
 
 <ol>
 <li>1 - An user tap a cell;</li>
@@ -246,7 +246,7 @@ _arrayDatasource = @[profileSection, logoutSection];
 }
 </code></pre>
 
-<p>When this method is called, first is called <code>[datasoure updateData]</code>, which reading from the data object (in our previous example, the user), regenerate all the <strong>InteractionObjects</strong>, included the one for the <strong>headerView</strong>.</p>
+<p>When this method is called, firstly is called <code>[datasoure updateData]</code>, which reading from the data object (in our previous example, the user), regenerate all the <strong>InteractionObjects</strong>, included the one for the <strong>headerView</strong>.</p>
 
 <p>Well, let&rsquo;s recap a little bit:</p>
 
@@ -279,7 +279,7 @@ _arrayDatasource = @[profileSection, logoutSection];
 }
 </code></pre>
 
-<p>which the only thing it does, is to get the corresponding <strong>InteractionObject</strong>, and reading the information from there, performing a <strong>selector</strong> on a <strong>target</strong>.</p>
+<p>which the only thing it does, is getting the corresponding <strong>InteractionObject</strong> for that <code>indexPath</code>,  reading the contained information to perform then a <strong>selector</strong> on a <strong>target</strong>.</p>
 
 <p><br />
 <br /></p>
@@ -290,7 +290,7 @@ _arrayDatasource = @[profileSection, logoutSection];
 
 <p style="text-align:center;"> <img src="/../images/posts/anatomy-architecture/project.png" height="500" alt="Project hierachy" /></p>
 
-<p>The best thing of this approach, is the power. Indeed all this architecture is really scalable and maintanable. Even if in 2 month you&rsquo;ll need to add another cell in your section, the only thing you&rsquo;ll do will be creating another <strong>InteractionObject</strong>, letting <strong>every component</strong> doing its job, <strong>without touching any kind of method</strong>.</p>
+<p>The best thing of this approach, is that the architecture really scalable and maintanable. Even if after some months you&rsquo;ll need to add another cell in one of the TableView&rsquo;s section, the only thing you&rsquo;ll do will be creating another <strong>InteractionObject</strong>, letting <strong>every component</strong> doing its job and <strong>without touching any kind of method</strong>.</p>
 
 <p>Follow me on <a href="http://twitter.com/matteo_gobbi">Twitter</a>!</p>
 
