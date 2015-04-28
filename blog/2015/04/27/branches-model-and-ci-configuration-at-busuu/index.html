@@ -140,18 +140,18 @@ So as I said above, we have to create another brach starting from <strong><code>
 <p>After having finished our feature, of course we would like to close and merging it into the <strong><code>develop</code></strong> branch.<br/>
 That&rsquo;s the time to ask a <strong>Pull Request</strong>.
 <br /><br/>
-A <strong>Pull Request</strong>, is a request made to the dev team, in order to review and eventually approve our code, merging it on <strong><code>develop</code></strong>.
-The process we follow in <strong>busuu</strong> in this situation after to have made the pull request, is to pick up the story in JIRA, moving it in the <code>Review</code> column. When another team&rsquo;s developer notes a story in review, he should have a look to the code being sure that everything is ok, and then he should moves the story in the <code>Testing</code> column.<br/>
-Now is the time of the <strong>QA</strong>. The <strong>QA</strong>, often called as <strong>Tester</strong>, should test the new feature, moving the story in the column <code>Done</code> if everything is ok, or otherwise back <code>In Progress</code> reporting the issue.<br/>
+A <strong>Pull Request</strong>, is a request made to the devs team, in order to let them review and eventually approve our code, merging it on <strong><code>develop</code></strong>.
+The process we follow in <strong>busuu</strong> in this situation, is to pick up the story in JIRA, moving it in the <code>Review</code> column. Then, when a team&rsquo;s developer notes a story in review, he should have a look to the code being sure that everything is ok, and then he should moves the story in the <code>Testing</code> column.<br/>
+Now the ball goes in the <strong>QA</strong>&rsquo;s hands. The <strong>QA</strong> (often called <strong>Tester</strong>), should test the new feature, moving the story in the column <code>Done</code> if everything is ok, or otherwise back <code>In Progress</code> reporting the issue.<br/>
 <br />
-Supposing that our feature has been approved even by the QA, anyone of the dev team could now <strong>merge the pull request</strong> in <strong><code>develop</code></strong>.<br/>
+Supposing that our feature has been approved even by the QA, any member of the dev team could now <strong>merge the pull request</strong> in <strong><code>develop</code></strong>.<br/>
 <br /></p>
 
 <h3>STEP 4</h3>
 
 <h4>Prepare a release</h4>
 
-<p>When all the features we want to be in the next version of the app are completed and merged in <strong><code>develop</code></strong>, it is the time to create a <strong>release</strong>. So what we should do is to create a branch from <strong><code>develop</code></strong> in the subfolder <code>release</code> ideally naming the branch with something related to the version number, like for instance <code>release/v1.0</code>.<br/>
+<p>When all the features we want to be in the next version of the app are completed and merged in <strong><code>develop</code></strong>, it is the time to create a <strong>release</strong>. So what we should do is to create a branch from <strong><code>develop</code></strong> in the subfolder <code>release</code>, ideally naming the branch with something related to the version number, like for instance <code>release/v1.0</code>.<br/>
 <br />
 What we have now in this <code>release</code> branch, it is exactly what should be delivered in the market, but of course we need still to test it again and again before to be sure that effectly we can safely making it available to everyone. Normally this is what the QA team does, but in <strong>busuu</strong> we also distribute the app internally for betatesting.<br/>
 Any bug found should be fixed directly in this branch, and then merged in <strong><code>develop</code></strong> to keep the working branch updated and stable.<br/>
@@ -162,11 +162,11 @@ Please note that <strong>only bug fixes</strong> are allowed in this branch, and
 
 <h4>Let&rsquo;s go in production!</h4>
 
-<p>Once we properly tested and fixed eventually bugs on the <code>release</code> branch, it&rsquo;s come the time to submit the app in the store.<br/>
+<p>Once we properly tested and fixed eventually bugs on the <code>release</code> branch, it comes the time to submit the app in the store.<br/>
 What we should do now, would be to merge our <code>release/v1.0</code> in <strong><code>master</code></strong>, therefore finally closing this <code>release</code> branch.<br/>
-Everytime something is merged on <strong><code>master</code></strong>, <strong>a new tag related to the version of the app is created</strong>. This makes it easy also navigate in the version history in the repository.
+Everytime something is merged on <strong><code>master</code></strong>, <strong>a new tag related to the version of the app is created</strong>. This makes easy also navigating in the versions history in the repository.
 <br />
-Let me say also that everytime a version goes in <strong><code>master</code></strong>, we can finally delete <code>feature/*</code> and <code>release/*</code> branches related to this, keeping our repository clean and tidy.<br/>
+When a <code>release</code> goes in <strong><code>master</code></strong>, we can finally delete <code>feature/*</code> and <code>release/*</code> branches related to this, keeping our repository clean and tidy.<br/>
 <br /></p>
 
 <h3>STEP 6 - Optional ;)</h3>
@@ -185,7 +185,7 @@ This is &ldquo;briefly&rdquo; how GitFlow works.<br/>
 
 <h2>SourceTree as GIT client</h2>
 
-<p>Everyone has probably used in life <code>git</code> from a terminal/shell, but what my collegues and I (but also some other friends of mine) experienced, is that a <code>git</code> client could be really interesting to use as it can result more immediate and easy to use. What we are gonna discuss in this paragraph is how to setup and how to use the client Atlassian <strong>SourceTree</strong>, respecting the <strong>GitFlow</strong> approach.<br/>
+<p>Everyone has probably used in life <code>git</code> from a terminal/shell, but what my collegues and I (but also some other friends of mine) experienced, is that a <code>git</code> client could be really interesting to use as it could result more immediate and easy to use. What we are gonna discuss in this paragraph is how to setup and how to use the client Atlassian <strong>SourceTree</strong>, respecting the <strong>GitFlow</strong> approach.<br/>
 <br/>
 Let&rsquo;s go fast and easy:</p>
 
