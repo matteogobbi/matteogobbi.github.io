@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Branching,git,continuous,integration,build,automation,distribution | Matteo Gobbi]]></title>
+  <link href="http://matteogobbi.github.io/blog/categories/branching-git-continuous-integration-build-automation-distribution/atom.xml" rel="self"/>
+  <link href="http://matteogobbi.github.io/"/>
+  <updated>2015-04-28T22:33:41+01:00</updated>
+  <id>http://matteogobbi.github.io/</id>
+  <author>
+    <name><![CDATA[Matteo Gobbi]]></name>
+    <email><![CDATA[job@matteogobbi.it]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Branching Model and CI Configuration @ Busuu]]></title>
+    <link href="http://matteogobbi.github.io/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu/"/>
+    <updated>2015-04-27T22:40:55+01:00</updated>
+    <id>http://matteogobbi.github.io/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu</id>
+    <content type="html"><![CDATA[<p>Any tech company which has a team of developers working on a project, needs to have a repository and to use a revision control system, as for instance <strong>Git</strong>.<br/>
+Unfortunately, even if the platform/tool&rsquo;s choice is more or less reconducible every time to a small group of these latters, many companies and particularly many teams, still don&rsquo;t use a strong <strong>Branching Model</strong> and a powerful <strong>Continuos Integration configuration</strong>.<br/>
+This article wants just to show how we sorted these important things in <a href="http://busuu.com/">busuu</a>, giving an idea of what we think is nicely organized.</p>
+
+<!--more-->
+
+
+<p><br/></p>
+
+<h2>GitFlow as branching model</h2>
+
+<p>Working in a project, always comes the time to pick a story from the board (working on that possibly without breaking the stable version of the code) and always comes the time to merge something in the main branch, testing, releasing, distributing, fixing a bug and so on.<br/>
+All these operations may easily generate a problem or break something if they are not dealt carefully. What I think is foundamental to reach this goal, is to use a <strong>consistent branching model</strong>.<br/>
+In <strong>busuu</strong>, we use <a href="http://github.com/">Github</a> as <strong>repository manager</strong>, <a href="https://www.atlassian.com/software/jira">JIRA</a> as <strong>issues and project tracker</strong>, <a href="http://git-scm.com/">Git</a> as <strong>revision control system</strong>, and we all together decided also to use <strong>GitFlow</strong> as branching model.<br/>
+<br />
+Probably you may have read in the past the article <a href="http://nvie.com/posts/a-successful-git-branching-model/">&ldquo;A successful Git branching model&rdquo;</a> of <a href="http://nvie.com/about/">Vincent Driessen</a>, talking exactly about <strong>GitFlow</strong>. If not, don&rsquo;t worry. I&rsquo;m gonna expose just below the same main image used in that article to explain how GitFlow works:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/1.png" width="700" alt="GitFlow" /></p>
+
+<p>When I saw this image, I found it very explicative. Let&rsquo;s see it together:<br/>
+<br />
+Firstly we see two branches in bold: <strong><code>develop</code></strong> and <strong><code>master</code></strong>. These branches are the most important, and they will <strong>never be removed</strong> or renamed.<br/>
+<br />
+<strong><code>develop</code></strong> is the branch containing the project&rsquo;s version on which we are currently working on. This branch is in every point of the commits history <strong>deliverable</strong>. This means that it <strong>will never contains just a part of a feature</strong> or a broken piece of code, but it will instead <strong>ever contains completed features</strong> or fixes.<br/>
+<br />
+<strong><code>master</code></strong> is the branch containing the project&rsquo;s version which is <strong>currently in production</strong> (i.e. AppStore, Google Play, etc.). Anytime there is a new merge on master, a new tag (normally corrisponding to the new version of the app) is created, and a new version of the app goes in production.<br/>
+<br />
+Cool, the principal branches have been quickly explained.<br/>
+What is clear from the picture is that there are other branches around these two, and they are what I call &ldquo;<strong>temporary</strong> branches&rdquo;. I&rsquo;m gonna explain what these are, showing step by step how <strong>GitFlow</strong> works and how should we apply it:
+<br />
+<br /></p>
+
+<h3>STEP 1</h3>
+
+<h4>Initial phase</h4>
+
+<p>In the initial phase of a project we should just have the main branches we just explained above: <strong><code>develop</code></strong> and <strong><code>master</code></strong>.<br/>
+<br /></p>
+
+<h3>STEP 2</h3>
+
+<h4>First feature</h4>
+
+<p>Now is the time to choose a story from our issue/project tracker (i.e. JIRA) and working on that. Let&rsquo;s say that we choose the story <code>IOS-941</code>, bringing the story from the <code>To Do</code> to the <code>In Progress</code> column.<br/>
+What we should do now, would be to <strong>create a separate branch</strong>.<br/>
+<br/>
+Indeed, working on develop is not a good practice, especially if we are working with a team. The risk to have conflicts breaking the project could be really high. Moreover, would be hard to keep clean the history of the project. Also remember that, for definition <strong><code>develop</code></strong> should be in any point deliverable. This means that a branch should be merged on develop just when the related feauture is completed and can be shipped. So pushing everything there would imply to have in many points of the branch, small parts of different stories, all together at the same time. In other words: <strong>an incontrollable big mess</strong>.<br/>
+<br/>
+So as I said above, we have to create another brach starting from <strong><code>develop</code></strong>. The new banch should be created in the subfolder <code>feature</code> as we are gonna implementing exactly a new feature: <code>feature/IOS-941</code>.<br/>
+<br /></p>
+
+<h3>STEP 3</h3>
+
+<h4>The feature is complete</h4>
+
+<p>After having worked on our feature, it will probably comes the time in which we finished it and we would like to close and merging it into the <strong><code>develop</code></strong> branch.<br/>
+That&rsquo;s the time to ask a <strong>Pull Request</strong>.
+<br /><br/>
+This latter, is a request made to the dev team, in order to review and eventually approve our code, merging it on <strong><code>develop</code></strong>.
+The process we follow in <strong>busuu</strong> in this situation after to have made the pull request, is to pick up the story in JIRA, moving it in the <code>Review</code> column. When another team&rsquo;s developer notes a story in review, he should have a look to the code being sure that everything is ok, and then he should moves the story in the <code>Testing</code> column.<br/>
+Now is the time of the <strong>QA</strong>. The <strong>QA</strong>, often called as <strong>Tester</strong>, should test the new feature, moving the story in the column <code>Done</code> if everything is ok, or otherwise back <code>In Progress</code> reporting the issue.<br/>
+<br />
+Supposing that our feature has been approved even by the QA, anyone of the dev team could now <strong>merge the pull request</strong> in <strong><code>develop</code></strong>.<br/>
+<br /></p>
+
+<h3>STEP 4</h3>
+
+<h4>Prepare a release</h4>
+
+<p>When all the features we want to be in the next version of the app are completed and merged in <strong><code>develop</code></strong>, it is the time to create a <strong>release</strong>. So what we should do is to create a branch from <strong><code>develop</code></strong> in the subfolder <code>release</code> ideally naming the branch with something related to the version number, like for instance <code>release/v1.0</code>.<br/>
+<br />
+What we have now in this <code>release</code> branch, it is exactly what should be delivered in the market, but of course we need still to test it again and again before to be sure that effectly we can safely making it available to everyone. Normally this is what the QA team does, but in <strong>busuu</strong> we also distribute the app internally for betatesting.<br/>
+Any bug found should be fixed directly in this branch, and then merged in <strong><code>develop</code></strong> to keep the working branch updated and stable.<br/>
+Please note that <strong>only bug fixes</strong> are allowed in this branch, and <strong>only <code>develop</code></strong> should be updated if this branch gets bug fixing commits.<br/>
+<br /></p>
+
+<h3>STEP 5</h3>
+
+<h4>Let&rsquo;s go in production!</h4>
+
+<p>Once we properly tested and fixed eventually bugs on the <code>release</code> branch, it&rsquo;s come the time to submit the app in the store.<br/>
+What we should do now, would be to merge our <code>release/v1.0</code> in <strong><code>master</code></strong>, therefore finally closing this <code>release</code> branch.<br/>
+Everytime something is merged on <strong><code>master</code></strong>, <strong>a new tag related to the version of the app is created</strong>. This makes it easy also navigate in the version history in the repository.
+<br />
+Let me say also that everytime a version goes in <strong><code>master</code></strong>, we can finally delete <code>feature/*</code> and <code>release/*</code> branches related to this, keeping our repository clean and tidy.<br/>
+<br /></p>
+
+<h3>STEP 6 - Optional ;)</h3>
+
+<h4>Bug: please fix immediately!</h4>
+
+<p>Yes, it may happen.<br/>
+Just suppose that while our app is in production, a serious bug is tracked on Crashlitics (or similar). What we want to do, is to fix it immediately and to distribute another version of our app. This is what is commonly called an <strong>hotfix</strong>.<br/>
+In the initial image, you see an example of <code>hotfix</code>. As you can note, a branch is created directly from <strong><code>master</code></strong>, and after having fixed the issue, the branch is merged back, again, directly on <strong><code>master</code></strong> but also on <strong><code>develop</code></strong>, to continue to keep it safe. As we said in the previous step, merging on <strong><code>master</code></strong> a new tag is created and a new version of the app gets submitted to Apple.
+The branch should be created under the subfolder <code>hotfix</code>, i.e. <code>hotfix/IOS-950</code>.<br/>
+<br />
+<br />
+This is &ldquo;briefly&rdquo; how GitFlow works.<br/>
+<br />
+<br /></p>
+
+<h2>SourceTree as GIT client</h2>
+
+<p>Everyone has probably used in life <code>git</code> from a terminal/shell, but what my collegues and I (but also some other friends of mine) experienced, is that a <code>git</code> client could be really interesting to use as it can result more immediate and easy to use. What we are gonna discuss in this paragraph is how to setup and how to use the client Atlassian <strong>SourceTree</strong>, respecting the <strong>GitFlow</strong> approach.<br/>
+<br/>
+Let&rsquo;s go fast and easy:</p>
+
+<p>The initial situation we should see in <code>SourceTree</code> after having branched <strong><code>develop</code></strong> from <strong><code>master</code></strong> in our repository, should be this:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/2.png" width="150" alt="SourceTree" /></p>
+
+<p>On the top bar, close to the end, we can note the button <code>GitFlow</code>:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/3.png" width="700" alt="SourceTree" /></p>
+
+<p>Pressing this button we&rsquo;ll access to the <code>GitFlow</code> configuration form:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/4.png" width="300" alt="SourceTree" /></p>
+
+<p>here we could customize the branches&#8217; names and folders, or just keep the dafault configuration (strongly suggested). <code>SourceTree</code> will use these information to create feature, hotfix and release branches, managing them properly. Clicking <strong>OK</strong>, <code>SourceTree</code> will be ready to use <code>GitFlow</code>.<br/>
+<br />
+Now it is the moment to create the first feature; so let&rsquo;s take again for instance the feature <code>IOS-941</code>. The only thing we need to do, it is to click again on the <code>GitFlow</code> button and start a new feature choosing a name for our new branch:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/5.png" width="300" alt="SourceTree" /></p>
+
+<p>We can do the same also with an <strong>hotfix</strong>, let&rsquo;s say <code>IOS-950</code>.<br/>
+So the branches situation in the left panel would looks like this:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/6.png" width="150" alt="SourceTree" /></p>
+
+<p>As you see, <code>SourceTree</code> has created for us the right subfolders.<br/>
+Well, let&rsquo;s suppose to have fixed our bug and of course we want to release a new version. We need just to click again on the <code>GitFlow</code> button, and we&rsquo;ll see the following window:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/7.png" width="300" alt="SourceTree" /></p>
+
+<p>Clicking on the <strong>Finish Current</strong> button, <code>SourceTree</code> will be ready to merge automatically our <code>hotfix</code> branch in <strong><code>develop</code></strong> and in <strong><code>master</code></strong>, offering us the chance to choose a <code>Tag</code> which will identify the new app version:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/8.png" width="300" alt="SourceTree" /></p>
+
+<p>Simple as that!<br/>
+<br />
+Now let&rsquo;s see how it works when we have to create a new <code>release</code>.<br/>
+The process is pretty the same of the previous ones but instead of starting a new <code>feature</code> or a new <code>hotfix</code>, we will start with a new <code>release</code>. After having choosen a name (i.e. <code>v1.0</code>), the result on the left panel will be this:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/9.png" width="150" alt="SourceTree" /></p>
+
+<p>As we said in the previous paragraph, what we have to do now is to test our new release, normally by QAs and Beta Testers. <strong>Any bug will be solved directly in this branch</strong> and merged back in <strong><code>develop</code></strong> to keep it updated.<br/>
+<br />
+Once we&rsquo;ll be ready to publish our version, we&rsquo;ll have to click again on the <code>GitFlow</code> button and &ldquo;finishing&rdquo; the release branch:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/10.png" width="300" alt="SourceTree" /></p>
+
+<p>As for the <code>hotfix</code>, this <code>release</code> will be merged in <strong><code>develop</code></strong> and in <strong><code>master</code></strong>, offering to us the chance to choose a <code>Tag</code> which will identify the new app version:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/11.png" width="300" alt="SourceTree" /></p>
+
+<p><br/></p>
+
+<h2>CI configuration in Jenkins</h2>
+
+<p>As you know, as Software Engineer we have to write code, but also to build, test, track and distribute our software. Any of us knows how it is boring doing manually this things, as well as how long it takes. For these and other reasons is really recommended for any company to use a <strong>Continuos Integration Server</strong>.<br/>
+Today there are many web platform offering this service like, one of the most famous, <strong>Travis</strong>. But what we ended up to do in <strong>busuu</strong> is to configure our CI Server in local, installing <a href="https://jenkins-ci.org/">Jenkins</a> (a really famous CI platform) on a server in our office.<br/>
+But I don&rsquo;t want boring you guys explaining how to configure <strong>Jenkins</strong> also because it is sufficient read the documentation and play with it. What instead I would like to share are the <strong>jobs we decided to setup on Jenkins</strong> in order to have a strong automation process:</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/gitflow/12.jpg" width="800" alt="SourceTree" /></p>
+
+<p>This image is hugly but real 😁. Those are the jobs we decided to setup in Jenkins after a 1 hour meeting.<br/>
+First of all we identified all the important tasks we would have had need. Let&rsquo;s explain them together:</p>
+
+<ul>
+<li><strong>build</strong>(+packaging): compiling all of the source files to object files, linking these together into an executable (i.e. in iOS <code>.app</code>);</li>
+<li><strong>unit tests</strong>: automated pieces of code used to checks assumptions about the behaviors of our code;</li>
+<li><strong>tests report</strong>: unit tests results;</li>
+<li><strong>tests coverage</strong>: how much the code is covered by tests;</li>
+<li><strong>functional tests</strong>: testing the software&rsquo;s functionalities (as a human) on a simulator or on a real device;</li>
+<li><strong>beta distribution</strong>: distribute the app internally for beta testing (we use <strong>Crashlitics</strong>);</li>
+<li><strong>store artificat</strong>: an artificat can be used to represent data created as a side-effect of running a Jenkins build;</li>
+<li><strong>archive</strong>: it generates an archive (i.e. <code>.ipa</code> for <strong>iOS</strong> / <code>.apk</code> for <strong>Android</strong>) ready to be sent in the market;</li>
+<li><strong>assembling</strong>: in Android it roughly corresponds to build, package and archive.</li>
+</ul>
+
+
+<p>From these we created all the necessaries jobs I&rsquo;m gonna list just below. Just to be clear: in the image you could see some job in more as there could be some difference between iOS and Android:</p>
+
+<h3>Job 1</h3>
+
+<h4>Weekend internal distribution</h4>
+
+<p><u>Branch</u>: <code>develop</code>;<br/>
+<u>Configuration</u>: <strong>Ad Hoc</strong>;<br/>
+<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>deploy</strong> > <strong>beta distribution</strong> (to devs, QA and to the whole company);<br/>
+<u>When</u>: <strong>friday afternoon</strong>.<br/>
+<br /></p>
+
+<h3>Job 2</h3>
+
+<h4>Debug for test coverage</h4>
+
+<p><u>Branch</u>: <code>develop</code>;<br/>
+<u>Configuration</u>: <strong>Debug</strong>;<br/>
+<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>test coverage</strong>;<br/>
+<u>When</u>: <strong>on commit</strong>.<br/>
+<br /></p>
+
+<h3>Job 3</h3>
+
+<h4>Internal distribution for devs and QA</h4>
+
+<p><u>Branch</u>: <code>develop</code>;<br/>
+<u>Configuration</u>: <strong>Ad Hoc</strong>;<br/>
+<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>archive</strong> > <strong>beta distribution</strong> (to devs and QA);<br/>
+<u>When</u>: <strong>on commit</strong>.<br/>
+<br /></p>
+
+<h3>Job 4</h3>
+
+<h4>Feature branches - Internal distribution for devs and QA</h4>
+
+<p><u>Branch</u>: <code>feature/*</code>;<br/>
+<u>Configuration</u>: <strong>Ad Hoc</strong>;<br/>
+<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>archive</strong> > <strong>beta distribution</strong> (to devs and QA);<br/>
+<u>When</u>: <strong>manual</strong> (when needed to test).
+<br /></p>
+
+<h3>Job 5</h3>
+
+<h4>Release - Internal distribution</h4>
+
+<p><u>Branch</u>: <code>release/*</code>;<br/>
+<u>Configuration</u>: <strong>Ad Hoc</strong>;<br/>
+<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>functional tests</strong> > <strong>archive</strong> > <strong>store artificat</strong> > <strong>beta distribution</strong> (to devs, QA and to the whole company);<br/>
+<u>When</u>: <strong>on commit</strong>.<br/>
+<br /></p>
+
+<h3>Job 6</h3>
+
+<h4>Hotfix - Internal distribution</h4>
+
+<p><u>Branch</u>: <code>hotfix/*</code>;<br/>
+<u>Configuration</u>: <strong>Ad Hoc</strong>;<br/>
+<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>functional tests</strong> > <strong>archive</strong> > <strong>store artificat</strong> > <strong>beta distribution</strong> (to devs, QA and to the whole company);<br/>
+<u>When</u>: <strong>on commit</strong>.<br/>
+<br /></p>
+
+<h3>Job 7</h3>
+
+<h4>Released app internal distribution</h4>
+
+<p><u>Branch</u>: <code>master</code>;<br/>
+<u>Configuration</u>: <strong>Ad Hoc</strong>;<br/>
+<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>functional tests</strong> > <strong>archive</strong> > <strong>store artificat</strong> > <strong>beta distribution</strong> (to devs, QA and to the whole company);<br/>
+<u>When</u>: <strong>on commit</strong>.</p>
+
+<p><br/></p>
+
+<h2>Conclusion</h2>
+
+<p>The more processes will be automated and conistent, the more you and your team will save time having your life easier.<br/>
+<br />
+Thanks to <a href="https://twitter.com/chris_cgp">Christian Garcia</a> for the review of this article.<br/>
+<br />
+<strong>Follow me on <a href="https://twitter.com/matteo_gobbi">Twitter</a></strong>!<br/>
+<br />
+Enjoy ;)</p>
+]]></content>
+  </entry>
+  
+</feed>

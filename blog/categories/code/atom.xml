@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Code | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/code/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-04-17T22:33:17+01:00</updated>
+  <updated>2015-04-28T22:33:41+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -319,7 +319,7 @@ Supposing to have <strong>4 items</strong>:</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/interaction-object/3.gif" height="300" alt="Happy" /></p>
 
-<p>Follow me on <a href="http://twitter.com/matteo_gobbi">Twitter</a>!</p>
+<p><strong>Follow me on <a href="https://twitter.com/matteo_gobbi">Twitter</a></strong>!</p>
 
 <p>Enjoy! ;)</p>
 ]]></content>
