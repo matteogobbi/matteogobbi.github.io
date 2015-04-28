@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-04-28T22:33:41+01:00</updated>
+  <updated>2015-04-28T22:56:40+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -29,7 +29,7 @@ This article wants just to show how we sorted these important things in <a href=
 
 <h2>GitFlow as branching model</h2>
 
-<p>Working in a project, always comes the time to pick a story from the board (working on that possibly without breaking the stable version of the code) and always comes the time to merge something in the main branch, testing, releasing, distributing, fixing a bug and so on.<br/>
+<p>Working in a project, always comes the time to pick a story from the board (possibly working on that without breaking the stable version of the project) and always comes the time to merge something in the main branch, testing, releasing, distributing, fixing a bug and so on.<br/>
 All these operations may easily generate a problem or break something if they are not dealt carefully. What I think is foundamental to reach this goal, is to use a <strong>consistent branching model</strong>.<br/>
 In <strong>busuu</strong>, we use <a href="http://github.com/">Github</a> as <strong>repository manager</strong>, <a href="https://www.atlassian.com/software/jira">JIRA</a> as <strong>issues and project tracker</strong>, <a href="http://git-scm.com/">Git</a> as <strong>revision control system</strong>, and we all together decided also to use <strong>GitFlow</strong> as branching model.<br/>
 <br />
@@ -41,7 +41,7 @@ Probably you may have read in the past the article <a href="http://nvie.com/post
 <br />
 Firstly we see two branches in bold: <strong><code>develop</code></strong> and <strong><code>master</code></strong>. These branches are the most important, and they will <strong>never be removed</strong> or renamed.<br/>
 <br />
-<strong><code>develop</code></strong> is the branch containing the project&rsquo;s version on which we are currently working on. This branch is in every point of the commits history <strong>deliverable</strong>. This means that it <strong>will never contains just a part of a feature</strong> or a broken piece of code, but it will instead <strong>ever contains completed features</strong> or fixes.<br/>
+<strong><code>develop</code></strong> is the branch containing the project&rsquo;s version on which we are <strong>currently working on</strong>. This branch is in every point of the commits history <strong>deliverable</strong>. This means that it <strong>will never contains just a part of a feature</strong> or a broken piece of code, but it will instead <strong>ever contains completed features</strong> or fixes.<br/>
 <br />
 <strong><code>master</code></strong> is the branch containing the project&rsquo;s version which is <strong>currently in production</strong> (i.e. AppStore, Google Play, etc.). Anytime there is a new merge on master, a new tag (normally corrisponding to the new version of the app) is created, and a new version of the app goes in production.<br/>
 <br />
@@ -54,17 +54,17 @@ What is clear from the picture is that there are other branches around these two
 
 <h4>Initial phase</h4>
 
-<p>In the initial phase of a project we should just have the main branches we just explained above: <strong><code>develop</code></strong> and <strong><code>master</code></strong>.<br/>
+<p>In the initial phase of a project we should just have the main branches just explained above: <strong><code>develop</code></strong> and <strong><code>master</code></strong>.<br/>
 <br /></p>
 
 <h3>STEP 2</h3>
 
 <h4>First feature</h4>
 
-<p>Now is the time to choose a story from our issue/project tracker (i.e. JIRA) and working on that. Let&rsquo;s say that we choose the story <code>IOS-941</code>, bringing the story from the <code>To Do</code> to the <code>In Progress</code> column.<br/>
-What we should do now, would be to <strong>create a separate branch</strong>.<br/>
+<p>Now is the time to choose a story from our issue/project tracker (i.e. JIRA) and working on that. Let&rsquo;s say that we choose the story <code>IOS-941</code>, bringing this from the <code>To Do</code> to the <code>In Progress</code> column.<br/>
+What we should do now, would be to <strong>create a separated branch</strong>.<br/>
 <br/>
-Indeed, working on develop is not a good practice, especially if we are working with a team. The risk to have conflicts breaking the project could be really high. Moreover, would be hard to keep clean the history of the project. Also remember that, for definition <strong><code>develop</code></strong> should be in any point deliverable. This means that a branch should be merged on develop just when the related feauture is completed and can be shipped. So pushing everything there would imply to have in many points of the branch, small parts of different stories, all together at the same time. In other words: <strong>an incontrollable big mess</strong>.<br/>
+Indeed, working on <code>develop</code> is not a good practice, especially if we are working with a team. The risk to have conflicts breaking the project could be really high and will be also hard to keep cleaned the project&rsquo;s history. Also remember that, for definition <strong><code>develop</code></strong> should be in any point deliverable. This means that a branch should be merged on <code>develop</code> just when the related feauture is completed and it is ready to be shipped. Instead, pushing everything there would imply to have in many points of the branch, small parts of different stories, all together at the same time. In other words: <strong>an incontrollable big mess</strong>.<br/>
 <br/>
 So as I said above, we have to create another brach starting from <strong><code>develop</code></strong>. The new banch should be created in the subfolder <code>feature</code> as we are gonna implementing exactly a new feature: <code>feature/IOS-941</code>.<br/>
 <br /></p>
