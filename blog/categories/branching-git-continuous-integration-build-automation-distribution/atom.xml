@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Branching,git,continuous,integration,build,automation,distribution | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/branching-git-continuous-integration-build-automation-distribution/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-04-29T22:00:30+01:00</updated>
+  <updated>2015-04-29T22:28:31+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -281,7 +281,9 @@ Thanks to <a href="https://twitter.com/chris_cgp">Christian Garcia</a> for the r
 <br />
 <strong>Follow me on <a href="https://twitter.com/matteo_gobbi">Twitter</a></strong>!<br/>
 <br />
-Enjoy ;)</p>
+Enjoy ;)<br/>
+<br />
+<strong>Note:</strong> This article has been reported also in the <a href="https://blog.busuu.com/branching-model-and-ci-configuration-busuu/">busuu&rsquo;s blog</a>.</p>
 ]]></content>
   </entry>
   
