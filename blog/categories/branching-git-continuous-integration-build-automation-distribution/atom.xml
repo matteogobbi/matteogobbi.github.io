@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Branching,git,continuous,integration,build,automation,distribution | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/branching-git-continuous-integration-build-automation-distribution/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-04-29T21:48:40+01:00</updated>
+  <updated>2015-04-29T21:57:47+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -89,7 +89,7 @@ Supposing that our feature has been approved even by the QA, any member of the d
 
 <p>When all the features we want to be in the next version of the app are completed and merged in <strong><code>develop</code></strong>, it is the time to create a <strong>release</strong>. So what we should do is to create a branch from <strong><code>develop</code></strong> in the subfolder <code>release</code>, ideally naming the branch with something related to the version number, like for instance <code>release/v1.0</code>.<br/>
 <br />
-What we have now in this <code>release</code> branch, it is exactly what should be delivered in the market, but of course we need still to test it again and again before to be sure that effectly we can safely making it available to everyone. This is what is called <strong>regression testing</strong>. Normally this is what the QA team does, but in <strong>busuu</strong> we also distribute the app internally for betatesting.<br/>
+What we have now in this <code>release</code> branch is what we ant to be published to production. Of course, we want to make sure that all the features have been integrated together without breaking each other. This is the point in which the QA performs the <strong>regression testing</strong>. <br/>
 Any bug found should be fixed directly in this branch, and then merged in <strong><code>develop</code></strong> to keep the working branch updated and stable.<br/>
 Please note that <strong>only bug fixes</strong> are allowed in this branch, and <strong>only <code>develop</code></strong> should be updated if this branch gets bug fixing commits.<br/>
 <br /></p>
@@ -100,7 +100,7 @@ Please note that <strong>only bug fixes</strong> are allowed in this branch, and
 
 <p>Once we properly tested and fixed eventually bugs on the <code>release</code> branch, it comes the time to submit the app in the store.<br/>
 What we should do now, would be to merge our <code>release/v1.0</code> in <strong><code>master</code></strong>, therefore finally closing this <code>release</code> branch.<br/>
-Everytime something is merged on <strong><code>master</code></strong>, <strong>a new tag related to the version of the app is created</strong>. This makes easy also navigating in the versions history in the repository.
+Everytime something is merged on <strong><code>master</code></strong>, <strong>we should create a new tag</strong> related to that published version of the app. This makes easy also navigating in the versions history in the repository.
 <br />
 When a <code>release</code> goes in <strong><code>master</code></strong>, we can finally delete <code>feature/*</code> and <code>release/*</code> branches related to this, keeping our repository clean and tidy.<br/>
 <br /></p>
@@ -110,7 +110,7 @@ When a <code>release</code> goes in <strong><code>master</code></strong>, we can
 <h4>Bug: please fix immediately!</h4>
 
 <p>Yes, it may happen.<br/>
-Just suppose that while our app is in production, a serious bug is tracked on Crashlitics (or similar). What we want to do, is to fix it immediately and to distribute another version of our app. This is what is commonly called an <strong>hotfix</strong>.<br/>
+Just suppose that while our app is in production, a serious bug is tracked on Crashlytics (or similar). What we want to do, is to fix it immediately and to distribute another version of our app. This is what is commonly called a <strong>hotfix</strong>.<br/>
 In the initial image, you see an example of <code>hotfix</code>. As you can note, a branch is created directly from <strong><code>master</code></strong>, and after having fixed the issue, the branch is merged back, again, directly on <strong><code>master</code></strong> but also on <strong><code>develop</code></strong>, to continue to keep it safe. As we said in the previous step, merging on <strong><code>master</code></strong> a new tag is created and a new version of the app gets submitted to Apple.
 The branch should be created under the subfolder <code>hotfix</code>, i.e. <code>hotfix/IOS-950</code>.<br/>
 <br />
@@ -121,7 +121,7 @@ This is &ldquo;briefly&rdquo; how GitFlow works.<br/>
 
 <h2>SourceTree as GIT client</h2>
 
-<p>Everyone has probably used in life <code>git</code> from a terminal/shell, but what my collegues and I (but also some other friends of mine) experienced, is that a <code>git</code> client could be really interesting to use as it could result more immediate and easy to use. What we are gonna discuss in this paragraph is how to setup and how to use the client Atlassian <strong>SourceTree</strong>, respecting the <strong>GitFlow</strong> approach.<br/>
+<p>Everyone has probably used in life <code>git</code> from a terminal/shell, but what my colleagues and I (but also some other friends of mine) experienced, is that a <code>git</code> client could be really interesting to use as it could result more immediate and easy to use. What we are gonna discuss in this paragraph is how to setup and how to use the client Atlassian <strong>SourceTree</strong>, respecting the <strong>GitFlow</strong> approach.<br/>
 <br/>
 Let&rsquo;s go fast and easy:</p>
 
@@ -144,7 +144,7 @@ Now it is the moment to create the first feature; so let&rsquo;s take again for 
 <p style="text-align:center;"> <img src="/../images/posts/gitflow/5.png" width="300" alt="SourceTree" /></p>
 
 <p>We can do the same also with an <strong>hotfix</strong>, let&rsquo;s say <code>IOS-950</code>.<br/>
-So the branches situation in the left panel would looks like this:</p>
+So the branches situation in the left panel would look like this:</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/gitflow/6.png" width="150" alt="SourceTree" /></p>
 
@@ -160,7 +160,7 @@ Well, let&rsquo;s suppose to have fixed our bug and of course we want to release
 <p>Simple as that!<br/>
 <br />
 Now let&rsquo;s see how it works when we have to create a new <code>release</code>.<br/>
-The process is pretty the same of the previous ones but instead of starting a new <code>feature</code> or a new <code>hotfix</code>, we will start with a new <code>release</code>. After having choosen a name (i.e. <code>v1.0</code>), the result on the left panel will be this:</p>
+The process is pretty the same of the previous ones but instead of starting a new <code>feature</code> or a new <code>hotfix</code>, we will start with a new <code>release</code>. After having chosen a name (i.e. <code>v1.0</code>), the result on the left panel will be this:</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/gitflow/9.png" width="150" alt="SourceTree" /></p>
 
@@ -178,13 +178,13 @@ Once we&rsquo;ll be ready to publish our version, we&rsquo;ll have to click agai
 
 <h2>CI configuration in Jenkins</h2>
 
-<p>As you know, as Software Engineer we have to write code, but also to build, test, track and distribute our software. Any of us knows how it is boring doing manually this things, as well as how long it takes. For these and other reasons is really recommended for any company to use a <strong>Continuos Integration Server</strong>.<br/>
+<p>As you know, as Software Engineer we have to write code, but also to build, test, track and distribute our software. Any of us developers knows how boring it is to perform these tasks manually, as well as how long it takes. For these and other reasons is really recommended for any company to use a <strong>Continuos Integration Server</strong>.<br/>
 Today there are many web platform offering this service like, one of the most famous, <strong>Travis</strong>. But what we ended up to do in <strong>busuu</strong> is to configure our CI Server in local, installing <a href="https://jenkins-ci.org/">Jenkins</a> (a really famous CI platform) on a server in our office.<br/>
-But I don&rsquo;t want boring you guys explaining how to configure <strong>Jenkins</strong> also because it is sufficient read the documentation and play with it. What instead I would like to share are the <strong>jobs we decided to setup on Jenkins</strong> in order to have a strong automation process:</p>
+But I don’t want to bore you guys by explaining how to configure Jenkins. It&#8217;is enough to read the documentation and play with it. What instead I would like to share are the <strong>jobs we decided to setup on Jenkins</strong> in order to have a strong automation process:</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/gitflow/12.jpg" width="800" alt="SourceTree" /></p>
 
-<p>This image is hugly but real 😁. Those are the jobs we decided to setup in Jenkins after a 1 hour meeting.<br/>
+<p>This image is ugly but real 😁. Those are the jobs we decided to set up in Jenkins after a 1 hour meeting.<br/>
 First of all we identified all the important tasks we would have had need. Let&rsquo;s explain them together:</p>
 
 <ul>
@@ -193,7 +193,7 @@ First of all we identified all the important tasks we would have had need. Let&r
 <li><strong>tests report</strong>: unit tests results;</li>
 <li><strong>tests coverage</strong>: how much the code is covered by tests;</li>
 <li><strong>functional tests</strong>: testing the software&rsquo;s functionalities (as a human) on a simulator or on a real device;</li>
-<li><strong>beta distribution</strong>: distribute the app internally for beta testing (we use <strong>Crashlitics</strong>);</li>
+<li><strong>beta distribution</strong>: distribute the app internally for beta testing (we use <strong>Crashlytics</strong>);</li>
 <li><strong>store artificat</strong>: an artificat can be used to represent data created as a side-effect of running a Jenkins build;</li>
 <li><strong>archive</strong>: it generates an archive (i.e. <code>.ipa</code> for <strong>iOS</strong> / <code>.apk</code> for <strong>Android</strong>) ready to be sent in the market;</li>
 <li><strong>assembling</strong>: in Android it roughly corresponds to build, package and archive.</li>
