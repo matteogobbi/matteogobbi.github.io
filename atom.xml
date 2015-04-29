@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-04-28T23:26:31+01:00</updated>
+  <updated>2015-04-29T21:48:10+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -19,7 +19,7 @@
     <updated>2015-04-27T22:40:55+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu</id>
     <content type="html"><![CDATA[<p>Any tech company which has a team of developers working on a project, needs to have a repository and to use a revision control system, as for instance <strong>Git</strong>.<br/>
-Unfortunately, even if the platform/tool&rsquo;s choice is more or less reconducible every time to a small group of these latters, many companies and particularly many teams, still don&rsquo;t use a strong <strong>Branching Model</strong> and a powerful <strong>Continuos Integration configuration</strong>.<br/>
+Unfortunately, even though the choice of platforms/tools seems to be pretty standard for most development teams, many companies and particularly many teams, still don&rsquo;t use a strong <strong>Branching Model</strong> and a powerful <strong>Continuos Integration configuration</strong>.<br/>
 This article wants just to show how we sorted these important things in <a href="http://busuu.com/">busuu</a>, giving an idea of what we think is nicely organized.</p>
 
 <!--more-->
@@ -41,11 +41,11 @@ Probably you may have read in the past the article <a href="http://nvie.com/post
 <br />
 Firstly we see two branches in bold: <strong><code>develop</code></strong> and <strong><code>master</code></strong>. These branches are the most important, and they will <strong>never be removed</strong> or renamed.<br/>
 <br />
-<strong><code>develop</code></strong> is the branch containing the project&rsquo;s version on which we are <strong>currently working on</strong>. This branch is in every point of the commits history <strong>deliverable</strong>. This means that it <strong>will never contains just a part of a feature</strong> or a broken piece of code, but it will instead <strong>ever contains completed features</strong> or fixes.<br/>
+<strong><code>develop</code></strong> is the branch containing the project&rsquo;s version on which we are <strong>currently working on</strong>. Every node of this branch should be always <strong>release ready</strong> (i.e. we should be able to create a release from it). This means that it <strong>will never contains just a part of a feature</strong> or a broken piece of code, but it will instead <strong>ever contains completed features</strong> or fixes.<br/>
 <br />
-<strong><code>master</code></strong> is the branch containing the project&rsquo;s version which is <strong>currently in production</strong> (i.e. AppStore, Google Play, etc.). Anytime there is a new merge on master, a new tag (normally corrisponding to the new version of the app) is created, and a new version of the app goes in production.<br/>
+<strong><code>master</code></strong> is the branch containing the project&rsquo;s version which is <strong>currently in production</strong> (i.e. AppStore, Google Play, etc.). Every node of this branch should match with an actual release in production.
 <br />
-Cool, the principal branches have been quickly explained.<br/>
+Cool, the main branches have been quickly explained.<br/>
 What is clear from the picture is that there are other branches around these two, and they are what I call &ldquo;<strong>temporary</strong> branches&rdquo;. I&rsquo;m gonna explain what these are, showing step by step how <strong>GitFlow</strong> works and how should we apply it:
 <br />
 <br /></p>
@@ -64,16 +64,16 @@ What is clear from the picture is that there are other branches around these two
 <p>Now is the time to choose a story from our issue/project tracker (i.e. JIRA) and working on that. Let&rsquo;s say that we choose the story <code>IOS-941</code>, bringing this from the <code>To Do</code> to the <code>In Progress</code> column.<br/>
 What we should do now, would be to <strong>create a separated branch</strong>.<br/>
 <br/>
-Indeed, working on <code>develop</code> is not a good practice, especially if we are working with a team. The risk to have conflicts breaking the project could be really high and will be also hard to keep cleaned the project&rsquo;s history. Also remember that, for definition <strong><code>develop</code></strong> should be in any point deliverable. This means that a branch should be merged on <code>develop</code> just when the related feauture is completed and it is ready to be shipped. Instead, pushing everything there would imply to have in many points of the branch, small parts of different stories, all together at the same time. In other words: <strong>an incontrollable big mess</strong>.<br/>
+Indeed, working on <code>develop</code> is not a good practice, especially if we are working with a team. The risk to have conflicts breaking the project could be really high and will be also hard to keep cleaned the project&rsquo;s history. Also remember that, for definition <strong><code>develop</code></strong> should be in any point deliverable. This means that a branch should be merged on <code>develop</code> just when the related feauture is completed and it is ready to be shipped. Instead, pushing everything there would imply to have in many points of the branch, small parts of different stories, all together at the same time. In other words: <strong>an uncontrollable big mess</strong>.<br/>
 <br/>
-So as I said above, we have to create another brach starting from <strong><code>develop</code></strong>. The new banch should be created in the subfolder <code>feature</code> as we are gonna implementing exactly a new feature: <code>feature/IOS-941</code>.<br/>
+So as I said above, we have to create another branch starting from <strong><code>develop</code></strong>. The new banch should be created in the subfolder <code>feature</code> as we are, indeed, implementing a new feature: <code>feature/IOS-941</code>.<br/>
 <br /></p>
 
 <h3>STEP 3</h3>
 
 <h4>The feature is complete</h4>
 
-<p>After having finished our feature, of course we would like to close and merging it into the <strong><code>develop</code></strong> branch.<br/>
+<p>After having finished our feature, of course we would like to close it and merge it into the <strong><code>develop</code></strong> branch.<br/>
 That&rsquo;s the time to ask a <strong>Pull Request</strong>.
 <br /><br/>
 A <strong>Pull Request</strong>, is a request made to the devs team, in order to let them review and eventually approve our code, merging it on <strong><code>develop</code></strong>.
@@ -89,7 +89,7 @@ Supposing that our feature has been approved even by the QA, any member of the d
 
 <p>When all the features we want to be in the next version of the app are completed and merged in <strong><code>develop</code></strong>, it is the time to create a <strong>release</strong>. So what we should do is to create a branch from <strong><code>develop</code></strong> in the subfolder <code>release</code>, ideally naming the branch with something related to the version number, like for instance <code>release/v1.0</code>.<br/>
 <br />
-What we have now in this <code>release</code> branch, it is exactly what should be delivered in the market, but of course we need still to test it again and again before to be sure that effectly we can safely making it available to everyone. Normally this is what the QA team does, but in <strong>busuu</strong> we also distribute the app internally for betatesting.<br/>
+What we have now in this <code>release</code> branch, it is exactly what should be delivered in the market, but of course we need still to test it again and again before to be sure that effectly we can safely making it available to everyone. This is what is called <strong>regression testing</strong>. Normally this is what the QA team does, but in <strong>busuu</strong> we also distribute the app internally for betatesting.<br/>
 Any bug found should be fixed directly in this branch, and then merged in <strong><code>develop</code></strong> to keep the working branch updated and stable.<br/>
 Please note that <strong>only bug fixes</strong> are allowed in this branch, and <strong>only <code>develop</code></strong> should be updated if this branch gets bug fixing commits.<br/>
 <br /></p>
