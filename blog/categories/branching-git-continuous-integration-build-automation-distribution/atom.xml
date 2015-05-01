@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Branching,git,continuous,integration,build,automation,distribution | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/branching-git-continuous-integration-build-automation-distribution/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-04-29T22:28:31+01:00</updated>
+  <updated>2015-04-30T18:34:00+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -43,7 +43,7 @@ Firstly we see two branches in bold: <strong><code>develop</code></strong> and <
 <br />
 <strong><code>develop</code></strong> is the branch containing the project&rsquo;s version on which we are <strong>currently working on</strong>. Every node of this branch should be always <strong>release ready</strong> (i.e. we should be able to create a release from it). This means that it <strong>will never contains just a part of a feature</strong> or a broken piece of code, but it will instead <strong>ever contains completed features</strong> or fixes.<br/>
 <br />
-<strong><code>master</code></strong> is the branch containing the project&rsquo;s version which is <strong>currently in production</strong> (i.e. AppStore, Google Play, etc.). Every node of this branch should match with an actual release in production.
+<strong><code>master</code></strong> is the branch containing the project&rsquo;s version which is <strong>currently in production</strong> (i.e. AppStore, Google Play, etc.). Every node of this branch should match with an actual release in production.<br/>
 <br />
 Cool, the main branches have been quickly explained.<br/>
 What is clear from the picture is that there are other branches around these two, and they are what I call &ldquo;<strong>temporary</strong> branches&rdquo;. I&rsquo;m gonna explain what these are, showing step by step how <strong>GitFlow</strong> works and how should we apply it:
@@ -89,7 +89,7 @@ Supposing that our feature has been approved even by the QA, any member of the d
 
 <p>When all the features we want to be in the next version of the app are completed and merged in <strong><code>develop</code></strong>, it is the time to create a <strong>release</strong>. So what we should do is to create a branch from <strong><code>develop</code></strong> in the subfolder <code>release</code>, ideally naming the branch with something related to the version number, like for instance <code>release/v1.0</code>.<br/>
 <br />
-What we have now in this <code>release</code> branch is what we ant to be published to production. Of course, we want to make sure that all the features have been integrated together without breaking each other. This is the point in which the QA performs the <strong>regression testing</strong>. <br/>
+What we have now in this <code>release</code> branch is what we want to be published to production. Of course, we want to make sure that all the features have been integrated together without breaking each other. This is the point in which the QA performs the <strong>regression testing</strong>. <br/>
 Any bug found should be fixed directly in this branch, and then merged in <strong><code>develop</code></strong> to keep the working branch updated and stable.<br/>
 Please note that <strong>only bug fixes</strong> are allowed in this branch, and <strong>only <code>develop</code></strong> should be updated if this branch gets bug fixing commits.<br/>
 <br /></p>
@@ -121,7 +121,7 @@ This is &ldquo;briefly&rdquo; how GitFlow works.<br/>
 
 <h2>SourceTree as GIT client</h2>
 
-<p>Everyone has probably used in life <code>git</code> from a terminal/shell, but what my colleagues and I (but also some other friends of mine) experienced, is that a <code>git</code> client could be really interesting to use as it could result more immediate and easy to use. What we are gonna discuss in this paragraph is how to setup and how to use the client Atlassian <strong>SourceTree</strong>, respecting the <strong>GitFlow</strong> approach.<br/>
+<p>Every developer has probably used in life <code>git</code> from a terminal/shell, but what my colleagues and I (but also some other friends of mine) experienced, is that a <code>git</code> client could be really interesting to use as it could result more immediate and easy to use. What we are gonna discuss in this paragraph is how to set up and how to use the client Atlassian <strong>SourceTree</strong>, respecting the <strong>GitFlow</strong> approach.<br/>
 <br/>
 Let&rsquo;s go fast and easy:</p>
 
@@ -178,9 +178,9 @@ Once we&rsquo;ll be ready to publish our version, we&rsquo;ll have to click agai
 
 <h2>CI configuration in Jenkins</h2>
 
-<p>As you know, as Software Engineer we have to write code, but also to build, test, track and distribute our software. Any of us developers knows how boring it is to perform these tasks manually, as well as how long it takes. For these and other reasons is really recommended for any company to use a <strong>Continuos Integration Server</strong>.<br/>
+<p>As you know, as Software Engineers we have to write code, but also to build, test, track and distribute our software. Any of us developers knows how boring it is to perform these tasks manually, as well as how long it takes. For these and other reasons is really recommended for any company to use a <strong>Continuos Integration Server</strong>.<br/>
 Today there are many web platform offering this service like, one of the most famous, <strong>Travis</strong>. But what we ended up to do in <strong>busuu</strong> is to configure our CI Server in local, installing <a href="https://jenkins-ci.org/">Jenkins</a> (a really famous CI platform) on a server in our office.<br/>
-But I don’t want to bore you guys by explaining how to configure Jenkins. It&#8217;is enough to read the documentation and play with it. What instead I would like to share are the <strong>jobs we decided to setup on Jenkins</strong> in order to have a strong automation process:</p>
+But I don’t want to bore you guys by explaining how to configure Jenkins. It&#8217;is enough to read the documentation and play with it. What instead I would like to share are the <strong>jobs we decided to set up on Jenkins</strong> in order to have a strong automation process:</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/gitflow/12.jpg" width="800" alt="SourceTree" /></p>
 
@@ -208,7 +208,7 @@ First of all we identified all the important tasks we would have had need. Let&r
 
 <p><u>Branch</u>: <code>develop</code>;<br/>
 <u>Configuration</u>: <strong>Ad Hoc</strong>;<br/>
-<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>deploy</strong> > <strong>beta distribution</strong> (to devs, QA and to the whole company);<br/>
+<u>Tasks</u>: <strong>build</strong> > <strong>unit tests</strong> > <strong>tests report</strong> > <strong>archive</strong> > <strong>beta distribution</strong> (to devs, QA and to the whole company);<br/>
 <u>When</u>: <strong>friday afternoon</strong>.<br/>
 <br /></p>
 
