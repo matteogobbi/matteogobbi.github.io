@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-c | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-04-30T18:34:00+01:00</updated>
+  <updated>2015-08-03T12:03:57+02:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Anatomy of a TableView(Controller) Architecture]]></title>
     <link href="http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/"/>
-    <updated>2015-03-22T02:09:15+00:00</updated>
+    <updated>2015-03-22T03:09:15+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture</id>
     <content type="html"><![CDATA[<p><code>UITableView</code>s are part of our projects since the very beginning of the iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: in a <strong>well architected way</strong>.</p>
 
@@ -306,7 +306,7 @@ Thanks to <a href="http://twitter.com/albertodebo">Alberto De Bortoli</a> for th
   <entry>
     <title type="html"><![CDATA[Extending Methods in a Category by Method Swizzling]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
-    <updated>2014-12-15T21:57:25+00:00</updated>
+    <updated>2014-12-15T22:57:25+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
     <content type="html"><![CDATA[<p>Overriding a method in a category <strong>is NOT possible</strong>.</p>
 
@@ -563,9 +563,9 @@ Basically we are saying to the class to exchange his <code>SEL</code> -> <code>M
   
   <entry>
     <title type="html"><![CDATA[Interaction Object]]></title>
-    <link href="http://matteogobbi.github.io/blog/2014/10/30/interaction-object/"/>
-    <updated>2014-10-30T23:16:22+00:00</updated>
-    <id>http://matteogobbi.github.io/blog/2014/10/30/interaction-object</id>
+    <link href="http://matteogobbi.github.io/blog/2014/10/31/interaction-object/"/>
+    <updated>2014-10-31T00:16:22+01:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/10/31/interaction-object</id>
     <content type="html"><![CDATA[<p>As a developer I often find myself in the situation where I have to face the problem to store and get some kind of information in the most possible handy way.<br/>
 In particular, this happens when you design a static menu list (e.g side panel or harburger menu) using a <code>UITableView</code>.</p>
 
@@ -875,9 +875,9 @@ Supposing to have <strong>4 items</strong>:</p>
   
   <entry>
     <title type="html"><![CDATA[Autorelease - Under the Hood]]></title>
-    <link href="http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/"/>
-    <updated>2014-09-28T23:24:37+01:00</updated>
-    <id>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood</id>
+    <link href="http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood/"/>
+    <updated>2014-09-29T00:24:37+02:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood</id>
     <content type="html"><![CDATA[<p>Since this is an argument less touched but much important, I decided to write an article to organize the informations and explain how <code>autorelease</code>, or better <strong>autorelease pool</strong> works.</p>
 
 <p>The main goal of this article is not to explain the base of what is an <strong>autorelease pool</strong> and when <code>autorelease</code> should be used, but anyway, this is really important to understand these concepts before proceeding. For this reason, the first paragraph will be dedicated to explain them. Experts developers, can safely skip it if they want.</p>
@@ -1028,7 +1028,7 @@ So basically when the object call <code>autorelease</code>, it does something li
 
 <pre><code class="objc">- (void)autorelease
 {
-    AutoreleasePool *pool = /* Take from the stack the most recently autorelease pool */
+    AutoreleasePool *pool = /* Get the most recet autorelease pool from the stack */
     [pool add:self];
 }
 </code></pre>

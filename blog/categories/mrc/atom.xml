@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mrc | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/mrc/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-04-30T18:34:00+01:00</updated>
+  <updated>2015-08-03T12:03:57+02:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Autorelease - Under the Hood]]></title>
-    <link href="http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/"/>
-    <updated>2014-09-28T23:24:37+01:00</updated>
-    <id>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood</id>
+    <link href="http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood/"/>
+    <updated>2014-09-29T00:24:37+02:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood</id>
     <content type="html"><![CDATA[<p>Since this is an argument less touched but much important, I decided to write an article to organize the informations and explain how <code>autorelease</code>, or better <strong>autorelease pool</strong> works.</p>
 
 <p>The main goal of this article is not to explain the base of what is an <strong>autorelease pool</strong> and when <code>autorelease</code> should be used, but anyway, this is really important to understand these concepts before proceeding. For this reason, the first paragraph will be dedicated to explain them. Experts developers, can safely skip it if they want.</p>
@@ -168,7 +168,7 @@ So basically when the object call <code>autorelease</code>, it does something li
 
 <pre><code class="objc">- (void)autorelease
 {
-    AutoreleasePool *pool = /* Take from the stack the most recently autorelease pool */
+    AutoreleasePool *pool = /* Get the most recet autorelease pool from the stack */
     [pool add:self];
 }
 </code></pre>
