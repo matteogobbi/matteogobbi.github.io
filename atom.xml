@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-08-18T00:48:27+02:00</updated>
+  <updated>2015-08-18T00:49:14+02:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -12,6 +12,97 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Teamworking]]></title>
+    <link href="http://matteogobbi.github.io/blog/2015/07/30/teamworking/"/>
+    <updated>2015-07-30T23:29:42+02:00</updated>
+    <id>http://matteogobbi.github.io/blog/2015/07/30/teamworking</id>
+    <content type="html"><![CDATA[<p>A team, is a machine. We can imagine it like a car which goes straight ahead without issues. Like a car, it has a mechanism which should be built possibly to be bug-free. The displacement is the energy of any team member. The fuel is the passion.</p>
+
+<p>In this article we&rsquo;ll discuss some good approach to make our team working properly and with the right attitude. Even if these approaches can be valid for any kind of team, I&rsquo;ll talk especially about a tech team, that is actually the kind of team which I work in.</p>
+
+<!--more-->
+
+
+<p><br/></p>
+
+<h2>Cultural fit</h2>
+
+<p>Spending most of your daily time with the same people, every day, means discussing, accepting and sharing.<br/>
+Writing code in a project with other people means <strong>trust them</strong> and their skills.<br/>
+So how can we figuring out if a person is the right one with who working together?</p>
+
+<p>Hiring a person in a team is not that easy: it means investing on him, spending time to let him fully enter in the project and in all the processes. Moreover, we&rsquo;d never want to break the team&rsquo;s sinergy and happiness hiring the wrong person.</p>
+
+<p>When I interview a tech candidate in my company, I try to understand as more as possible (and in a very short time) if he has the right technical skills and if he can culturally fit our team.<br/>
+In our company we normally have 4/5 steps in which the candidate as well as getting a techincal interview, has to meet the CEO, the Product Manager and some other member of the team. When the interview is finished, we have a quick standup meeting to share our opinion with the other interviewer. Of course the priority is on the techincal point of view, as if the candidate doesn&rsquo;t rich our skills requirements, there isn&rsquo;t anything else to discuss. If instead he does, the conversation go ahead on the cultural aspect.</p>
+
+<p>Here the truth: it is not easy to evaluate the personality of a guy in 1 hour or kind of, but if the most of us has the same impression, that could be probably true.<br/>
+There are a couple of pretty funny questions we make each other in every of this meeting: <strong>would you take a beer with this guy?</strong> or <strong>Would you talk with this guy while you are waiting for your flight?</strong><br/>
+They could seem 2 stupid questions, but don&rsquo;t get me wrong: these questions just help us to make concrete an abstract aspect, making easier to express our opinion. Our goal is just to understand if we&rsquo;d be happy to work with that person, and if that person would be happy to be every day with us.</p>
+
+<p>Another good point to mention, is about the candidate&rsquo;s past experiences.<br/>
+Just because a candidate used to work in Facebook, Google or any other very top company, doesn&rsquo;t mean that for sure he&rsquo;d fit our team.<br/>
+Working in a small/medium company is most of the time totally different in both aspects, technical and cultural. Indeed, being the company smaller, the team could be lesser scaled, therefore the position could actually requieres more responsibilities. Moreover, being minor the quantity of employees, the cultural aspect could be much more significant.<br/>
+<br/></p>
+
+<h2>Scheduling process</h2>
+
+<p>In the former paragraph I mentioned the importance to &ldquo;be aligned&rdquo; with the team&rsquo;s processes. A very famous software development process used in many teams, is the <strong>Agile methodology</strong>.<br/>
+<strong>Scrum</strong> is an agile approach to manage projects. First of all I have to say that we will call <code>story</code> any feature, bug, task or improvement which has to be worked on the project. There are several online tools to track <strong>Stories</strong>, one of this (and also a very famous one) is <strong>JIRA</strong>.<br/>
+JIRA is really powerful and it has a lot of functions that I&rsquo;ll not explain in this article. Instead I wanna talk about <strong>boards</strong>. In JIRA we can create a <code>board</code> related to a project (i.e. iOS app) where we can track our stories. The board has to be divided in  columns, that in SCRUM are normally these:<br/>
+<br/>
+<code>TO DO</code> -> <code>IN PROGRESS</code> -> <code>REVIEW</code> -> <code>TESTING</code> -> <code>READY</code> -> <code>DONE</code><br/>
+<br/>
+The reason why I put arrows between columns is because this is the sequence which any story should follow.<br/>
+The process is easy: when a story is in <code>TO DO</code>, means that no one is working on that, and it is waiting to be moved in progress.<br/>
+When someone start to work on the story, he moves it in the <code>IN PROGRESS</code> column. Other developers, will see that story already started from someone else, avoiding to start working on the same thing.<br/>
+When a developer complete a story, he moves it in <code>REVIEW</code>. The <code>REVIEW</code> state means that another developer should have a look to that story, confirming or not its completeness and correctness. If it is correct, it will be moved in the <code>TESTING</code> column, otherwise back <code>IN PROGRESS</code>.<br/>
+Now is the time of QAs. They have to test properly the story and if everything is ok, they should move it in the <code>READY</code> column. At this point, developers can merge the story in the main <code>develop</code> branch, moving it in the <code>DONE</code> column.<br/>
+<br/>
+Some team use to have a couple of columns in more that are <code>WAITING FOR REVIEW</code> and <code>WAITING FOR TESTING</code>, but in our team we prefer to have lesser states.
+There are a few really important steps that make Scrum extremelly useful. Let&rsquo;s see them 1 by 1:<br/>
+<br/></p>
+
+<h3>Backlog Grooming</h3>
+
+<p><strong>Backlog Grooming</strong> is a meeting that normally takes 30/60 minutes in which the team prioritize the stories in the backlog. Prioritize means <strong>move on top the most important stories</strong>. Stories on top, will be the firsts to be inserted in the next sprint.</p>
+
+<h3>Sprint Planning</h3>
+
+<p><strong>Sprint Planning</strong> is a meeting in which the team discuss and estimate the stories on top of the backlog, in order to put them in the next sprint. A sprint can be of an arbitrary duration, but commonly it takes 2 weeks. In this period the team should complete all the stories inserted in it. Initially it is not easy figuring out how many stories the team can complete in 2 weeks, as it is not easy to estimate them. Sprint by sprint it will become naturally easier. There are different ways to estimate a story, one of this is the <strong>T-shirt size</strong> <code>(.., XS, S, M, L, XL, ..)</code>. Personally I don&rsquo;t like it. I do prefer numbers ;). A classic sequence to use is the <strong>Fibonacci&rsquo;s</strong> <code>(1, 2, 3, 5, 8, 13, 21, ..)</code>.<br/>
+This meeting is extremely important to <strong>keep the team aligned on what are the next things to do, and how long they should take</strong>.</p>
+
+<h3>Daily Standup Meeting</h3>
+
+<p>In this meeting, every morning before start to work, team&rsquo;s members stand in circle. 1 by 1 they say to the rest of the group <strong>what they did yesterday, and what they will do today</strong>.<br/>
+This meeting has to be quick, it can takes between 10 and 30 minutes according with the team size. Every member can talk for 1 or 2 minutes, then the ball pass in the hands of the next member. This is exactly the reason why this meeting is performed by standing in circle. Standing, people are tempted to be 100% focused and to be quick on talking.</p>
+
+<h3>Sprint Review</h3>
+
+<p><strong>Sprint Review</strong> is the meeting happening at the end of the sprint. Here the sprint gets closed and a member of the team explains what has been completed and what has been not, mentioning eventual scope changes or issues encountered.</p>
+
+<h3>Sprint Retrospective</h3>
+
+<p>Immediatelly after the Sprint Review, there is the <strong>Sprint Retrospective</strong>. The goal of this team is to bring out anything to improveTime boxing should be part of retrospective
+no many company do this properly</p>
+
+<p>follow the scheduling on the board</p>
+
+<p><br/></p>
+
+<h2>Pair programming</h2>
+
+<p>Sometimes</p>
+
+<p><br/></p>
+
+<h2>Conclusion</h2>
+
+<p>&hellip;</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Branching Model and CI Configuration @ Busuu]]></title>
