@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Branching,git,continuous,integration,build,automation,distribution | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/branching-git-continuous-integration-build-automation-distribution/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-08-20T00:38:11+02:00</updated>
+  <updated>2015-08-27T22:52:05+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Branching Model and CI Configuration @ Busuu]]></title>
     <link href="http://matteogobbi.github.io/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu/"/>
-    <updated>2015-04-27T23:40:55+02:00</updated>
+    <updated>2015-04-27T22:40:55+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu</id>
     <content type="html"><![CDATA[<p>Any tech company which has a team of developers working on a project, needs to have a repository and to use a revision control system, as for instance <strong>Git</strong>.<br/>
 Unfortunately, even though the choice of platforms/tools seems to be pretty standard for most development teams, many companies and particularly many teams, still don&rsquo;t use a strong <strong>Branching Model</strong> and a powerful <strong>Continuos Integration configuration</strong>.<br/>

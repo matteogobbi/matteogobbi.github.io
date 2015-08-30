@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Arc | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/arc/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-08-20T00:38:11+02:00</updated>
+  <updated>2015-08-27T22:52:05+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Autorelease - Under the Hood]]></title>
-    <link href="http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood/"/>
-    <updated>2014-09-29T00:24:37+02:00</updated>
-    <id>http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood</id>
+    <link href="http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/"/>
+    <updated>2014-09-28T23:24:37+01:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood</id>
     <content type="html"><![CDATA[<p>Since this is an argument less touched but much important, I decided to write an article to organize the informations and explain how <code>autorelease</code>, or better <strong>autorelease pool</strong> works.</p>
 
 <p>The main goal of this article is not to explain the base of what is an <strong>autorelease pool</strong> and when <code>autorelease</code> should be used, but anyway, this is really important to understand these concepts before proceeding. For this reason, the first paragraph will be dedicated to explain them. Experts developers, can safely skip it if they want.</p>
