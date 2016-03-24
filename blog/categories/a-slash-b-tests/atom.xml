@@ -4,7 +4,7 @@
   <title><![CDATA[Category: A/b Tests | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/a-slash-b-tests/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-03-24T10:31:07+00:00</updated>
+  <updated>2016-03-24T11:32:56+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -18,7 +18,7 @@
     <link href="http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments/"/>
     <updated>2016-03-24T09:02:48+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments</id>
-    <content type="html"><![CDATA[<p>Making experiments on a product is one of the most powerful tecnique for a company to get the best respose from its customers. But sometimes, especially when they are more than 2 or 3 at the same time, it may become a bit frustrating for developers who find pieces of experiment blocks around the whole project.<br/>
+    <content type="html"><![CDATA[<p>Making experiments on a product is one of the most powerful tecnique for a company to get the best response from its customers. But sometimes, especially when they are more than 2 or 3 at the same time, it may become a bit frustrating for developers who find pieces of experiment blocks around the whole project.<br/>
 In this article I&rsquo;ll explain an easy architectural approach to keep our code clean and dynamic.</p>
 
 <!--more-->
@@ -28,34 +28,35 @@ In this article I&rsquo;ll explain an easy architectural approach to keep our co
 
 <h2>What&rsquo;s an A/B test?</h2>
 
-<p>Let&rsquo;s suppose we want to improve a feature of our app in order to get more users using it. We have few idea to improve it (involving design, visibility, etc), but we don&rsquo;t know exactly which one would be the best to get the max response by our users. The solution is set up an <strong>A/B test</strong>.<br/>
+<p>Let&rsquo;s suppose we want to improve a feature of our app in order to get more users using it. We have few idea to improve it (involving design, visibility, etc), but we don&rsquo;t know exactly which one would be the best to get the max response by our users. The solution is to set up an <strong>A/B test</strong>.<br/>
 An A/B test is an experiment which randomnly allocates users in a specific variation. Let&rsquo;s see how does it work:<br/>
 <br>
 Let&rsquo;s say that we want to know which is the best price we should sell our premium membership in order to get the most high revenues.<br/>
 We decide to setup 3 variation:</p>
 
 <ul>
-<li><strong>Variation A</strong> (and current price): 15,00 $;</li>
-<li><strong>Variation B</strong>: 25,00 $;</li>
-<li><strong>Variation C</strong>: 40,00 $.</li>
+<li><strong>Original Variation</strong>: 15,00 $;</li>
+<li><strong>Variation A</strong>: 25,00 $;</li>
+<li><strong>Variation B</strong>: 40,00 $.</li>
 </ul>
 
 
-<p>Every user using our app, through specific APIs (i.e. <a href="http://apptimize.com/">Apptimize</a> APIs), will be allocated in one of these variations, and the service will return to our client where the user has been allocated. At this point, we&rsquo;ll execute a piece of code rather than another, according with the choosen variation. In this specific case, we&rsquo;ll show to the user the choosen price for that variation. Note that <strong>an experiment, must always includes the original variation</strong> which was there before starting the experiment, otherwise you&rsquo;ll never know if that was the best solution or if effectivelly was not good enough.</p>
+<p>Every user using our app, through specific APIs (i.e. <a href="http://apptimize.com/">Apptimize</a> APIs), will be allocated in one of these variations, and the service will return to our client where the user has been allocated. At this point, we&rsquo;ll execute a piece of code rather than another, according with the choosen variation.<br/>
+In the example above, the user will see the choosen price for that variation. Note that <strong>an experiment, must always includes the original variation</strong>, or in other words, the variation which was there before starting the experiment, otherwise we&rsquo;d never know if that was the best solution or if effectivelly was not good enough.</p>
 
 <p>Great job, the experiment is running! Now we have just to wait an arbitrary amount of time and get the results.<br/>
 <br>
 Ok, a week is gone and we found out these results:</p>
 
 <ul>
-<li>Variation A: <strong>1000 users</strong> payed 15,00 $ -> <strong>15.000,00 $ in revenues</strong>;</li>
-<li>Variation B: <strong>800 users</strong> payed 25,00 $ -> <strong>20.000,00 $ in revenues</strong>;</li>
-<li>Variation C: <strong>300 users</strong> payed 40,00 $ -> <strong>12.000,00 $ in revenues</strong>;</li>
+<li>Original Variation: <strong>1000 users</strong> payed 15,00 $ -> <strong>15.000,00 $ in revenues</strong>;</li>
+<li>Variation A: <strong>800 users</strong> payed 25,00 $ -> <strong>20.000,00 $ in revenues</strong>;</li>
+<li>Variation B: <strong>300 users</strong> payed 40,00 $ -> <strong>12.000,00 $ in revenues</strong>;</li>
 </ul>
 
 
-<p>Note that neither the lowest and highest prices won! Indeed <strong>Variation B</strong> (with a middle price) produced the highest revenues.<br/>
-We can so set the price of our service memebership to 25,00$ and close the experiment.</p>
+<p>Note that neither the lowest price nor the highest price won! Indeed <strong>Variation A</strong> (with a middle price) produced the highest revenues.<br/>
+Therefore, we should set the price of our service memebership to 25,00$ and close the experiment.</p>
 
 <p><br/></p>
 
@@ -88,7 +89,7 @@ We can so set the price of our service memebership to 25,00$ and close the exper
 Let&rsquo;s see the downsides of using this approach:</p>
 
 <p><strong>☹ Dirty code</strong><br/>
-In addition to have &ldquo;spaghetti code&rdquo;, XCode not even apply a correct sintax higlighting for pieces of code like the one above;</p>
+In addition to have &ldquo;spaghetti code&rdquo;, XCode desn&rsquo;t apply a correct <strong>sintax higlighting</strong> for pieces of code like the one above;</p>
 
 <p><strong>☹ Imports</strong><br/>
 A/B test framework <strong>imported here and there around the whole project</strong>;</p>
@@ -97,11 +98,11 @@ A/B test framework <strong>imported here and there around the whole project</str
 Even if they should be avoided, <strong>nested experiments become really hard to manage</strong>;</p>
 
 <p><strong>☹ No nil blocks</strong><br/>
-If in some part of the app, you need to excute a block of code, just in the variations of the experiment, <strong>you cannot return <code>nil</code> in the baseline block</strong>. You have instead to return an empty block;</p>
+If you need to excute a block of code just in the variations of the experiment, doing nothing in the original variation, <strong>you cannot return <code>nil</code> in the baseline block</strong>. You have instead to return an empty block;</p>
 
 <p><strong>☹ Checking implies running</strong><br/>
-In order to <strong>check if an user has been allocated in an experiment&rsquo;s variation, you need to run the test every time</strong>. Every time you run an experiment on an user, he becomes part of it, and affects the final stats. Sometimes you might instead want just to check if he has been allocated in the experiment or not, without running it.<br/>
-For example if you want to run an experiment on users which respect a specific condition, but at some point in the app you need to check if the current user is in a variation of this experiment or not without risking to allocate him in the experiment itself, it may be not easy to solve, and your code could really become dirty and tricky to read;</p>
+In order to <strong>check if an user has been allocated in an experiment&rsquo;s variation, you need to run the test every time</strong>. Every time you run an experiment on an user, he becomes part of it, affecting the final stats. Sometimes instead, you might want just to check if he has been allocated in the experiment or not, without running it.<br/>
+For example if you want to run an experiment on users which respect a specific condition, and at some point in the app you need to check if the current user is in a variation of this experiment or not without risking to allocate him in the experiment itself, it may be not easy to solve, and your code could really become dirty and tricky to read;</p>
 
 <p><strong>☹ Not easy to remove</strong><br/>
 Don&rsquo;t forget that <strong>experiments are temporary</strong>, and you might want to easily remove them once closed. So you should not over complicate your current architecture and code;</p>
@@ -113,7 +114,7 @@ Experiments will <strong>run also during unit tests</strong>. To avoid this, you
 
 <h2>A separate experiment manager</h2>
 
-<p>In order to solve the downsides exposed in the previous paragraph, you first need to wrap the &ldquo;A/B test&rdquo; framework inside a custom class:</p>
+<p>In order to solve the downsides exposed in the previous paragraph, we first need to wrap the &ldquo;A/B test&rdquo; framework inside a custom class:</p>
 
 <pre><code class="objc">#import &lt;Foundation/Foundation.h&gt;
 
@@ -124,8 +125,10 @@ typedef void (^VariationBlock)();
 
 + (instancetype)sharedInstance;
 
-- (void)setBaselineVariation:(VariationBlock)baselineVariation forExperimentWithName:(NSString *)experimentName;
-- (void)setVariation:(VariationBlock)variation withName:(NSString *)variationName forExperimentName:(NSString *)experimentName;
+- (void)setBaselineVariation:(VariationBlock)baselineVariation forExperimentWithName:(NSString *)experimentName;  
+
+- (void)setVariation:(VariationBlock)variation withName:(NSString *)variationName forExperimentName:(NSString *)experimentName;  
+
 - (void)runTest:(NSString *)experimentName;
 
 - (NSDictionary &lt;NSString *, NSString *&gt; *)testInfo;
@@ -133,7 +136,7 @@ typedef void (^VariationBlock)();
 @end
 </code></pre>
 
-<p>As you see, there are specific method to set the baseline variation and the other variations, and a method to run a specific test.<br/>
+<p>As you see, there are specific methods to set the baseline variation and the other variations, plus a method to run a specific test.<br/>
 Let&rsquo;s see a case of use:</p>
 
 <pre><code class="objc">__weak typeof (self) weakSelf = self;
@@ -156,9 +159,9 @@ Let&rsquo;s see a case of use:</p>
 <p>A nice thing to highlight, is that you can launch these 3 methods above, also in different moment or in different point of the app. Basically you can easily prepare and then launch your experiment, mantaining the code clean and readable. Even more important, your framework dependence is just in a unique class which wraps it, and will help you to mantain your code (i.e. you want to replace Apptimize with another A/B test framework).</p>
 
 <p><br/>
-The following is the implementation file of the <code>MGExperimentsManager</code> class:</p>
+The following is the implementation file of the <code>MGExperimentsManager</code> class. I won&rsquo;t spend time entering in the details of this implementation, as it&rsquo;s quite easy to read and it&rsquo;s not the main point of this article:</p>
 
-<pre><code class="objc">#import "BSUExperimentsManager.h"
+<pre><code class="objc">#import "MGExperimentsManager.h"
 #import &lt;Apptimize/Apptimize.h&gt;
 
 
@@ -309,7 +312,7 @@ typedef NS_ENUM(NSInteger, MGPriceVariation) {
 
 <p>The enumeration must respects the variations we configured in the A/B test platform. <code>MGPriceVariationNotAssigned</code> is the default variation, or the baseline variation, or in other words, the original configuration which was there before launching the experiment.<br/>
 <code>MGPriceVariationNotEnrolled</code> is instead the default value of the property <code>priceVariation</code>, which means that the experiment has never been launched in that session.<br/>
-Note also that when the experiment is run, a pre-condition is passed to the method. In this case, the pre-condition is that the user has not to be a free (not currently paying or not premium) user. Just in that case, the user will be allocated in the experiment, otherwise the experiment will be not enrolled and the session will not affect our final stats.<br/>
+Note also that when the experiment is performed, a pre-condition is passed to the method. In this case, our pre-condition is that the user has to be a free (not currently paying or not premium) user. Just in that case, the user will be allocated in the experiment, otherwise the experiment will be not enrolled and the session will not affect our final stats.<br/>
 Let&rsquo;s see how this category is implemented:</p>
 
 <pre><code class="objc">#import "MGExperimentsManager+PriceExperiment.h"
@@ -329,7 +332,7 @@ static char const * const kMGPriceVariationProperty = "__kMGPriceVariationProper
 @end
 
 
-@implementation BSUExperimentsManager (PriceExperiment)
+@implementation MGExperimentsManager (PriceExperiment)
 
 - (MGPriceVariation)runOrRefreshPriceExperimentConsideringUserPremium:(BOOL)isUserPremium
 {
@@ -383,8 +386,8 @@ static char const * const kMGPriceVariationProperty = "__kMGPriceVariationProper
 <br/>
 Note that if the pre-condition is not respected, the value is set to <code>MGPriceVariationNotEnrolled</code>, which exactly means that the experiment has not been run.<br/>
 Note also that there is a special <code>if</code> condition (Line 25), which prevents the experiment to be performed on a <strong>Unit Test</strong> target, setting the value always to <code>MGPriceVariationNotAssigned</code>.<br/>
-This class, could also contain other properties and methods to support the experiment while running, avoiding to get the code dirty with &ldquo;temporary&rdquo; line of codes.<br/>
-Indeed, once the experiment will finish, we will just remove the <code>#import</code> and the relative calls, from the classes who make use of it, without spending time (and introducing bug) finding the correct piece of code to remove.</p>
+This class, could also contain other properties and methods to support the experiment while running, avoiding to get the code dirty with &ldquo;temporary&rdquo; line of codes around the project.<br/>
+Indeed, once the experiment will be finished, we&rsquo;ll just remove the <code>#import</code> and the relative calls from the classes who make use of it, without spending time (and introducing bug) finding the correct pieces of code to remove.</p>
 
 <p><br/></p>
 
@@ -418,7 +421,11 @@ Note that once the experiment has been run, you can access the value without use
 
 <h2>Conclusion</h2>
 
-<p><strong>Follow me on <a href="https://twitter.com/matteo_gobbi">Twitter</a></strong>!</p>
+<p>Happy A/B tests!<br/>
+<br/>
+Cheers ;)<br/>
+<br/>
+<strong>Follow me on <a href="https://twitter.com/matteo_gobbi">Twitter</a></strong>!</p>
 ]]></content>
   </entry>
   
