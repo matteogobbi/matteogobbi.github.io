@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ios | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-03-24T14:52:44+01:00</updated>
+  <updated>2016-03-24T15:03:30+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -415,7 +415,25 @@ switch (priceVariation) {
 </code></pre>
 
 <p>Simple as that.<br/>
-Note that once the experiment has been run, you can access the value without uselessly passing through the A/B test framework, by reading the property: <code>[MGExperimentsManager sharedInstance].priceVariation</code></p>
+Note that once the experiment has been run, you can access the value without uselessly passing through the A/B test framework, by reading the property: <code>[MGExperimentsManager sharedInstance].priceVariation</code>.<br/>
+<br/>
+We could also be in situations where we need to check multiple experiments at the same time, and in these cases our architecture it&rsquo;s really helpful.<br/>
+For example:</p>
+
+<pre><code class="objc">BOOL userIsInExperimentA = 
+[MGExperimentsManager sharedInstance].variationExperimentA != MGExperimentAVariationNotEnrolled;
+
+BOOL userIsInExperimentBVariationA = 
+[MGExperimentsManager sharedInstance].variationExperimentB == MGExperimentBVariationAssignedA;
+
+if (!userIsInExperimentA &amp;&amp; userIsInExperimentBVariationA)  {
+    // do something
+} else if (userIsInExperimentA) {
+    // do something else
+} else {
+    // do something else
+}
+</code></pre>
 
 <p><br/></p>
 

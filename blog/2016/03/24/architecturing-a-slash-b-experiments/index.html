@@ -756,7 +756,39 @@ Indeed, once the experiment will be finished, we&rsquo;ll just remove the <code>
 
 
 <p>Simple as that.<br/>
-Note that once the experiment has been run, you can access the value without uselessly passing through the A/B test framework, by reading the property: <code>[MGExperimentsManager sharedInstance].priceVariation</code></p>
+Note that once the experiment has been run, you can access the value without uselessly passing through the A/B test framework, by reading the property: <code>[MGExperimentsManager sharedInstance].priceVariation</code>.<br/>
+<br/>
+We could also be in situations where we need to check multiple experiments at the same time, and in these cases our architecture it&rsquo;s really helpful.<br/>
+For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="kt">BOOL</span> <span class="n">userIsInExperimentA</span> <span class="o">=</span>
+</span><span class='line'><span class="p">[</span><span class="n">MGExperimentsManager</span> <span class="n">sharedInstance</span><span class="p">].</span><span class="n">variationExperimentA</span> <span class="o">!=</span> <span class="n">MGExperimentAVariationNotEnrolled</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">BOOL</span> <span class="n">userIsInExperimentBVariationA</span> <span class="o">=</span>
+</span><span class='line'><span class="p">[</span><span class="n">MGExperimentsManager</span> <span class="n">sharedInstance</span><span class="p">].</span><span class="n">variationExperimentB</span> <span class="o">==</span> <span class="n">MGExperimentBVariationAssignedA</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">userIsInExperimentA</span> <span class="o">&amp;&amp;</span> <span class="n">userIsInExperimentBVariationA</span><span class="p">)</span>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// do something</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">userIsInExperimentA</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// do something else</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// do something else</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p><br/></p>
 
