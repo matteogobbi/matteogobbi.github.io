@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Underthehood | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/underthehood/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-03-24T11:32:56+00:00</updated>
+  <updated>2016-03-24T14:52:44+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Extending Methods in a Category by Method Swizzling]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
-    <updated>2014-12-15T21:57:25+00:00</updated>
+    <updated>2014-12-15T22:57:25+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
     <content type="html"><![CDATA[<p>Probably you have been in the situation to being writing a category and at some point exclaim &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
 Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you were writing in a category.</p>
@@ -271,9 +271,9 @@ Basically we are saying to the class to exchange his <code>SEL</code> -> <code>M
   
   <entry>
     <title type="html"><![CDATA[Autorelease - Under the Hood]]></title>
-    <link href="http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/"/>
-    <updated>2014-09-28T23:24:37+01:00</updated>
-    <id>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood</id>
+    <link href="http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood/"/>
+    <updated>2014-09-29T00:24:37+02:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/09/29/autorelease-under-the-hood</id>
     <content type="html"><![CDATA[<p>Since this is an argument less touched but much important, I decided to write an article to organize the informations and explain how <code>autorelease</code>, or better <strong>autorelease pool</strong> works.</p>
 
 <p>The main goal of this article is not to explain the base of what is an <strong>autorelease pool</strong> and when <code>autorelease</code> should be used, but anyway, this is really important to understand these concepts before proceeding. For this reason, the first paragraph will be dedicated to explain them. Experts developers, can safely skip it if they want.</p>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Best Practice | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/best-practice/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-03-24T11:32:56+00:00</updated>
+  <updated>2016-03-24T14:52:44+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Architecturing A/B Experiments]]></title>
     <link href="http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments/"/>
-    <updated>2016-03-24T09:02:48+00:00</updated>
+    <updated>2016-03-24T10:02:48+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments</id>
     <content type="html"><![CDATA[<p>Making experiments on a product is one of the most powerful tecnique for a company to get the best response from its customers. But sometimes, especially when they are more than 2 or 3 at the same time, it may become a bit frustrating for developers who find pieces of experiment blocks around the whole project.<br/>
 In this article I&rsquo;ll explain an easy architectural approach to keep our code clean and dynamic.</p>
@@ -31,7 +31,7 @@ In this article I&rsquo;ll explain an easy architectural approach to keep our co
 <p>Let&rsquo;s suppose we want to improve a feature of our app in order to get more users using it. We have few idea to improve it (involving design, visibility, etc), but we don&rsquo;t know exactly which one would be the best to get the max response by our users. The solution is to set up an <strong>A/B test</strong>.<br/>
 An A/B test is an experiment which randomnly allocates users in a specific variation. Let&rsquo;s see how does it work:<br/>
 <br>
-Let&rsquo;s say that we want to know which is the best price we should sell our premium membership in order to get the most high revenues.<br/>
+Let&rsquo;s say that we want to know which is the best price we should sell our premium membership in order to get the highest revenues.<br/>
 We decide to setup 3 variation:</p>
 
 <ul>
@@ -41,8 +41,8 @@ We decide to setup 3 variation:</p>
 </ul>
 
 
-<p>Every user using our app, through specific APIs (i.e. <a href="http://apptimize.com/">Apptimize</a> APIs), will be allocated in one of these variations, and the service will return to our client where the user has been allocated. At this point, we&rsquo;ll execute a piece of code rather than another, according with the choosen variation.<br/>
-In the example above, the user will see the choosen price for that variation. Note that <strong>an experiment, must always includes the original variation</strong>, or in other words, the variation which was there before starting the experiment, otherwise we&rsquo;d never know if that was the best solution or if effectivelly was not good enough.</p>
+<p>Every user using our app, through specific APIs (i.e. <a href="http://apptimize.com/">Apptimize</a> APIs), will be allocated in one of these variations, and the service will return to our client the variation where the user has been allocated. At this point, we&rsquo;ll execute a piece of code rather than another, according with the choosen variation.<br/>
+In the example above, the user will see the choosen price for the variation which he has been allocated in. Note that <strong>an experiment, must always includes the original variation</strong>, or in other words, the variation which was there before starting the experiment, otherwise we&rsquo;d never know if that was the best solution or if effectivelly was not good enough.</p>
 
 <p>Great job, the experiment is running! Now we have just to wait an arbitrary amount of time and get the results.<br/>
 <br>
@@ -55,8 +55,8 @@ Ok, a week is gone and we found out these results:</p>
 </ul>
 
 
-<p>Note that neither the lowest price nor the highest price won! Indeed <strong>Variation A</strong> (with a middle price) produced the highest revenues.<br/>
-Therefore, we should set the price of our service memebership to 25,00$ and close the experiment.</p>
+<p>Note that neither the lowest price nor the highest price won! Indeed <strong>Variation A</strong> (with a price in the middle) produced the highest revenues.<br/>
+Therefore, we should set the price of the memebership we are selling to 25,00$ and close the experiment.</p>
 
 <p><br/></p>
 
@@ -432,7 +432,7 @@ Cheers ;)<br/>
   <entry>
     <title type="html"><![CDATA[Anatomy of a TableView(Controller) Architecture]]></title>
     <link href="http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/"/>
-    <updated>2015-03-22T02:09:15+00:00</updated>
+    <updated>2015-03-22T03:09:15+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture</id>
     <content type="html"><![CDATA[<p><code>UITableView</code>s are part of our projects since the very beginning of the iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: in a <strong>well architected way</strong>.</p>
 
