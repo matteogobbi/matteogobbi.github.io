@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ios | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-03-24T15:03:30+01:00</updated>
+  <updated>2016-03-24T15:29:09+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -434,6 +434,13 @@ if (!userIsInExperimentA &amp;&amp; userIsInExperimentBVariationA)  {
     // do something else
 }
 </code></pre>
+
+<p><br/>
+This is an example of how much I reduced the code in a class where there were 2 nested experiments running together, using the described approach (highlighted lines):</p>
+
+<p style="text-align:center;"> <img src="/../images/posts/ab-tests/1.jpg" height="400" alt="Experiment Manager Refactor" /></p>
+
+<p>The code on the left side, is using the experiment manager approach. The (2.5x) code on the right side, is not using it.</p>
 
 <p><br/></p>
 
