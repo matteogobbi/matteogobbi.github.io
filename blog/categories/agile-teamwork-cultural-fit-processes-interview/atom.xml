@@ -1,88 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Teamworking - Matteo Gobbi</title>
-  <meta name="author" content="Matteo Gobbi">
-
-  
-  <meta name="description" content="Teamworking written in agile,teamwork,cultural-fit,processes,interview A team is like a machine. We can imagine it as a car, travelling along a &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><![CDATA[Category: Agile,teamwork,cultural-fit,processes,interview | Matteo Gobbi]]></title>
+  <link href="http://matteogobbi.github.io/blog/categories/agile-teamwork-cultural-fit-processes-interview/atom.xml" rel="self"/>
+  <link href="http://matteogobbi.github.io/"/>
+  <updated>2016-03-24T10:31:07+00:00</updated>
+  <id>http://matteogobbi.github.io/</id>
+  <author>
+    <name><![CDATA[Matteo Gobbi]]></name>
+    <email><![CDATA[job@matteogobbi.it]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-  <link rel="canonical" href="http://matteogobbi.github.io/blog/2015/08/31/teamworking">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Matteo Gobbi" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-55234030-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-</head>
-
-  <body>
-    <a href="/" class="home-icon">
-      <img src="/images/home.png"/>
-    </a>
-
-    <article role="article" class="full-single-article">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8 col-md-offset-2">
-        <h1>Teamworking</h1>
-        <div class="meta">
-          written 
-
-
-
-
-
-
-
-
-  
-
-
-
-<time datetime="2015-08-31T10:02:23+01:00" pubdate data-updated="true"></time>
-          
-
-in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/agile-teamwork-cultural-fit-processes-interview/'>agile,teamwork,cultural-fit,processes,interview</a>
-  
-</span>
-
-
-        </div>
-        <p>A team is like a machine. We can imagine it as a car, travelling along a straight road. Like a car, its engine needs to be designed and built to be bug-free. Its speed is the energy of any team member. The fuel is the passion.</p>
+  <entry>
+    <title type="html"><![CDATA[Teamworking]]></title>
+    <link href="http://matteogobbi.github.io/blog/2015/08/31/teamworking/"/>
+    <updated>2015-08-31T10:02:23+01:00</updated>
+    <id>http://matteogobbi.github.io/blog/2015/08/31/teamworking</id>
+    <content type="html"><![CDATA[<p>A team is like a machine. We can imagine it as a car, travelling along a straight road. Like a car, its engine needs to be designed and built to be bug-free. Its speed is the energy of any team member. The fuel is the passion.</p>
 
 <p>In this article I&rsquo;ll explore some good approach to making sure a team works effectively and with the right attitude. The methods that I’ll discuss could probably be applicable to any kind of team, however, in this post, I will be making specific reference to life in a tech team.</p>
 
@@ -177,95 +113,7 @@ Thanks to <a href="https://www.linkedin.com/profile/view?id=275981167">Harriet B
 <p>Cheers!<br/>
 <br/>
 <strong>Note:</strong> This article has been reported also in the <a href="https://blog.busuu.com/teamworking/">busuu’s blog</a>.</p>
-
-
-        <hr class="divider-short"/>
-
-        
-        <section>
-          <h1>Comments</h1>
-          <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-        </section>
-        
-      </div>
-    </div>
-  </div>
-</article>
-
-<hr class="divider-short"/>
-
-<div class="archive-link">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8 col-md-offset-2">
-        
-          <a class="pull-left" href="/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu/" title="Previous Post: Branching model and CI configuration @ busuu">&laquo; Previous: Branching model and CI configuration @ busuu</a>
-        
-
-        
-          <a class="pull-right" href="/blog/2016/03/24/architecturing-a-slash-b-experiments/" title="Next Post: Architecturing A/B experiments">Next: Architecturing A/B experiments &raquo;</a>
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-    <footer id="footer" class="her-row">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-1">
-  <a href="/"><h4>Home</h4></a>
-</div>
-
-<div class="col-md-2">
-  <div class="social-icon-list">
-    
-    <a title="Twitter" href="https://twitter.com/matteo_gobbi"><img src="/images/glyphicons_social_31_twitter.png"/></a>
-    
-    
-    <a title="GitHub" href="https://github.com/matteogobbi"><img src="/images/glyphicons_social_21_github.png"/></a>
-    
-    
-    <a title="StackOverflow" href="http://stackoverflow.com/users/1973344"><img src="/images/glyphicons_social_21_stackoverflow.png"/></a>
-    
-    
-    <a title="LinkedIn" href="https://linkedin.com/in/matteogobbi"><img src="/images/glyphicons_social_17_linked_in.png"/></a>
-    
-    
-    <a title="E-Mail" href="mailto:job@matteogobbi.it"><img src="/images/glyphicons_social_39_e-mail.png"/></a>
-    
-  </div>
-</div>
-
-<div class="pull-right">
-</div>
-
-
-    </div>
-  </div>
-</footer>
-
-    
-      
-
-<script type="text/javascript">
-      var disqus_shortname = 'matteogobbi';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://matteogobbi.github.io/blog/2015/08/31/teamworking/';
-        var disqus_url = 'http://matteogobbi.github.io/blog/2015/08/31/teamworking/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-    
-  </body>
-</html>
+]]></content>
+  </entry>
+  
+</feed>

@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-08-27T22:52:05+01:00</updated>
+  <updated>2016-03-24T10:31:07+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -14,13 +14,697 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Architecturing A/B Experiments]]></title>
+    <link href="http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments/"/>
+    <updated>2016-03-24T09:02:48+00:00</updated>
+    <id>http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments</id>
+    <content type="html"><![CDATA[<p>Making experiments on a product is one of the most powerful tecnique for a company to get the best respose from its customers. But sometimes, especially when they are more than 2 or 3 at the same time, it may become a bit frustrating for developers who find pieces of experiment blocks around the whole project.<br/>
+In this article I&rsquo;ll explain an easy architectural approach to keep our code clean and dynamic.</p>
+
+<!--more-->
+
+
+<p><br/></p>
+
+<h2>What&rsquo;s an A/B test?</h2>
+
+<p>Let&rsquo;s suppose we want to improve a feature of our app in order to get more users using it. We have few idea to improve it (involving design, visibility, etc), but we don&rsquo;t know exactly which one would be the best to get the max response by our users. The solution is set up an <strong>A/B test</strong>.<br/>
+An A/B test is an experiment which randomnly allocates users in a specific variation. Let&rsquo;s see how does it work:<br/>
+<br>
+Let&rsquo;s say that we want to know which is the best price we should sell our premium membership in order to get the most high revenues.<br/>
+We decide to setup 3 variation:</p>
+
+<ul>
+<li><strong>Variation A</strong> (and current price): 15,00 $;</li>
+<li><strong>Variation B</strong>: 25,00 $;</li>
+<li><strong>Variation C</strong>: 40,00 $.</li>
+</ul>
+
+
+<p>Every user using our app, through specific APIs (i.e. <a href="http://apptimize.com/">Apptimize</a> APIs), will be allocated in one of these variations, and the service will return to our client where the user has been allocated. At this point, we&rsquo;ll execute a piece of code rather than another, according with the choosen variation. In this specific case, we&rsquo;ll show to the user the choosen price for that variation. Note that <strong>an experiment, must always includes the original variation</strong> which was there before starting the experiment, otherwise you&rsquo;ll never know if that was the best solution or if effectivelly was not good enough.</p>
+
+<p>Great job, the experiment is running! Now we have just to wait an arbitrary amount of time and get the results.<br/>
+<br>
+Ok, a week is gone and we found out these results:</p>
+
+<ul>
+<li>Variation A: <strong>1000 users</strong> payed 15,00 $ -> <strong>15.000,00 $ in revenues</strong>;</li>
+<li>Variation B: <strong>800 users</strong> payed 25,00 $ -> <strong>20.000,00 $ in revenues</strong>;</li>
+<li>Variation C: <strong>300 users</strong> payed 40,00 $ -> <strong>12.000,00 $ in revenues</strong>;</li>
+</ul>
+
+
+<p>Note that neither the lowest and highest prices won! Indeed <strong>Variation B</strong> (with a middle price) produced the highest revenues.<br/>
+We can so set the price of our service memebership to 25,00$ and close the experiment.</p>
+
+<p><br/></p>
+
+<h2>OMG this is so dirty!</h2>
+
+<p>An example of experiment using the famous Apptimize platform, might be this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">[</span><span class="n">Apptimize</span> <span class="nl">runTest</span><span class="p">:</span><span class="s">@&quot;Experiment name&quot;</span> <span class="nl">withBaseline</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>  <span class="c1">// Baseline variant &quot;original&quot;</span>
+</span><span class='line'>  <span class="c1">// ..code</span>
+</span><span class='line'>  <span class="c1">// ..code</span>
+</span><span class='line'>  <span class="c1">// ..code</span>
+</span><span class='line'>  <span class="p">}</span> <span class="nl">andVariations</span><span class="p">:</span><span class="l">@{</span>
+</span><span class='line'>    <span class="s">@&quot;variation1&quot;</span><span class="o">:</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>      <span class="c1">// Variant &quot;Variation A&quot;</span>
+</span><span class='line'>      <span class="c1">// ..code</span>
+</span><span class='line'>      <span class="c1">// ..code</span>
+</span><span class='line'>      <span class="c1">// ..code</span>
+</span><span class='line'>    <span class="l">}</span><span class="p">,</span> <span class="s">@&quot;variation2&quot;</span><span class="o">:</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>      <span class="c1">// Variant &quot;Variation B&quot;</span>
+</span><span class='line'>      <span class="c1">// ..code</span>
+</span><span class='line'>      <span class="c1">// ..code</span>
+</span><span class='line'>      <span class="c1">// ..code</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Can you imagine as dirty can become your project?<br/>
+Let&rsquo;s see the downsides of using this approach:</p>
+
+<p><strong>☹ Dirty code</strong><br/>
+In addition to have &ldquo;spaghetti code&rdquo;, XCode not even apply a correct sintax higlighting for pieces of code like the one above;</p>
+
+<p><strong>☹ Imports</strong><br/>
+A/B test framework <strong>imported here and there around the whole project</strong>;</p>
+
+<p><strong>☹ Nested Experiments</strong><br/>
+Even if they should be avoided, <strong>nested experiments become really hard to manage</strong>;</p>
+
+<p><strong>☹ No nil blocks</strong><br/>
+If in some part of the app, you need to excute a block of code, just in the variations of the experiment, <strong>you cannot return <code>nil</code> in the baseline block</strong>. You have instead to return an empty block;</p>
+
+<p><strong>☹ Checking implies running</strong><br/>
+In order to <strong>check if an user has been allocated in an experiment&rsquo;s variation, you need to run the test every time</strong>. Every time you run an experiment on an user, he becomes part of it, and affects the final stats. Sometimes you might instead want just to check if he has been allocated in the experiment or not, without running it.<br/>
+For example if you want to run an experiment on users which respect a specific condition, but at some point in the app you need to check if the current user is in a variation of this experiment or not without risking to allocate him in the experiment itself, it may be not easy to solve, and your code could really become dirty and tricky to read;</p>
+
+<p><strong>☹ Not easy to remove</strong><br/>
+Don&rsquo;t forget that <strong>experiments are temporary</strong>, and you might want to easily remove them once closed. So you should not over complicate your current architecture and code;</p>
+
+<p><strong>☹ Affects unit tests</strong><br/>
+Experiments will <strong>run also during unit tests</strong>. To avoid this, you need to check the target before launching an experiment, making your code even more dirty.</p>
+
+<p><br/></p>
+
+<h2>A separate experiment manager</h2>
+
+<p>In order to solve the downsides exposed in the previous paragraph, you first need to wrap the &ldquo;A/B test&rdquo; framework inside a custom class:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &lt;Foundation/Foundation.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">typedef</span> <span class="nf">void</span> <span class="p">(</span><span class="o">^</span><span class="n">VariationBlock</span><span class="p">)();</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">MGExperimentsManager</span> : <span class="bp">NSObject</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">+</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">sharedInstance</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setBaselineVariation:</span><span class="p">(</span><span class="n">VariationBlock</span><span class="p">)</span><span class="nv">baselineVariation</span> <span class="nf">forExperimentWithName:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">experimentName</span><span class="p">;</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setVariation:</span><span class="p">(</span><span class="n">VariationBlock</span><span class="p">)</span><span class="nv">variation</span> <span class="nf">withName:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">variationName</span> <span class="nf">forExperimentName:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">experimentName</span><span class="p">;</span>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">runTest:</span><span class="p">(</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">experimentName</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSDictionary</span> <span class="o">&lt;</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">,</span> <span class="bp">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nf">testInfo</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you see, there are specific method to set the baseline variation and the other variations, and a method to run a specific test.<br/>
+Let&rsquo;s see a case of use:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="k">__weak</span> <span class="k">typeof</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="nb">self</span> <span class="nl">setBaselineVariation</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>  <span class="c1">//...code</span>
+</span><span class='line'>  <span class="c1">//...code</span>
+</span><span class='line'>  <span class="c1">//...code</span>
+</span><span class='line'><span class="p">}</span> <span class="nl">forExperimentWithName</span><span class="p">:</span><span class="n">kMGExperimentName</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="nb">self</span> <span class="nl">setVariation</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>  <span class="c1">//...code</span>
+</span><span class='line'>  <span class="c1">//...code</span>
+</span><span class='line'>  <span class="c1">//...code  </span>
+</span><span class='line'><span class="p">}</span> <span class="nl">withName</span><span class="p">:</span><span class="s">@&quot;variation1&quot;</span> <span class="nl">forExperimentName</span><span class="p">:</span><span class="n">kMGExperimentName</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="nb">self</span> <span class="nl">runTest</span><span class="p">:</span><span class="n">kMGExperimentName</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A nice thing to highlight, is that you can launch these 3 methods above, also in different moment or in different point of the app. Basically you can easily prepare and then launch your experiment, mantaining the code clean and readable. Even more important, your framework dependence is just in a unique class which wraps it, and will help you to mantain your code (i.e. you want to replace Apptimize with another A/B test framework).</p>
+
+<p><br/>
+The following is the implementation file of the <code>MGExperimentsManager</code> class:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &quot;BSUExperimentsManager.h&quot;</span>
+</span><span class='line'><span class="cp">#import &lt;Apptimize/Apptimize.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="nc">MGExperimentsManager</span> <span class="p">{</span>
+</span><span class='line'>    <span class="bp">NSMutableDictionary</span><span class="o">&lt;</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">,</span> <span class="n">VariationBlock</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">experimentsBaselines_</span><span class="p">;</span>
+</span><span class='line'>    <span class="bp">NSMutableDictionary</span><span class="o">&lt;</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">,</span> <span class="bp">NSMutableDictionary</span><span class="o">&lt;</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">,</span> <span class="n">VariationBlock</span><span class="o">&gt;</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">experimentsVariations_</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">+</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">sharedInstance</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">static</span> <span class="n">MGExperimentsManager</span> <span class="o">*</span><span class="n">experimentManager</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">static</span> <span class="kt">dispatch_once_t</span> <span class="n">onceToken</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">onceToken</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+</span><span class='line'>        <span class="n">experimentManager</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGExperimentsManager</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">experimentManager</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">init</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">experimentsBaselines_</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableDictionary</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>        <span class="n">experimentsVariations_</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableDictionary</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setBaselineVariation:</span><span class="p">(</span><span class="n">nullable</span> <span class="n">VariationBlock</span><span class="p">)</span><span class="nv">baselineVariation</span> <span class="nf">forExperimentWithName:</span><span class="p">(</span><span class="n">nonnull</span> <span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">experimentName</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSParameterAssert</span><span class="p">(</span><span class="n">experimentName</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">experimentName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">experimentsBaselines_</span><span class="p">[</span><span class="n">experimentName</span><span class="p">]</span> <span class="o">=</span> <span class="n">baselineVariation</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setVariation:</span><span class="p">(</span><span class="n">nullable</span> <span class="n">VariationBlock</span><span class="p">)</span><span class="nv">variation</span> <span class="nf">withName:</span><span class="p">(</span><span class="n">nonnull</span> <span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">variationName</span> <span class="nf">forExperimentName:</span><span class="p">(</span><span class="n">nonnull</span> <span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">experimentName</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSParameterAssert</span><span class="p">(</span><span class="n">experimentName</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">NSParameterAssert</span><span class="p">(</span><span class="n">variationName</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">experimentName</span> <span class="o">||</span> <span class="o">!</span><span class="n">variationName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">experimentsVariations_</span><span class="p">[</span><span class="n">experimentName</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">experimentsVariations_</span><span class="p">[</span><span class="n">experimentName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableDictionary</span> <span class="n">new</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">experimentsVariations_</span><span class="p">[</span><span class="n">experimentName</span><span class="p">][</span><span class="n">variationName</span><span class="p">]</span> <span class="o">=</span> <span class="n">variation</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">runTest:</span><span class="p">(</span><span class="n">nonnull</span> <span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">experimentName</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSParameterAssert</span><span class="p">(</span><span class="n">experimentName</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">experimentName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">VariationBlock</span> <span class="n">baselineVariation</span> <span class="o">=</span> <span class="n">experimentsBaselines_</span><span class="p">[</span><span class="n">experimentName</span><span class="p">];</span>
+</span><span class='line'>    <span class="bp">NSDictionary</span> <span class="o">*</span><span class="n">variations</span> <span class="o">=</span> <span class="p">[</span><span class="n">experimentsVariations_</span><span class="p">[</span><span class="n">experimentName</span><span class="p">]</span> <span class="k">copy</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">NSAssert</span><span class="p">(</span><span class="n">variations</span><span class="p">,</span> <span class="s">@&quot;There is not even a variation&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">NSAssert</span><span class="p">([</span><span class="n">variations</span> <span class="n">count</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">@&quot;There is not even a variation&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">variations</span> <span class="o">||</span> <span class="p">[</span><span class="n">variations</span> <span class="n">count</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">baselineVariation</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">baselineVariation</span> <span class="o">=</span> <span class="o">^</span><span class="p">(){};</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="n">Apptimize</span> <span class="nl">runTest</span><span class="p">:</span><span class="n">experimentName</span> <span class="nl">withBaseline</span><span class="p">:</span><span class="n">baselineVariation</span> <span class="nl">andVariations</span><span class="p">:</span><span class="n">variations</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">[</span><span class="nb">self</span> <span class="nl">mg_removeStoredBlocksForExperimentWithName</span><span class="p">:</span><span class="n">experimentName</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="bp">NSDictionary</span> <span class="o">&lt;</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">,</span> <span class="bp">NSString</span> <span class="o">*&gt;*</span><span class="p">)</span><span class="nf">testInfo</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="bp">NSDictionary</span> <span class="o">*</span><span class="n">apptimizeTestInfo</span> <span class="o">=</span> <span class="p">[</span><span class="n">Apptimize</span> <span class="n">testInfo</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="bp">NSMutableDictionary</span> <span class="o">&lt;</span><span class="bp">NSString</span> <span class="o">*</span><span class="p">,</span> <span class="bp">NSString</span> <span class="o">*&gt;*</span><span class="n">enrolledTests</span> <span class="o">=</span> <span class="p">[</span><span class="bp">NSMutableDictionary</span> <span class="n">dictionary</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">apptimizeTestInfo</span> <span class="o">&amp;&amp;</span> <span class="n">apptimizeTestInfo</span><span class="p">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">apptimizeTestInfo</span> <span class="nl">enumerateKeysAndObjectsUsingBlock</span><span class="p">:</span><span class="o">^</span><span class="p">(</span><span class="kt">id</span>  <span class="n">_Nonnull</span> <span class="n">key</span><span class="p">,</span> <span class="kt">id</span>  <span class="n">_Nonnull</span> <span class="n">obj</span><span class="p">,</span> <span class="kt">BOOL</span> <span class="o">*</span> <span class="n">_Nonnull</span> <span class="n">stop</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="bp">NSString</span> <span class="o">*</span><span class="n">testName</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGExperimentsManagerHelper</span> <span class="nl">formattedTestName</span><span class="p">:</span><span class="n">key</span><span class="p">];</span>
+</span><span class='line'>            <span class="bp">NSString</span> <span class="o">*</span><span class="n">variation</span> <span class="o">=</span> <span class="p">[</span><span class="n">MGExperimentsManagerHelper</span> <span class="nl">trimmedString</span><span class="p">:[</span><span class="n">obj</span> <span class="n">enrolledVariantName</span><span class="p">]];</span>
+</span><span class='line'>            <span class="n">enrolledTests</span><span class="p">[</span><span class="n">testName</span><span class="p">]</span> <span class="o">=</span> <span class="n">variation</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">enrolledTests</span> <span class="k">copy</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#pragma mark - Private methods</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">mg_removeStoredBlocksForExperimentWithName:</span><span class="p">(</span><span class="n">nonnull</span> <span class="bp">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">experimentName</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSParameterAssert</span><span class="p">(</span><span class="n">experimentName</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">experimentName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">experimentsBaselines_</span><span class="p">[</span><span class="n">experimentName</span><span class="p">]</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">experimentsVariations_</span><span class="p">[</span><span class="n">experimentName</span><span class="p">]</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><br/></p>
+
+<h2>The core of the architecture</h2>
+
+<p>Now that we have all the pieces, let&rsquo;s pass to the final step of the architecture.<br/>
+First of all, we want to keep our experiments in order, easy to use, easy to remove once closed. A good way to do this, is using <strong>categories</strong>.<br/>
+<br/>
+Having a category of our experiment manager class for every experiment, we can mantain them well separated from each other. Moreover, where we need, we have just to import the category relatives to the experiment we want to run (or check).<br/>
+The header file of the experiment&rsquo;s category should be something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &quot;MGExperimentsManager.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">typedef</span> <span class="nf">NS_ENUM</span><span class="p">(</span><span class="bp">NSInteger</span><span class="p">,</span> <span class="n">MGPriceVariation</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">MGPriceVariationNotEnrolled</span>        <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">MGPriceVariationNotAssigned</span>        <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">//or MGPriceVariationOriginal</span>
+</span><span class='line'>    <span class="n">MGPriceVariationAssignedA</span>          <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">MGPriceVariationAssignedB</span>          <span class="o">=</span> <span class="mi">2</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">MGExperimentsManager</span> <span class="nl">(PriceExperiment)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="k">readonly</span><span class="p">)</span> <span class="n">MGPriceVariation</span> <span class="n">priceVariation</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="n">MGPriceVariation</span><span class="p">)</span><span class="nf">runOrRefreshPriceExperimentConsideringUserPremium:</span><span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nv">isUserPremium</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The enumeration must respects the variations we configured in the A/B test platform. <code>MGPriceVariationNotAssigned</code> is the default variation, or the baseline variation, or in other words, the original configuration which was there before launching the experiment.<br/>
+<code>MGPriceVariationNotEnrolled</code> is instead the default value of the property <code>priceVariation</code>, which means that the experiment has never been launched in that session.<br/>
+Note also that when the experiment is run, a pre-condition is passed to the method. In this case, the pre-condition is that the user has not to be a free (not currently paying or not premium) user. Just in that case, the user will be allocated in the experiment, otherwise the experiment will be not enrolled and the session will not affect our final stats.<br/>
+Let&rsquo;s see how this category is implemented:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &quot;MGExperimentsManager+PriceExperiment.h&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#import &lt;objc/runtime.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="bp">NSString</span> <span class="o">*</span> <span class="k">const</span> <span class="n">kMGExperimentName</span> <span class="o">=</span> <span class="s">@&quot;Price experiment&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="kt">char</span> <span class="k">const</span> <span class="o">*</span> <span class="k">const</span> <span class="n">kMGPriceVariationProperty</span> <span class="o">=</span> <span class="s">&quot;__kMGPriceVariationProperty&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">@interface</span> <span class="nc">MGExperimentsManager</span> <span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@property</span> <span class="p">(</span><span class="k">readwrite</span><span class="p">)</span> <span class="n">MGPriceVariation</span> <span class="n">priceVariation</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">@implementation</span> <span class="nc">BSUExperimentsManager</span> <span class="nl">(PriceExperiment)</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="n">MGPriceVariation</span><span class="p">)</span><span class="nf">runOrRefreshPriceExperimentConsideringUserPremium:</span><span class="p">(</span><span class="kt">BOOL</span><span class="p">)</span><span class="nv">isUserPremium</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isUserPremium</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">__weak</span> <span class="k">typeof</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="n">weakSelf</span> <span class="o">=</span> <span class="nb">self</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="cm">/* Check if is not Unit Test target */</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="p">[</span><span class="nb">self</span> <span class="nl">setBaselineVariation</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                <span class="n">weakSelf</span><span class="p">.</span><span class="n">priceVariation</span> <span class="o">=</span> <span class="n">MGPriceVariationNotAssigned</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span> <span class="nl">forExperimentWithName</span><span class="p">:</span><span class="n">kMGExperimentName</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="p">[</span><span class="nb">self</span> <span class="nl">setVariation</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                <span class="n">weakSelf</span><span class="p">.</span><span class="n">priceVariation</span> <span class="o">=</span> <span class="n">MGPriceVariationAssignedA</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span> <span class="nl">withName</span><span class="p">:</span><span class="s">@&quot;variation1&quot;</span> <span class="nl">forExperimentName</span><span class="p">:</span><span class="n">kMGExperimentName</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="p">[</span><span class="nb">self</span> <span class="nl">setVariation</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+</span><span class='line'>                <span class="n">weakSelf</span><span class="p">.</span><span class="n">priceVariation</span> <span class="o">=</span> <span class="n">MGPriceVariationAssignedB</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span> <span class="nl">withName</span><span class="p">:</span><span class="s">@&quot;variation2&quot;</span> <span class="nl">forExperimentName</span><span class="p">:</span><span class="n">kMGExperimentName</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="p">[</span><span class="nb">self</span> <span class="nl">runTest</span><span class="p">:</span><span class="n">kMGExperimentName</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="n">weakSelf</span><span class="p">.</span><span class="n">priceVariation</span> <span class="o">=</span> <span class="n">MGPriceVariationNotAssigned</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nb">self</span><span class="p">.</span><span class="n">priceVariation</span> <span class="o">=</span> <span class="n">MGPriceVariationNotEnrolled</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">self</span><span class="p">.</span><span class="n">priceVariation</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#pragma mark - New properties</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setPriceVariation:</span><span class="p">(</span><span class="n">MGPriceVariation</span><span class="p">)</span><span class="nv">priceVariation</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">objc_setAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">kMGPriceVariationProperty</span><span class="p">,</span> <span class="l">@(</span><span class="n">priceVariation</span><span class="l">)</span> <span class="p">,</span> <span class="n">OBJC_ASSOCIATION_RETAIN</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span> <span class="p">(</span><span class="n">MGPriceVariation</span><span class="p">)</span><span class="nf">priceVariation</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="bp">NSNumber</span> <span class="o">*</span><span class="n">value</span> <span class="o">=</span> <span class="n">objc_getAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">kMGPriceVariationProperty</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">value</span> <span class="n">integerValue</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It does basically just 1 thing:<br/>
+<strong>for any experiment&rsquo;s block, assign the corrispondant enumeration&rsquo;s value</strong>.<br/>
+<br/>
+Note that if the pre-condition is not respected, the value is set to <code>MGPriceVariationNotEnrolled</code>, which exactly means that the experiment has not been run.<br/>
+Note also that there is a special <code>if</code> condition (Line 25), which prevents the experiment to be performed on a <strong>Unit Test</strong> target, setting the value always to <code>MGPriceVariationNotAssigned</code>.<br/>
+This class, could also contain other properties and methods to support the experiment while running, avoiding to get the code dirty with &ldquo;temporary&rdquo; line of codes.<br/>
+Indeed, once the experiment will finish, we will just remove the <code>#import</code> and the relative calls, from the classes who make use of it, without spending time (and introducing bug) finding the correct piece of code to remove.</p>
+
+<p><br/></p>
+
+<h2>Example of usage</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="n">MGPriceVariation</span> <span class="n">priceVariation</span> <span class="o">=</span> <span class="p">[[</span><span class="n">MGExperimentsManager</span> <span class="n">sharedInstance</span><span class="p">]</span> <span class="nl">runOrRefreshLifetimeTestConsideringUserPremium</span><span class="p">:</span><span class="n">user</span><span class="p">.</span><span class="n">isPremium</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// User is premium</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">priceVariation</span> <span class="o">==</span> <span class="n">MGPriceVariationNotEnrolled</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">CGFloat</span> <span class="n">price</span> <span class="o">=</span> <span class="mf">15.</span><span class="p">;</span> <span class="c1">// original price (MGPriceVariationNotAssigned)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">switch</span> <span class="p">(</span><span class="n">priceVariation</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">case</span> <span class="nl">MGPriceVariationA</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">price</span> <span class="o">=</span> <span class="mf">25.</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="nl">MGPriceVariationB</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">price</span> <span class="o">=</span> <span class="mf">40.</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// ..code</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Simple as that.<br/>
+Note that once the experiment has been run, you can access the value without uselessly passing through the A/B test framework, by reading the property: <code>[MGExperimentsManager sharedInstance].priceVariation</code></p>
+
+<p><br/></p>
+
+<h2>Conclusion</h2>
+
+<p><strong>Follow me on <a href="https://twitter.com/matteo_gobbi">Twitter</a></strong>!</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Teamworking]]></title>
     <link href="http://matteogobbi.github.io/blog/2015/08/31/teamworking/"/>
-    <updated>2015-08-31T08:02:23+01:00</updated>
+    <updated>2015-08-31T10:02:23+01:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/08/31/teamworking</id>
-    <content type="html"><![CDATA[<p>A team, is a machine. We can imagine it like a car which goes straight ahead. Like a car, it has a mechanism which should be built possibly to be bug-free. The displacement is the energy of any team member. The fuel is the passion.</p>
+    <content type="html"><![CDATA[<p>A team is like a machine. We can imagine it as a car, travelling along a straight road. Like a car, its engine needs to be designed and built to be bug-free. Its speed is the energy of any team member. The fuel is the passion.</p>
 
-<p>In this article I&rsquo;ll discuss some good approach to make your team work properly and with the right attitude. Even if these approaches can be valid for any kind of team, I&rsquo;ll talk especially about a tech team, which is actually the kind of team I work in.</p>
+<p>In this article I&rsquo;ll explore some good approach to making sure a team works effectively and with the right attitude. The methods that I’ll discuss could probably be applicable to any kind of team, however, in this post, I will be making specific reference to life in a tech team.</p>
 
 <!--more-->
 
@@ -30,87 +714,89 @@
 <h2>Cultural fit</h2>
 
 <p>Spending most of your daily time with the same people, every day, means discussing, accepting and sharing.<br/>
-Writing code in a project with other people means <strong>trust them</strong> and their skills.<br/>
-So how can we figure out if a person is the right one whom to work with?</p>
+Writing code in a project with other people means we have to <strong>trust each other</strong> and our skills.<br/>
+So how can we figure out if someone is the right person to work with?</p>
 
-<p>Hiring someone in a team is not that easy: it means <strong>investing in her</strong>, spending time to let her fully enter in the project and in all the processes. Most importantly, we&rsquo;d never want to break the team&rsquo;s synergy and happiness hiring the wrong person.</p>
+<p>Hiring someone in a team is not that easy: it means <strong>investing in them</strong>, spending time to let them fully immerse themselves in the project and in all the processes. Most importantly, we’d never want to break the team’s solidarity and happiness by hiring the wrong person.</p>
 
-<p>When I interview a tech candidate in my company, I try to understand as much as possible (and in a very short time) if she has the right technical skills and if she can culturally fit our team.<br/>
-In our company we normally have 4/5 steps: in addition to doing a technical interview, the candidate has to meet the CEO, the Product Manager and other member of the team. When the interview is finished, we have a quick standup meeting to share our opinion with the other interviewer. Of course the prerequisites are the candidate&rsquo;s techincal skills, as if the candidate doesn&rsquo;t meet our requirements, the interview process stops short. If instead she does, the discussion goes ahead to the cultural fit.</p>
+<p>When I interview a tech candidate in my company, I try to understand as much as possible (and in a very short time) if he has the right technical skills and if he can culturally fit our team.<br/>
+In our company we normally have 4/5 steps: in addition to holding a technical interview, the candidate must meet the CEO, the Product Manager and other members of the team. When the interview process is over, we have a quick standup meeting to feed back and share our opinion with the other interviewers. Of course the prerequisites are the candidate&rsquo;s technical skills, as if the candidate doesn&rsquo;t meet our requirements, there is nothing further to discuss. If instead we are happy that all of our requirements are fulfilled, the discussion progresses whether they are a cultural fit.</p>
 
-<p>Here the truth: it is not easy to evaluate the personality of a guy in 1 hour or so, but if the most of us has the same impression, that could be probably true.<br/>
-There are a couple of pretty funny questions we ask each other in every of this meeting: <strong>would you take a beer with this guy?</strong> or <strong>Would you talk with this guy while you are waiting for your flight?</strong><br/>
-They could seem 2 stupid questions, but don&rsquo;t get me wrong: these questions just help us to make more concrete an abstract concept sush as cultural fit, making it easier to express our opinion. Our goal is just to understand if we&rsquo;d be happy to work with that person, and if that person would be happy <strong>to be every day with us</strong>.</p>
+<p>Here&rsquo;s the truth: it is not easy to evaluate the personality of someone in an hour or so, but if the most of us have the same impression, then we trust each other enough to make a decision based on that.<br/>
+There are a couple of pretty funny questions we ask each other in each of these meetings: <strong>Would you go for a beer with this guy?</strong> or <strong>Would you chat with him while you were waiting for your flight?</strong><br/>
+Granted, they sound a bit silly, but these questions just help us to take a fairly abstract concept like “cultural fit”, and to make it more concrete or relatable, helping us to express our opinion and make a decision. Our goal is just to understand if we&rsquo;d be happy to work with that person, and if that person would be happy <strong>to work every day with us</strong>.</p>
 
-<p>Another good point to mention, is about the candidate&rsquo;s past experiences.<br/>
-Just because a candidate used to work in Facebook, Google or any other very top company, <strong>doesn&rsquo;t mean that for sure he&rsquo;d fit our team</strong>.<br/>
-Working in a small/medium company is most of the time totally different in both aspects, technical and cultural. Indeed, within a smaller company, the team isn&rsquo;t scaled as much and the job position often requires more responsabilities (and the ability to juggle between them). Also, with fewer employees, interpersonal interactions become even more important and so does culture.</p>
+<p>Obviously, the candidate’s past experience is also pivotal in whether we hire them.  <br/>
+Just because a candidate used to work in Facebook, Google or any other top company, <strong>this doesn&rsquo;t mean that they would definitely fit our team</strong>.<br/>
+Most of the time, working in a small/medium company is totally different to larger companies, both technically and culturally. Indeed, within a smaller company, the team is more &ldquo;compact&rdquo; and the job position often requires more responsibility (and the ability to juggle between them). Also, with fewer employees, interpersonal interactions become even more important and so does culture.</p>
 
 <p><br/></p>
 
 <h2>Scheduling process</h2>
 
-<p>In the former paragraph I mentioned the importance of &ldquo;<strong>be aligned</strong>&rdquo; with the team&rsquo;s processes. A very famous software development process used in many teams, is the <strong>Agile methodology</strong>.<br/>
-<strong>SCRUM</strong> is an agile approach to manage projects. For the sake of semplicity, we will refer to any feature, bug, task or improvement which has to be implemented or solved in the project, ad a <code>story</code>. There are several online tools to track <strong>Stories</strong>, one of this (and also a very famous one) is <strong>JIRA</strong>.<br/>
-JIRA is really powerful and it has a lot of functions that I won&rsquo;t explain in this article. Instead I want to talk about <strong>boards</strong>. In JIRA Agile we can create a <code>board</code> related to a project (i.e. iOS app) where we can track our stories. The board has to be divided in  columns, that in SCRUM are normally these:<br/>
+<p>In the former paragraph I mentioned the importance of &ldquo;<strong>being aligned</strong>&rdquo; with the team&rsquo;s processes. A very famous software development process used in many teams, is the <strong>Agile methodology</strong>.<br/>
+<strong>SCRUM</strong> is an agile approach to manage projects. For the sake of simplicity, we will refer to any feature, bug, task or improvement which has to be implemented or solved in the project, as a <code>story</code>. There are several online tools to track <strong>Stories</strong>, one of these (and also a very famous one) is <strong>JIRA</strong>.<br/>
+JIRA is really powerful and it has a lot of functions that I won&rsquo;t explain in this article. Instead I want to talk about <strong>boards</strong>. In JIRA Agile we can create a <code>board</code> related to a project (i.e. iOS app) where we can track our stories. The board has to be divided in  columns, which, in SCRUM, are normally these:<br/>
 <br/>
 <code>TO DO</code> -> <code>IN PROGRESS</code> -> <code>REVIEW</code> -> <code>TESTING</code> -> <code>READY</code> -> <code>DONE</code><br/>
 <br/>
-The reason why I put <strong>arrows (<code>-&gt;</code>)</strong> between columns, is because this is the sequence which any story should follow.<br/>
-The process is easy: when a story is in <code>TO DO</code>, means that <strong>no one is working on that</strong>, and it is waiting to be moved in progress.<br/>
-When someone <strong>starts to work on a story</strong>, he should moves it in <code>IN PROGRESS</code>. Doing in this way, other developers will see that story already started from someone else, avoiding to start working on the same thing.<br/>
-When a developer completes a story, he moves it in <code>REVIEW</code>. The <code>REVIEW</code> state means that <strong>another developer should have a look at that story</strong>, confirming or not its completeness and correctness. If it is correct, it will be moved in the <code>TESTING</code> column, otherwise back <code>IN PROGRESS</code>.<br/>
-Now is the time of QAs. They have to <strong>test properly</strong> the story and if everything is ok, they should move it in <code>READY</code>. At this point, developers will can merge the story in the main (<code>develop</code>) branch, moving then the story in <code>DONE</code>.<br/>
+The arrows in this diagram show the order and flow of work.<br/>
+The process is easy: when a story is in <code>TO DO</code>, means that <strong>no one is working on it</strong>, and it is waiting to be moved in progress.<br/>
+When someone <strong>starts to work on a story</strong>, it is moved to <code>IN PROGRESS</code>. By working in this way, other developers will see that this story has already been started by someone else. This communication is important as it means that we avoid the risk of two people working on the same project.<br/>
+When a developer completes a story, he moves it to <code>REVIEW</code>. The <code>REVIEW</code> state means that <strong>another developer should have a look at that story</strong> checking the work that has been done, to make sure it is fully complete and correct. If it is correct, it will be moved to the <code>TESTING</code> column, otherwise it is moved back to <code>IN PROGRESS</code>.<br/>
+Now is the time when we hand the story over to the QAs. They have to <strong>test</strong> the story properly, and if everything is ok, they should move it to <code>READY</code>. At this point, developers will can merge the story into the main (<code>develop</code>) branch, and then move it to <code>DONE</code>.<br/>
 <br/>
-Some team, uses to have a couple of columns in more: <code>WAITING FOR REVIEW</code> and <code>WAITING FOR TESTING</code>. In our team instead, we prefer to have lesser states.<br/>
+Some team have a couple more columns in their Scrum board: <code>WAITING FOR REVIEW</code> and <code>WAITING FOR TESTING</code>. In our team instead, we prefer to have fewer stages.<br/>
 <br/>
 There are a few really important ceremonies that make Scrum extremelly useful. Let&rsquo;s see them 1 by 1:</p>
 
 <h3>Backlog Grooming</h3>
 
-<p><strong>Backlog Grooming</strong> is a meeting that normally takes 30/60 minutes in which the team prioritizes stories in the backlog. Prioritizing means <strong>moving the most important stories at the top of the Product Backlog</strong>. Stories at the top, will be the first to be inserted in the next sprint.</p>
+<p><strong>Backlog Grooming</strong> is a meeting that normally takes 30/60 minutes in which the team prioritizes stories in the backlog. Prioritizing means <strong>moving the most important stories to the top of the Product Backlog</strong>. Stories at the top, will be the first to be inserted in the next sprint.</p>
 
 <h3>Sprint Planning</h3>
 
-<p><strong>Sprint Planning</strong> is a meeting in which the team discusses and estimates stories on top of the backlog, in order to put them in the next sprint. A sprint can be of an arbitrary duration, but commonly it takes 2 weeks. In this period the team should complete all the stories inserted in it. Initially it is not easy figuring out how many stories the team can complete in 2 weeks, as it is not easy to estimate them. Sprint by sprint it will become naturally easier. There are different ways to estimate a story, one of this is the <strong>T-shirt size</strong> <code>(.., XS, S, M, L, XL, ..)</code>. Personally I don&rsquo;t like it. I do prefer numbers ;). A classic sequence to use is the <strong>Fibonacci&rsquo;s</strong> <code>(1, 2, 3, 5, 8, 13, 21, ..)</code>.<br/>
+<p><strong>Sprint Planning</strong> is a meeting in which the team discusses and estimates stories at the top of the backlog, in order to put them in the next sprint. A sprint can be of an arbitrary duration decided by the team, but commonly it takes 2 weeks. In this period the team should complete all the stories inserted in it. Initially it is not easy figuring out how many stories the team can complete in 2 weeks, as it is not easy to estimate them. Sprint by sprint it will become naturally easier. There are different ways to estimate a story, one of these is by <strong>T-shirt size</strong> <code>(.., XS, S, M, L, XL, ..)</code>. Personally I don&rsquo;t like it. I do prefer numbers ;). A classic sequence to use is the <strong>Fibonacci&rsquo;s</strong> <code>(1, 2, 3, 5, 8, 13, 21, ..)</code>.<br/>
 This meeting is extremely important to <strong>keep the team aligned on what are the next things to do, and how long they should take</strong>.</p>
 
 <h3>Daily Standup Meeting</h3>
 
-<p>In this meeting, every morning before start to work, team&rsquo;s members stand in circle. 1 by 1 they say to the rest of the group <strong>what they did yesterday, and what they will do today</strong>.<br/>
-This meeting has to be quick and shouldn&rsquo;t take more than 15 minutes. Every member can talk for 1 or 2 minutes, then the ball pass in the hands of the next member. This is exactly the reason why this meeting is performed by standing in circle. Standing, people are tempted to be 100% focused and to be quick on exposing.</p>
+<p>In this meeting, every morning before starting work, the team members stand in a circle. 1-by-1 they say to the rest of the group <strong>what they did yesterday, and what they will do today</strong>.<br/>
+This meeting has to be quick and shouldn&rsquo;t take more than 15 minutes. Every member can talk for 1 or 2 minutes, ball is passed to next team member. This is exactly the reason why this meeting is performed by standing in a circle. Standing, people are more inclined to be 100% focused and to be quick on sharing their progress.</p>
 
 <h3>Sprint Review</h3>
 
-<p><strong>Sprint Review</strong> is the meeting happening at the end of the sprint. Here the sprint gets closed and a member of the team explains what has been completed and what has been not, mentioning eventual scope changes or issues encountered.</p>
+<p><strong>Sprint Review</strong> is the meeting that takes place at the end of the sprint. Here the sprint is brought to an end and a member of the team explains what has been completed and what has been not, mentioning eventual scope changes or issues that they encountered.</p>
 
 <h3>Sprint Retrospective</h3>
 
-<p>Immediatelly after the Sprint Review, there is the <strong>Sprint Retrospective</strong>. The goal of this meeting is to bring out anything which needs to be improved, as for instance processes, teamwork, etc. An interesting part of the sprint retrospective is the initial improvement ideation phase (<code>time-boxed</code>), in which every member of the team keeps silent while writing on green and pink tickets any good and bad things related to the last sprint, what went well, what didn&rsquo;t, what she would change and what she is grateful for. Just few companies do this properly, even though it&rsquo;s essential in improving the way we work as a team.<br/>
+<p>Immediatelly after the Sprint Review, there is the <strong>Sprint Retrospective</strong>. The goal of this meeting is to raise anything that needs to be improved, in terms of processes, teamwork, etc. An interesting part of the sprint retrospective is the initial improvement ideation phase (<code>time-boxed</code>), in which every member of the team writes any good and bad aspects, related to the last sprint, on green and pink tickets. This includes: what went well, what didn’t, what they would change and what they are grateful for. Only a few companies do this properly, even though it’s essential in improving the way we work as a team.<br/>
 At the end of the Retrospective, a few <strong>follow-up actions</strong> to improve processes and teamwork are set up for the next sprint.</p>
 
 <p><br/></p>
 
 <h2>Pair programming</h2>
 
-<p>Sometimes it&rsquo;s really valuable to work in pair on a feature or on finding a bug. While a developer is writing code, another can observe him, following his approach, suggesting different ways or eventually correcting him.<br/>
-In my team we use to do pair programming when we have really big and important parts of the project to implement or refactor. In these cases, <strong>the approach used at the base will be foundamental, as it will affect the whole implementation</strong>. I stongly reccommend to do pair programming if you ever find yourself in situations like these.</p>
+<p>Sometimes it&rsquo;s really valuable to work in pairs on a feature or on finding a bug. While a developer is writing code, another can observe him, following his approach, suggesting different ways or eventually correcting him.<br/>
+In my team we use to do pair programming when we have really big and important parts of the project to implement or refactor. In these cases, <strong>the approach used from the beginning will be foundamental, as it will affect the whole implementation</strong>. I stongly reccommend that you practise pair programming if you ever find yourself in situations like these.</p>
 
 <p><br/></p>
 
 <h2>Conclusion</h2>
 
-<p>Keeping happiness in the air is the most important thing for a team. Having defined processes and being aligned techincally as well as culturally, we can reach sky high results.<br/>
+<p>Providing a happy environment is the most important thing for a team. Having defined processes and being aligned techincally as well as culturally, we can reach sky high results.<br/>
 <br/>
-Remember also to give feedbacks to your teammates in both negative and positive cases. This feedback can be <strong>general</strong>, or <strong>specific</strong>. An example could be <code>Ehi Matteo, you really did a great job here!</code> or <code>Ehi Matteo, don't you think it would be better to do this in an other way next time?</code>.</p>
+Remember also to give feedback to your teammates in both negative and positive cases. This feedback can be <strong>general</strong>, or <strong>specific</strong>. An example could be <code>Ehi Matteo, you really did a great job here!</code> or <code>Ehi Matteo, don't you think it would be better to do this in an other way next time?</code>.</p>
 
 <p>BTW, I wish you the best in your team ;) !<br/>
 <br/>
-Thanks to my friend and colleague <a href="http://www.sakho.me/">Antoine Sakho</a> for the review of this article.</p>
+Thanks to <a href="https://www.linkedin.com/profile/view?id=275981167">Harriet Ballantyne</a> and <a href="http://www.sakho.me/">Antoine Sakho</a> for the review of this article.</p>
 
 <p><strong>Follow me on <a href="https://twitter.com/matteo_gobbi">Twitter</a></strong>!</p>
 
-<p>Cheers!</p>
+<p>Cheers!<br/>
+<br/>
+<strong>Note:</strong> This article has been reported also in the <a href="https://blog.busuu.com/teamworking/">busuu’s blog</a>.</p>
 ]]></content>
   </entry>
   
@@ -772,12 +1458,12 @@ Thanks to <a href="http://twitter.com/albertodebo">Alberto De Bortoli</a> for th
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
     <updated>2014-12-15T21:57:25+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
-    <content type="html"><![CDATA[<p>Probably is happened to you too to being writing a category and at a certain point exclaiming &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
-Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you was writing a category.</p>
+    <content type="html"><![CDATA[<p>Probably you have been in the situation to being writing a category and at some point exclaim &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
+Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you were writing in a category.</p>
 
-<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probably need to have some <strong>new methods</strong> or <strong>properties</strong> you would like every subclass of that class will can to use.</p>
+<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probably need to have some <strong>new methods</strong> or <strong>properties</strong> that you&rsquo;d like to be used from every subclass.</p>
 
-<p>There is only another situation in front of which you could be confused, and this is when you are in both the previous cases, <strong>together</strong>.</p>
+<p>There is only another situation which could confuse you, and this is when you are in both the previous cases, <strong>together</strong>.</p>
 
 <!--more-->
 
@@ -805,14 +1491,14 @@ Yes, and probably was because you accidentally tried to override a method withou
 
 <p>Great.</p>
 
-<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> would implements an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
+<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> to implement an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
 Make this by subclassing would be time-consuming and would implies code repetition as you should create a subclass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, <code>UIImageView</code>, <code>UIControl</code>, <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
 
 <p style="text-align:center;"> <img src="http://matteogobbi.github.io/../images/posts/swizzling/1.jpg" height="300" alt="..say again?" /></p>
 
 <p>Exactly, it is <strong>unthinkable</strong>.</p>
 
-<p>When we need to add functionalities or properties to a class, we normally write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
+<p>When we need to add methods or properties to a class, we normally write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
 We know that this is not possible, as a category is a class extension, and implementing an existing method like <code>-layoutSubviews</code>, would results in a method repetition. As figurative and easy example think just to something like this:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

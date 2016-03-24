@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ios | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2015-08-27T22:52:05+01:00</updated>
+  <updated>2016-03-24T10:31:07+00:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -12,6 +12,415 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Architecturing A/B Experiments]]></title>
+    <link href="http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments/"/>
+    <updated>2016-03-24T09:02:48+00:00</updated>
+    <id>http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments</id>
+    <content type="html"><![CDATA[<p>Making experiments on a product is one of the most powerful tecnique for a company to get the best respose from its customers. But sometimes, especially when they are more than 2 or 3 at the same time, it may become a bit frustrating for developers who find pieces of experiment blocks around the whole project.<br/>
+In this article I&rsquo;ll explain an easy architectural approach to keep our code clean and dynamic.</p>
+
+<!--more-->
+
+
+<p><br/></p>
+
+<h2>What&rsquo;s an A/B test?</h2>
+
+<p>Let&rsquo;s suppose we want to improve a feature of our app in order to get more users using it. We have few idea to improve it (involving design, visibility, etc), but we don&rsquo;t know exactly which one would be the best to get the max response by our users. The solution is set up an <strong>A/B test</strong>.<br/>
+An A/B test is an experiment which randomnly allocates users in a specific variation. Let&rsquo;s see how does it work:<br/>
+<br>
+Let&rsquo;s say that we want to know which is the best price we should sell our premium membership in order to get the most high revenues.<br/>
+We decide to setup 3 variation:</p>
+
+<ul>
+<li><strong>Variation A</strong> (and current price): 15,00 $;</li>
+<li><strong>Variation B</strong>: 25,00 $;</li>
+<li><strong>Variation C</strong>: 40,00 $.</li>
+</ul>
+
+
+<p>Every user using our app, through specific APIs (i.e. <a href="http://apptimize.com/">Apptimize</a> APIs), will be allocated in one of these variations, and the service will return to our client where the user has been allocated. At this point, we&rsquo;ll execute a piece of code rather than another, according with the choosen variation. In this specific case, we&rsquo;ll show to the user the choosen price for that variation. Note that <strong>an experiment, must always includes the original variation</strong> which was there before starting the experiment, otherwise you&rsquo;ll never know if that was the best solution or if effectivelly was not good enough.</p>
+
+<p>Great job, the experiment is running! Now we have just to wait an arbitrary amount of time and get the results.<br/>
+<br>
+Ok, a week is gone and we found out these results:</p>
+
+<ul>
+<li>Variation A: <strong>1000 users</strong> payed 15,00 $ -> <strong>15.000,00 $ in revenues</strong>;</li>
+<li>Variation B: <strong>800 users</strong> payed 25,00 $ -> <strong>20.000,00 $ in revenues</strong>;</li>
+<li>Variation C: <strong>300 users</strong> payed 40,00 $ -> <strong>12.000,00 $ in revenues</strong>;</li>
+</ul>
+
+
+<p>Note that neither the lowest and highest prices won! Indeed <strong>Variation B</strong> (with a middle price) produced the highest revenues.<br/>
+We can so set the price of our service memebership to 25,00$ and close the experiment.</p>
+
+<p><br/></p>
+
+<h2>OMG this is so dirty!</h2>
+
+<p>An example of experiment using the famous Apptimize platform, might be this:</p>
+
+<pre><code class="objc">[Apptimize runTest:@"Experiment name" withBaseline:^{
+  // Baseline variant "original"
+  // ..code
+  // ..code
+  // ..code
+  } andVariations:@{
+    @"variation1": ^{
+      // Variant "Variation A"
+      // ..code
+      // ..code
+      // ..code
+    }, @"variation2": ^{
+      // Variant "Variation B"
+      // ..code
+      // ..code
+      // ..code
+    }
+  }
+];
+</code></pre>
+
+<p>Can you imagine as dirty can become your project?<br/>
+Let&rsquo;s see the downsides of using this approach:</p>
+
+<p><strong>☹ Dirty code</strong><br/>
+In addition to have &ldquo;spaghetti code&rdquo;, XCode not even apply a correct sintax higlighting for pieces of code like the one above;</p>
+
+<p><strong>☹ Imports</strong><br/>
+A/B test framework <strong>imported here and there around the whole project</strong>;</p>
+
+<p><strong>☹ Nested Experiments</strong><br/>
+Even if they should be avoided, <strong>nested experiments become really hard to manage</strong>;</p>
+
+<p><strong>☹ No nil blocks</strong><br/>
+If in some part of the app, you need to excute a block of code, just in the variations of the experiment, <strong>you cannot return <code>nil</code> in the baseline block</strong>. You have instead to return an empty block;</p>
+
+<p><strong>☹ Checking implies running</strong><br/>
+In order to <strong>check if an user has been allocated in an experiment&rsquo;s variation, you need to run the test every time</strong>. Every time you run an experiment on an user, he becomes part of it, and affects the final stats. Sometimes you might instead want just to check if he has been allocated in the experiment or not, without running it.<br/>
+For example if you want to run an experiment on users which respect a specific condition, but at some point in the app you need to check if the current user is in a variation of this experiment or not without risking to allocate him in the experiment itself, it may be not easy to solve, and your code could really become dirty and tricky to read;</p>
+
+<p><strong>☹ Not easy to remove</strong><br/>
+Don&rsquo;t forget that <strong>experiments are temporary</strong>, and you might want to easily remove them once closed. So you should not over complicate your current architecture and code;</p>
+
+<p><strong>☹ Affects unit tests</strong><br/>
+Experiments will <strong>run also during unit tests</strong>. To avoid this, you need to check the target before launching an experiment, making your code even more dirty.</p>
+
+<p><br/></p>
+
+<h2>A separate experiment manager</h2>
+
+<p>In order to solve the downsides exposed in the previous paragraph, you first need to wrap the &ldquo;A/B test&rdquo; framework inside a custom class:</p>
+
+<pre><code class="objc">#import &lt;Foundation/Foundation.h&gt;
+
+
+typedef void (^VariationBlock)();
+
+@interface MGExperimentsManager : NSObject
+
++ (instancetype)sharedInstance;
+
+- (void)setBaselineVariation:(VariationBlock)baselineVariation forExperimentWithName:(NSString *)experimentName;
+- (void)setVariation:(VariationBlock)variation withName:(NSString *)variationName forExperimentName:(NSString *)experimentName;
+- (void)runTest:(NSString *)experimentName;
+
+- (NSDictionary &lt;NSString *, NSString *&gt; *)testInfo;
+
+@end
+</code></pre>
+
+<p>As you see, there are specific method to set the baseline variation and the other variations, and a method to run a specific test.<br/>
+Let&rsquo;s see a case of use:</p>
+
+<pre><code class="objc">__weak typeof (self) weakSelf = self;
+
+[self setBaselineVariation:^{
+    //...code
+    //...code
+    //...code
+} forExperimentWithName:kMGExperimentName];
+
+[self setVariation:^{
+    //...code
+    //...code
+    //...code   
+} withName:@"variation1" forExperimentName:kMGExperimentName];
+
+[self runTest:kMGExperimentName];
+</code></pre>
+
+<p>A nice thing to highlight, is that you can launch these 3 methods above, also in different moment or in different point of the app. Basically you can easily prepare and then launch your experiment, mantaining the code clean and readable. Even more important, your framework dependence is just in a unique class which wraps it, and will help you to mantain your code (i.e. you want to replace Apptimize with another A/B test framework).</p>
+
+<p><br/>
+The following is the implementation file of the <code>MGExperimentsManager</code> class:</p>
+
+<pre><code class="objc">#import "BSUExperimentsManager.h"
+#import &lt;Apptimize/Apptimize.h&gt;
+
+
+@implementation MGExperimentsManager {
+    NSMutableDictionary&lt;NSString *, VariationBlock&gt; *experimentsBaselines_;
+    NSMutableDictionary&lt;NSString *, NSMutableDictionary&lt;NSString *, VariationBlock&gt; *&gt; *experimentsVariations_;
+
+}
+
++ (instancetype)sharedInstance
+{
+    static MGExperimentsManager *experimentManager;
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        experimentManager = [MGExperimentsManager new];
+    });
+
+    return experimentManager;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        experimentsBaselines_ = [NSMutableDictionary new];
+        experimentsVariations_ = [NSMutableDictionary new];
+    }
+    return self;
+}
+
+- (void)setBaselineVariation:(nullable VariationBlock)baselineVariation forExperimentWithName:(nonnull NSString *)experimentName
+{
+    NSParameterAssert(experimentName);
+
+    if (!experimentName) {
+        return;
+    }
+
+    experimentsBaselines_[experimentName] = baselineVariation;
+}
+
+- (void)setVariation:(nullable VariationBlock)variation withName:(nonnull NSString *)variationName forExperimentName:(nonnull NSString *)experimentName
+{
+    NSParameterAssert(experimentName);
+    NSParameterAssert(variationName);
+
+    if (!experimentName || !variationName) {
+        return;
+    }
+
+    if (!experimentsVariations_[experimentName]) {
+        experimentsVariations_[experimentName] = [NSMutableDictionary new];
+    }
+
+    experimentsVariations_[experimentName][variationName] = variation;
+}
+
+- (void)runTest:(nonnull NSString *)experimentName
+{
+    NSParameterAssert(experimentName);
+
+    if (!experimentName) {
+        return;
+    }
+
+    VariationBlock baselineVariation = experimentsBaselines_[experimentName];
+    NSDictionary *variations = [experimentsVariations_[experimentName] copy];
+
+    NSAssert(variations, @"There is not even a variation");
+    NSAssert([variations count] &gt; 0, @"There is not even a variation");
+
+    if (!variations || [variations count] == 0) {
+        return;
+    }
+
+    if (!baselineVariation) {
+        baselineVariation = ^(){};
+    }
+
+    [Apptimize runTest:experimentName withBaseline:baselineVariation andVariations:variations];
+
+    [self mg_removeStoredBlocksForExperimentWithName:experimentName];
+}
+
+- (NSDictionary &lt;NSString *, NSString *&gt;*)testInfo
+{
+    NSDictionary *apptimizeTestInfo = [Apptimize testInfo];
+
+    NSMutableDictionary &lt;NSString *, NSString *&gt;*enrolledTests = [NSMutableDictionary dictionary];
+
+    if (apptimizeTestInfo &amp;&amp; apptimizeTestInfo.count &gt; 0) {
+        [apptimizeTestInfo enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            NSString *testName = [MGExperimentsManagerHelper formattedTestName:key];
+            NSString *variation = [MGExperimentsManagerHelper trimmedString:[obj enrolledVariantName]];
+            enrolledTests[testName] = variation;
+        }];
+    }
+
+    return [enrolledTests copy];
+}
+
+
+#pragma mark - Private methods
+
+- (void)mg_removeStoredBlocksForExperimentWithName:(nonnull NSString *)experimentName
+{
+    NSParameterAssert(experimentName);
+
+    if (!experimentName) {
+        return;
+    }
+
+    experimentsBaselines_[experimentName] = nil;
+    experimentsVariations_[experimentName] = nil;
+}
+
+@end
+</code></pre>
+
+<p><br/></p>
+
+<h2>The core of the architecture</h2>
+
+<p>Now that we have all the pieces, let&rsquo;s pass to the final step of the architecture.<br/>
+First of all, we want to keep our experiments in order, easy to use, easy to remove once closed. A good way to do this, is using <strong>categories</strong>.<br/>
+<br/>
+Having a category of our experiment manager class for every experiment, we can mantain them well separated from each other. Moreover, where we need, we have just to import the category relatives to the experiment we want to run (or check).<br/>
+The header file of the experiment&rsquo;s category should be something like this:</p>
+
+<pre><code class="objc">#import "MGExperimentsManager.h"
+
+
+typedef NS_ENUM(NSInteger, MGPriceVariation) {
+    MGPriceVariationNotEnrolled        = -1,
+    MGPriceVariationNotAssigned        = 0, //or MGPriceVariationOriginal
+    MGPriceVariationAssignedA           = 1,
+    MGPriceVariationAssignedB           = 2
+};
+
+@interface MGExperimentsManager (PriceExperiment)
+
+@property (readonly) MGPriceVariation priceVariation;
+
+- (MGPriceVariation)runOrRefreshPriceExperimentConsideringUserPremium:(BOOL)isUserPremium;
+
+@end
+</code></pre>
+
+<p>The enumeration must respects the variations we configured in the A/B test platform. <code>MGPriceVariationNotAssigned</code> is the default variation, or the baseline variation, or in other words, the original configuration which was there before launching the experiment.<br/>
+<code>MGPriceVariationNotEnrolled</code> is instead the default value of the property <code>priceVariation</code>, which means that the experiment has never been launched in that session.<br/>
+Note also that when the experiment is run, a pre-condition is passed to the method. In this case, the pre-condition is that the user has not to be a free (not currently paying or not premium) user. Just in that case, the user will be allocated in the experiment, otherwise the experiment will be not enrolled and the session will not affect our final stats.<br/>
+Let&rsquo;s see how this category is implemented:</p>
+
+<pre><code class="objc">#import "MGExperimentsManager+PriceExperiment.h"
+
+#import &lt;objc/runtime.h&gt;
+
+
+static NSString * const kMGExperimentName = @"Price experiment";
+
+static char const * const kMGPriceVariationProperty = "__kMGPriceVariationProperty";
+
+
+@interface MGExperimentsManager ()
+
+@property (readwrite) MGPriceVariation priceVariation;
+
+@end
+
+
+@implementation BSUExperimentsManager (PriceExperiment)
+
+- (MGPriceVariation)runOrRefreshPriceExperimentConsideringUserPremium:(BOOL)isUserPremium
+{
+    if (!isUserPremium) {
+        __weak typeof (self) weakSelf = self;
+
+        if (/* Check if is not Unit Test target */) {
+
+            [self setBaselineVariation:^{
+                weakSelf.priceVariation = MGPriceVariationNotAssigned;
+            } forExperimentWithName:kMGExperimentName];
+
+            [self setVariation:^{
+                weakSelf.priceVariation = MGPriceVariationAssignedA;
+            } withName:@"variation1" forExperimentName:kMGExperimentName];
+
+            [self setVariation:^{
+                weakSelf.priceVariation = MGPriceVariationAssignedB;
+            } withName:@"variation2" forExperimentName:kMGExperimentName];
+
+            [self runTest:kMGExperimentName];
+
+        } else {
+            weakSelf.priceVariation = MGPriceVariationNotAssigned;
+        }
+
+    } else {
+        self.priceVariation = MGPriceVariationNotEnrolled;
+    }
+
+    return self.priceVariation;
+}
+
+
+#pragma mark - New properties
+
+- (void)setPriceVariation:(MGPriceVariation)priceVariation
+{
+    objc_setAssociatedObject(self, kMGPriceVariationProperty, @(priceVariation) , OBJC_ASSOCIATION_RETAIN);
+}
+
+- (MGPriceVariation)priceVariation
+{
+    NSNumber *value = objc_getAssociatedObject(self, kMGPriceVariationProperty);
+    return [value integerValue];
+}
+</code></pre>
+
+<p>It does basically just 1 thing:<br/>
+<strong>for any experiment&rsquo;s block, assign the corrispondant enumeration&rsquo;s value</strong>.<br/>
+<br/>
+Note that if the pre-condition is not respected, the value is set to <code>MGPriceVariationNotEnrolled</code>, which exactly means that the experiment has not been run.<br/>
+Note also that there is a special <code>if</code> condition (Line 25), which prevents the experiment to be performed on a <strong>Unit Test</strong> target, setting the value always to <code>MGPriceVariationNotAssigned</code>.<br/>
+This class, could also contain other properties and methods to support the experiment while running, avoiding to get the code dirty with &ldquo;temporary&rdquo; line of codes.<br/>
+Indeed, once the experiment will finish, we will just remove the <code>#import</code> and the relative calls, from the classes who make use of it, without spending time (and introducing bug) finding the correct piece of code to remove.</p>
+
+<p><br/></p>
+
+<h2>Example of usage</h2>
+
+<pre><code class="objc">MGPriceVariation priceVariation = [[MGExperimentsManager sharedInstance] runOrRefreshLifetimeTestConsideringUserPremium:user.isPremium];
+
+// User is premium
+if (priceVariation == MGPriceVariationNotEnrolled) {
+    return;
+}
+
+CGFloat price = 15.; // original price (MGPriceVariationNotAssigned)
+
+switch (priceVariation) {
+    case MGPriceVariationA:
+        price = 25.;
+        break;
+    case MGPriceVariationB:
+        price = 40.;
+        break;
+}
+
+// ..code
+</code></pre>
+
+<p>Simple as that.<br/>
+Note that once the experiment has been run, you can access the value without uselessly passing through the A/B test framework, by reading the property: <code>[MGExperimentsManager sharedInstance].priceVariation</code></p>
+
+<p><br/></p>
+
+<h2>Conclusion</h2>
+
+<p><strong>Follow me on <a href="https://twitter.com/matteo_gobbi">Twitter</a></strong>!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Anatomy of a TableView(Controller) Architecture]]></title>
@@ -308,12 +717,12 @@ Thanks to <a href="http://twitter.com/albertodebo">Alberto De Bortoli</a> for th
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
     <updated>2014-12-15T21:57:25+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
-    <content type="html"><![CDATA[<p>Probably is happened to you too to being writing a category and at a certain point exclaiming &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
-Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you was writing a category.</p>
+    <content type="html"><![CDATA[<p>Probably you have been in the situation to being writing a category and at some point exclaim &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
+Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you were writing in a category.</p>
 
-<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probably need to have some <strong>new methods</strong> or <strong>properties</strong> you would like every subclass of that class will can to use.</p>
+<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probably need to have some <strong>new methods</strong> or <strong>properties</strong> that you&rsquo;d like to be used from every subclass.</p>
 
-<p>There is only another situation in front of which you could be confused, and this is when you are in both the previous cases, <strong>together</strong>.</p>
+<p>There is only another situation which could confuse you, and this is when you are in both the previous cases, <strong>together</strong>.</p>
 
 <!--more-->
 
@@ -334,14 +743,14 @@ Yes, and probably was because you accidentally tried to override a method withou
 
 <p>Great.</p>
 
-<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> would implements an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
+<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> to implement an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
 Make this by subclassing would be time-consuming and would implies code repetition as you should create a subclass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, <code>UIImageView</code>, <code>UIControl</code>, <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/swizzling/1.jpg" height="300" alt="..say again?" /></p>
 
 <p>Exactly, it is <strong>unthinkable</strong>.</p>
 
-<p>When we need to add functionalities or properties to a class, we normally write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
+<p>When we need to add methods or properties to a class, we normally write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
 We know that this is not possible, as a category is a class extension, and implementing an existing method like <code>-layoutSubviews</code>, would results in a method repetition. As figurative and easy example think just to something like this:</p>
 
 <pre><code class="objc">//UIView standard code...

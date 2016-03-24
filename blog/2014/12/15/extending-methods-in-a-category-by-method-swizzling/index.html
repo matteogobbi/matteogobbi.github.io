@@ -82,12 +82,12 @@ in
 
 
         </div>
-        <p>Probably is happened to you too to being writing a category and at a certain point exclaiming &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
-Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you was writing a category.</p>
+        <p>Probably you have been in the situation to being writing a category and at some point exclaim &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
+Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you were writing in a category.</p>
 
-<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probably need to have some <strong>new methods</strong> or <strong>properties</strong> you would like every subclass of that class will can to use.</p>
+<p>In the largest percentage of situations, when you need to <strong>override a method</strong>, you want to write a <strong>subclass</strong>; when instead you want to <strong>write a category</strong> for a class, it is because you probably need to have some <strong>new methods</strong> or <strong>properties</strong> that you&rsquo;d like to be used from every subclass.</p>
 
-<p>There is only another situation in front of which you could be confused, and this is when you are in both the previous cases, <strong>together</strong>.</p>
+<p>There is only another situation which could confuse you, and this is when you are in both the previous cases, <strong>together</strong>.</p>
 
 <!--more-->
 
@@ -115,14 +115,14 @@ Yes, and probably was because you accidentally tried to override a method withou
 
 <p>Great.</p>
 
-<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> would implements an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
+<p>Wait..let&rsquo;s suppose also you would like every subclass of <code>UIView</code> to implement an <strong>extra code</strong>, like for instance logging something or checking a property before do something else.<br/>
 Make this by subclassing would be time-consuming and would implies code repetition as you should create a subclass and override the <code>-layoutSubviews</code> method for <code>UIView</code>, <code>UIImageView</code>, <code>UIControl</code>, <code>UILabel</code> and so on, as well as set these subclasses for any new and old class&hellip;</p>
 
 <p style="text-align:center;"> <img src="/../images/posts/swizzling/1.jpg" height="300" alt="..say again?" /></p>
 
 <p>Exactly, it is <strong>unthinkable</strong>.</p>
 
-<p>When we need to add functionalities or properties to a class, we normally write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
+<p>When we need to add methods or properties to a class, we normally write a single <strong>Category</strong> for the higher superclass we need to extend. In this case that class would be <code>UIView</code>. But, we still have a problem: we <strong>don&rsquo;t want to add a new method</strong>, we want to <strong>extend an existing method</strong>.<br/>
 We know that this is not possible, as a category is a class extension, and implementing an existing method like <code>-layoutSubviews</code>, would results in a method repetition. As figurative and easy example think just to something like this:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
