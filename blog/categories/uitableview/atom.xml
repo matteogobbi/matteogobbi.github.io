@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Uitableview | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/uitableview/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-05-08T19:16:47+02:00</updated>
+  <updated>2016-07-13T20:47:56+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Anatomy of a TableView(Controller) Architecture]]></title>
     <link href="http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/"/>
-    <updated>2015-03-22T03:09:15+01:00</updated>
+    <updated>2015-03-22T02:09:15+00:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture</id>
     <content type="html"><![CDATA[<p><code>UITableView</code>s are part of our projects since the very beginning of the iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: in a <strong>well architected way</strong>.</p>
 

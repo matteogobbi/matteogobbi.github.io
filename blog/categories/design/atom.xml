@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Design | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/design/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-05-08T19:16:47+02:00</updated>
+  <updated>2016-07-13T20:47:56+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Interaction Object]]></title>
-    <link href="http://matteogobbi.github.io/blog/2014/10/31/interaction-object/"/>
-    <updated>2014-10-31T00:16:22+01:00</updated>
-    <id>http://matteogobbi.github.io/blog/2014/10/31/interaction-object</id>
+    <link href="http://matteogobbi.github.io/blog/2014/10/30/interaction-object/"/>
+    <updated>2014-10-30T23:16:22+00:00</updated>
+    <id>http://matteogobbi.github.io/blog/2014/10/30/interaction-object</id>
     <content type="html"><![CDATA[<p>As a developer I often find myself in the situation where I have to face the problem to store and get some kind of information in the most possible handy way.<br/>
 In particular, this happens when you design a static menu list (e.g side panel or harburger menu) using a <code>UITableView</code>.</p>
 
