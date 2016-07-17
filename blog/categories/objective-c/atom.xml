@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Objective-c | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-07-13T20:47:56+01:00</updated>
+  <updated>2016-07-17T13:06:08+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -41,8 +41,8 @@ We decide to setup 3 variation:</p>
 </ul>
 
 
-<p>Every user using our app, through specific APIs (i.e. <a href="http://apptimize.com/">Apptimize</a> APIs), will be allocated in one of these variations, and the service will return to our client the variation where the user has been allocated. At this point, we&rsquo;ll execute a piece of code rather than another, according with the choosen variation.<br/>
-In the example above, the user will see the choosen price for the variation which he has been allocated in. Note that <strong>an experiment, must always includes the original variation</strong>, or in other words, the variation which was there before starting the experiment, otherwise we&rsquo;d never know if that was the best solution or if effectivelly was not good enough.</p>
+<p>Every user using our app, through specific APIs (i.e. <a href="http://apptimize.com/">Apptimize</a> APIs), will be allocated in one of these variations, and the service will return to our client the variation where the user has been allocated. At this point, we&rsquo;ll execute a piece of code rather than another, according with the chosen variation.<br/>
+In the example above, the user will see the chosen price for the variation which he has been allocated in. Note that <strong>an experiment, must always includes the original variation</strong>, or in other words, the variation which was there before starting the experiment, otherwise we&rsquo;d never know if that was the best solution or if effectively was not good enough.</p>
 
 <p>Great job, the experiment is running! Now we have just to wait an arbitrary amount of time and get the results.<br/>
 <br>
@@ -56,7 +56,7 @@ Ok, a week is gone and we found out these results:</p>
 
 
 <p>Note that neither the lowest price nor the highest price won! Indeed <strong>Variation A</strong> (with a price in the middle) produced the highest revenues.<br/>
-Therefore, we should set the price of the memebership we are selling to 25,00$ and close the experiment.</p>
+Therefore, we should set the price of the membership we are selling to 25,00$ and close the experiment.</p>
 
 <p><br/></p>
 
@@ -89,7 +89,7 @@ Therefore, we should set the price of the memebership we are selling to 25,00$ a
 Let&rsquo;s see the downsides of using this approach:</p>
 
 <p><strong>☹ Dirty code</strong><br/>
-In addition to have &ldquo;spaghetti code&rdquo;, XCode desn&rsquo;t apply a correct <strong>sintax higlighting</strong> for pieces of code like the one above;</p>
+In addition to have &ldquo;spaghetti code&rdquo;, Xcode doesn&rsquo;t apply a correct <strong>syntax highlighting and indentation</strong> for pieces of code like the one above;</p>
 
 <p><strong>☹ Imports</strong><br/>
 A/B test framework <strong>imported here and there around the whole project</strong>;</p>
@@ -98,7 +98,7 @@ A/B test framework <strong>imported here and there around the whole project</str
 Even if they should be avoided, <strong>nested experiments become really hard to manage</strong>;</p>
 
 <p><strong>☹ No nil blocks</strong><br/>
-If you need to excute a block of code just in the variations of the experiment, doing nothing in the original variation, <strong>you cannot return <code>nil</code> in the baseline block</strong>. You have instead to return an empty block;</p>
+If you need to execute a block of code just in the variations of the experiment, doing nothing in the original variation, <strong>you cannot return <code>nil</code> in the baseline block</strong>. You have instead to return an empty block;</p>
 
 <p><strong>☹ Checking implies running</strong><br/>
 In order to <strong>check if an user has been allocated in an experiment&rsquo;s variation, you need to run the test every time</strong>. Every time you run an experiment on an user, he becomes part of it, affecting the final stats. Sometimes instead, you might want just to check if he has been allocated in the experiment or not, without running it.<br/>
@@ -156,7 +156,7 @@ Let&rsquo;s see a case of use:</p>
 [self runTest:kMGExperimentName];
 </code></pre>
 
-<p>A nice thing to highlight, is that you can launch these 3 methods above, also in different moment or in different point of the app. Basically you can easily prepare and then launch your experiment, mantaining the code clean and readable. Even more important, your framework dependence is just in a unique class which wraps it, and will help you to mantain your code (i.e. you want to replace Apptimize with another A/B test framework).</p>
+<p>A nice thing to highlight, is that you can launch these 3 methods above, also in different moments and in different points of the app. Basically you can easily prepare and then launch your experiment, maintaining the code clean and readable. Even more important, your framework dependence is just in a unique class which wraps it, and will help you to maintain your code (i.e. you want to replace Apptimize with another A/B test framework).</p>
 
 <p><br/>
 The following is the implementation file of the <code>MGExperimentsManager</code> class. I won&rsquo;t spend time entering in the details of this implementation, as it&rsquo;s quite easy to read and it&rsquo;s not the main point of this article:</p>
@@ -288,7 +288,7 @@ The following is the implementation file of the <code>MGExperimentsManager</code
 <p>Now that we have all the pieces, let&rsquo;s pass to the final step of the architecture.<br/>
 First of all, we want to keep our experiments in order, easy to use, easy to remove once closed. A good way to do this, is using <strong>categories</strong>.<br/>
 <br/>
-Having a category of our experiment manager class for every experiment, we can mantain them well separated from each other. Moreover, where we need, we have just to import the category relatives to the experiment we want to run (or check).<br/>
+Having a category of our experiment manager class for every experiment, we can maintain them well separated from each other. Moreover, where we need, we have just to import the category relatives to the experiment we want to run (or check).<br/>
 The header file of the experiment&rsquo;s category should be something like this:</p>
 
 <pre><code class="objc">#import "MGExperimentsManager.h"
@@ -446,7 +446,7 @@ This is an example of how much I reduced the code in a class where there were 2 
 
 <h2>Conclusion</h2>
 
-<p>Happy A/B tests!<br/>
+<p>Happy A/B testing!<br/>
 <br/>
 Cheers ;)<br/>
 <br/>
