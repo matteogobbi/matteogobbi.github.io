@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-07-17T13:22:08+01:00</updated>
+  <updated>2016-07-17T13:26:28+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -643,7 +643,7 @@ Let&rsquo;s see how this category is implemented:</p>
 
 
 <p>It does basically just 1 thing:<br/>
-<strong>for any experiment&rsquo;s block, assign the corrispondant enumeration&rsquo;s value</strong>.<br/>
+<strong>for any experiment&rsquo;s block, assign the correspondent enumeration&rsquo;s value</strong>.<br/>
 <br/>
 Note that if the pre-condition is not respected, the value is set to <code>MGPriceVariationNotEnrolled</code>, which exactly means that the experiment has not been run.<br/>
 Note also that there is a special <code>if</code> condition (Line 25), which prevents the experiment to be performed on a <strong>Unit Test</strong> target, setting the value always to <code>MGPriceVariationNotAssigned</code>.<br/>
