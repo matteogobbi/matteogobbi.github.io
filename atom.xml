@@ -4,7 +4,7 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-07-17T13:06:08+01:00</updated>
+  <updated>2016-07-17T13:19:57+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -571,6 +571,8 @@ Let&rsquo;s see how this category is implemented:</p>
 <span class='line-number'>62</span>
 <span class='line-number'>63</span>
 <span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
 </pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="cp">#import &quot;MGExperimentsManager+PriceExperiment.h&quot;</span>
 </span><span class='line'>
 </span><span class='line'><span class="cp">#import &lt;objc/runtime.h&gt;</span>
@@ -635,6 +637,8 @@ Let&rsquo;s see how this category is implemented:</p>
 </span><span class='line'>    <span class="bp">NSNumber</span> <span class="o">*</span><span class="n">value</span> <span class="o">=</span> <span class="n">objc_getAssociatedObject</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">kMGPriceVariationProperty</span><span class="p">);</span>
 </span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">value</span> <span class="n">integerValue</span><span class="p">];</span>
 </span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">@end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 

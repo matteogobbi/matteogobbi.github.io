@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Best Practice | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/best-practice/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-07-17T13:06:08+01:00</updated>
+  <updated>2016-07-17T13:19:57+01:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
@@ -379,6 +379,8 @@ static char const * const kMGPriceVariationProperty = "__kMGPriceVariationProper
     NSNumber *value = objc_getAssociatedObject(self, kMGPriceVariationProperty);
     return [value integerValue];
 }
+
+@end
 </code></pre>
 
 <p>It does basically just 1 thing:<br/>
