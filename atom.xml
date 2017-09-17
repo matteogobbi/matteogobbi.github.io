@@ -4,11 +4,11 @@
   <title><![CDATA[Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-07-17T13:26:28+01:00</updated>
+  <updated>2017-09-16T13:13:24-07:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
-    <email><![CDATA[job@matteogobbi.it]]></email>
+    <email><![CDATA[matteo_gobbi@me.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Architecturing A/B Experiments]]></title>
     <link href="http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments/"/>
-    <updated>2016-03-24T09:02:48+00:00</updated>
+    <updated>2016-03-24T02:02:48-07:00</updated>
     <id>http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments</id>
     <content type="html"><![CDATA[<p>Making experiments on a product is one of the most powerful technique for a company to get the best response from its customers. But sometimes, especially when they are more than 2 or 3 at the same time, it may become a bit frustrating for developers who find pieces of experiment blocks around the whole project.<br/>
 In this article I&rsquo;ll explain an easy architectural approach to keep our code clean and dynamic.</p>
@@ -752,7 +752,7 @@ Cheers ;)<br/>
   <entry>
     <title type="html"><![CDATA[Teamworking]]></title>
     <link href="http://matteogobbi.github.io/blog/2015/08/31/teamworking/"/>
-    <updated>2015-08-31T10:02:23+01:00</updated>
+    <updated>2015-08-31T02:02:23-07:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/08/31/teamworking</id>
     <content type="html"><![CDATA[<p>A team is like a machine. We can imagine it as a car, travelling along a straight road. Like a car, its engine needs to be designed and built to be bug-free. Its speed is the energy of any team member. The fuel is the passion.</p>
 
@@ -855,7 +855,7 @@ Thanks to <a href="https://www.linkedin.com/profile/view?id=275981167">Harriet B
   <entry>
     <title type="html"><![CDATA[Branching Model and CI Configuration @ Busuu]]></title>
     <link href="http://matteogobbi.github.io/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu/"/>
-    <updated>2015-04-27T22:40:55+01:00</updated>
+    <updated>2015-04-27T14:40:55-07:00</updated>
     <id>http://matteogobbi.github.io/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu</id>
     <content type="html"><![CDATA[<p>Any tech company which has a team of developers working on a project, needs to have a repository and to use a revision control system, as for instance <strong>Git</strong>.<br/>
 Unfortunately, even though the choice of platforms/tools seems to be pretty standard for most development teams, many companies and particularly many teams, still don&rsquo;t use a strong <strong>Branching Model</strong> and a powerful <strong>Continuos Integration configuration</strong>.<br/>
@@ -1128,9 +1128,9 @@ Enjoy ;)<br/>
   
   <entry>
     <title type="html"><![CDATA[Anatomy of a TableView(Controller) Architecture]]></title>
-    <link href="http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/"/>
-    <updated>2015-03-22T02:09:15+00:00</updated>
-    <id>http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture</id>
+    <link href="http://matteogobbi.github.io/blog/2015/03/21/anatomy-of-a-tableview-controller-architecture/"/>
+    <updated>2015-03-21T19:09:15-07:00</updated>
+    <id>http://matteogobbi.github.io/blog/2015/03/21/anatomy-of-a-tableview-controller-architecture</id>
     <content type="html"><![CDATA[<p><code>UITableView</code>s are part of our projects since the very beginning of the iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: in a <strong>well architected way</strong>.</p>
 
 <!--more-->
@@ -1508,7 +1508,7 @@ Thanks to <a href="http://twitter.com/albertodebo">Alberto De Bortoli</a> for th
   <entry>
     <title type="html"><![CDATA[Extending Methods in a Category by Method Swizzling]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
-    <updated>2014-12-15T21:57:25+00:00</updated>
+    <updated>2014-12-15T13:57:25-08:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
     <content type="html"><![CDATA[<p>Probably you have been in the situation to being writing a category and at some point exclaim &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
 Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you were writing in a category.</p>
@@ -1867,7 +1867,7 @@ Basically we are saying to the class to exchange his <code>SEL</code> -> <code>M
   <entry>
     <title type="html"><![CDATA[Interaction Object]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/10/30/interaction-object/"/>
-    <updated>2014-10-30T23:16:22+00:00</updated>
+    <updated>2014-10-30T16:16:22-07:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/10/30/interaction-object</id>
     <content type="html"><![CDATA[<p>As a developer I often find myself in the situation where I have to face the problem to store and get some kind of information in the most possible handy way.<br/>
 In particular, this happens when you design a static menu list (e.g side panel or harburger menu) using a <code>UITableView</code>.</p>
@@ -2383,7 +2383,7 @@ Supposing to have <strong>4 items</strong>:</p>
   <entry>
     <title type="html"><![CDATA[Autorelease - Under the Hood]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/"/>
-    <updated>2014-09-28T23:24:37+01:00</updated>
+    <updated>2014-09-28T15:24:37-07:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood</id>
     <content type="html"><![CDATA[<p>Since this is an argument less touched but much important, I decided to write an article to organize the informations and explain how <code>autorelease</code>, or better <strong>autorelease pool</strong> works.</p>
 

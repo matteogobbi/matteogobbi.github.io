@@ -6611,7 +6611,7 @@ button.close {
     z-index: -1;
     height: 550px;
     text-align: center;
-    color: #002b36;
+    color: black
 }
 .hero>h1 {
     font-weight: 700;

@@ -5,7 +5,7 @@
   <url>
     <loc>http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments/</loc>
     
-    <lastmod>2016-03-24T09:02:48+00:00</lastmod>
+    <lastmod>2016-03-24T02:02:48-07:00</lastmod>
     
     <priority>0.8</priority>
   </url>
@@ -13,7 +13,7 @@
   <url>
     <loc>http://matteogobbi.github.io/blog/2015/08/31/teamworking/</loc>
     
-    <lastmod>2015-08-31T10:02:23+01:00</lastmod>
+    <lastmod>2015-08-31T02:02:23-07:00</lastmod>
     
     <priority>0.8</priority>
   </url>
@@ -21,15 +21,15 @@
   <url>
     <loc>http://matteogobbi.github.io/blog/2015/04/27/branches-model-and-ci-configuration-at-busuu/</loc>
     
-    <lastmod>2015-04-27T22:40:55+01:00</lastmod>
+    <lastmod>2015-04-27T14:40:55-07:00</lastmod>
     
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/</loc>
+    <loc>http://matteogobbi.github.io/blog/2015/03/21/anatomy-of-a-tableview-controller-architecture/</loc>
     
-    <lastmod>2015-03-22T02:09:15+00:00</lastmod>
+    <lastmod>2015-03-21T19:09:15-07:00</lastmod>
     
     <priority>0.8</priority>
   </url>
@@ -37,7 +37,7 @@
   <url>
     <loc>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/</loc>
     
-    <lastmod>2014-12-15T21:57:25+00:00</lastmod>
+    <lastmod>2014-12-15T13:57:25-08:00</lastmod>
     
     <priority>0.8</priority>
   </url>
@@ -45,7 +45,7 @@
   <url>
     <loc>http://matteogobbi.github.io/blog/2014/10/30/interaction-object/</loc>
     
-    <lastmod>2014-10-30T23:16:22+00:00</lastmod>
+    <lastmod>2014-10-30T16:16:22-07:00</lastmod>
     
     <priority>0.8</priority>
   </url>
@@ -53,7 +53,7 @@
   <url>
     <loc>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/</loc>
     
-    <lastmod>2014-09-28T23:24:37+01:00</lastmod>
+    <lastmod>2014-09-28T15:24:37-07:00</lastmod>
     
     <priority>0.8</priority>
   </url>
@@ -61,21 +61,21 @@
   
   <url>
     <loc>http://matteogobbi.github.io/</loc>
-    <lastmod>2016-07-17T13:26:28+01:00</lastmod>
+    <lastmod>2017-09-16T13:13:24-07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://matteogobbi.github.io/blog/archives/</loc>
-    <lastmod>2016-07-17T13:26:28+01:00</lastmod>
+    <lastmod>2017-09-16T13:13:24-07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://matteogobbi.github.io/posts/</loc>
-    <lastmod>2016-07-17T13:26:28+01:00</lastmod>
+    <lastmod>2017-09-16T13:13:24-07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

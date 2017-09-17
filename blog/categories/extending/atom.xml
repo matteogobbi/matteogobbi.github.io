@@ -4,11 +4,11 @@
   <title><![CDATA[Category: Extending | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/extending/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-07-17T13:26:28+01:00</updated>
+  <updated>2017-09-16T13:13:24-07:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
-    <email><![CDATA[job@matteogobbi.it]]></email>
+    <email><![CDATA[matteo_gobbi@me.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Extending Methods in a Category by Method Swizzling]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling/"/>
-    <updated>2014-12-15T21:57:25+00:00</updated>
+    <updated>2014-12-15T13:57:25-08:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/12/15/extending-methods-in-a-category-by-method-swizzling</id>
     <content type="html"><![CDATA[<p>Probably you have been in the situation to being writing a category and at some point exclaim &ldquo;<strong>F**K! It&rsquo;s a category!</strong>&rdquo;.
 Yes, and probably was because you accidentally tried to override a method without remembering that effectively, you were writing in a category.</p>

@@ -4,11 +4,11 @@
   <title><![CDATA[Category: Best Practice | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/best-practice/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-07-17T13:26:28+01:00</updated>
+  <updated>2017-09-16T13:13:24-07:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
-    <email><![CDATA[job@matteogobbi.it]]></email>
+    <email><![CDATA[matteo_gobbi@me.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Architecturing A/B Experiments]]></title>
     <link href="http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments/"/>
-    <updated>2016-03-24T09:02:48+00:00</updated>
+    <updated>2016-03-24T02:02:48-07:00</updated>
     <id>http://matteogobbi.github.io/blog/2016/03/24/architecturing-a-slash-b-experiments</id>
     <content type="html"><![CDATA[<p>Making experiments on a product is one of the most powerful technique for a company to get the best response from its customers. But sometimes, especially when they are more than 2 or 3 at the same time, it may become a bit frustrating for developers who find pieces of experiment blocks around the whole project.<br/>
 In this article I&rsquo;ll explain an easy architectural approach to keep our code clean and dynamic.</p>
@@ -458,9 +458,9 @@ Cheers ;)<br/>
   
   <entry>
     <title type="html"><![CDATA[Anatomy of a TableView(Controller) Architecture]]></title>
-    <link href="http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture/"/>
-    <updated>2015-03-22T02:09:15+00:00</updated>
-    <id>http://matteogobbi.github.io/blog/2015/03/22/anatomy-of-a-tableview-controller-architecture</id>
+    <link href="http://matteogobbi.github.io/blog/2015/03/21/anatomy-of-a-tableview-controller-architecture/"/>
+    <updated>2015-03-21T19:09:15-07:00</updated>
+    <id>http://matteogobbi.github.io/blog/2015/03/21/anatomy-of-a-tableview-controller-architecture</id>
     <content type="html"><![CDATA[<p><code>UITableView</code>s are part of our projects since the very beginning of the iOS SDK. But even if they are kind of our &ldquo;old friends&rdquo;, many of us still don&rsquo;t use them properly. No, wait. I know you use them to &ldquo;show cells&rdquo;, of course. For &ldquo;properly&rdquo; I mean: in a <strong>well architected way</strong>.</p>
 
 <!--more-->

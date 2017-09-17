@@ -4,11 +4,11 @@
   <title><![CDATA[Category: Arc | Matteo Gobbi]]></title>
   <link href="http://matteogobbi.github.io/blog/categories/arc/atom.xml" rel="self"/>
   <link href="http://matteogobbi.github.io/"/>
-  <updated>2016-07-17T13:26:28+01:00</updated>
+  <updated>2017-09-16T13:13:24-07:00</updated>
   <id>http://matteogobbi.github.io/</id>
   <author>
     <name><![CDATA[Matteo Gobbi]]></name>
-    <email><![CDATA[job@matteogobbi.it]]></email>
+    <email><![CDATA[matteo_gobbi@me.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Autorelease - Under the Hood]]></title>
     <link href="http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood/"/>
-    <updated>2014-09-28T23:24:37+01:00</updated>
+    <updated>2014-09-28T15:24:37-07:00</updated>
     <id>http://matteogobbi.github.io/blog/2014/09/28/autorelease-under-the-hood</id>
     <content type="html"><![CDATA[<p>Since this is an argument less touched but much important, I decided to write an article to organize the informations and explain how <code>autorelease</code>, or better <strong>autorelease pool</strong> works.</p>
 
